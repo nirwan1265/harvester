@@ -53,6 +53,10 @@ PCAdapt_v2 <- makeGRangesFromDataFrame(PCAdapt,
 PCAdapt_v4 <- liftOver(PCAdapt_v2,ch) %>% unlist()
 saveRDS(PCAdapt_v4, file= "PCAdapt_v4.RDS")
 
+#Converting to V5
+chain_file2 <- "B73_RefGen_v4_to_Zm-B73-REFERENCE-NAM-5.0.chain"
+ch2 <- import.chain(chain_file2)
+PCAdapt_v5 <-  liftOver(PCAdapt_v4,ch2) %>% unlist()
 
 
 
