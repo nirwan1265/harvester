@@ -66,6 +66,11 @@ pvalue.combine <- function(gwas.fstat, gwas.markers, gwas.pvalue, geno, tab.pc){
 }
 
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 5df7a0819959d81625ea8743ef11f389cb69e873
 ###Loading database
 ##Download SNP database
 #SNP Database 
@@ -126,24 +131,40 @@ for(i in 10){
 
 ###Combining F-stat:
 ##Filtering out only the gene and fstat columns
+<<<<<<< HEAD
 for(i in 10){
   assign(paste0("gwas",i), paste0("common",i))
 }
 for(i in 10){
+=======
+for(i in 1:10){
+  assign(paste0("gwas",i), paste0("common",i))
+}
+for(i in 1:10){
+>>>>>>> 5df7a0819959d81625ea8743ef11f389cb69e873
   assign(paste0("gwas",i), paste0("gwas",i)[,c(6,7,15,16,17)])
   assign(paste0("gwas",i), paste0("gwas",i)[which(paste0("gwas",i,"first.X.Region") == "gene"), ])
   assign(paste0("gwas",i), paste0("gwas",i)[,c(2,3,4,5)])
 }
+<<<<<<< HEAD
 for(i in 10){
+=======
+for(i in 1:10){
+>>>>>>> 5df7a0819959d81625ea8743ef11f389cb69e873
   colnames(assign(paste0("gwas",i)), c("Gene","fstat","Marker","pvalue"))
 }
 
 ##Sorting a/c gene name
+<<<<<<< HEAD
 for(i in 10){
+=======
+for(i in 1:10){
+>>>>>>> 5df7a0819959d81625ea8743ef11f389cb69e873
   assign(paste0("gwas",i), paste0("gwas",i)[gtools::mixedorder(paste0("gwas",i,"Gene")), ])
 }
 
 ##Table with F-stat values
+<<<<<<< HEAD
 for(i in 10){
   assign(paste0("gwas.fstat",i), dcast(setDT(paste0("gwas",i)), Gene~rowid(Gene, prefix = "fstat"), value.var = "fstat"))
 }
@@ -156,6 +177,20 @@ for(i in 10){
   assign(paste0("gene.names",i), as.data.frame(t(paste0("gene.names"),i)))
 }
 for(i in 10){
+=======
+for(i in 1:10){
+  assign(paste0("gwas.fstat",i), dcast(setDT(paste0("gwas",i)), Gene~rowid(Gene, prefix = "fstat"), value.var = "fstat"))
+}
+#Adding gene names
+for(i in 1:10){
+  assign(paste0("gene.names",i), paste0("gwas.fstat",i)[1, ])
+}
+for(i in 1:10){
+  assign(paste0("gene.names",i), apply(paste0("gene.names",i), 2, split.names))
+  assign(paste0("gene.names",i), as.data.frame(t(paste0("gene.names"),i)))
+}
+for(i in 1:10){
+>>>>>>> 5df7a0819959d81625ea8743ef11f389cb69e873
   assign(paste0("gwas.fstat",i), paste0("gwasfstat",i)[-1, ])
   assign(paste0("gwas.fstat",i), apply(paste0("gwasfstat",i),2,sort))
   assign(paste0("gwas.fstat",i), na.omit(paste0("gwasfstat",i)))
@@ -166,10 +201,17 @@ for(i in 10){
 
 
 ##Table with SNP markers
+<<<<<<< HEAD
 for(i in 10){
   assign(paste0("gwas.markers",i), dcast(setDT(paste0("gwas",i)), Gene~rowid(Gene, prefix = "markers"), value.var = "markers"))
 }
 for(i in 10){
+=======
+for(i in 1:10){
+  assign(paste0("gwas.markers",i), dcast(setDT(paste0("gwas",i)), Gene~rowid(Gene, prefix = "markers"), value.var = "markers"))
+}
+for(i in 1:10){
+>>>>>>> 5df7a0819959d81625ea8743ef11f389cb69e873
   assign(paste0("gwas.markers",i), paste0("gwasmarkers",i)[-1, ])
   assign(paste0("gwas.markers",i), apply(paste0("gwasmarkers",i),2,sort))
   assign(paste0("gwas.markers",i), na.omit(paste0("gwasmarkers",i)))
@@ -179,10 +221,17 @@ for(i in 10){
 
 
 ##Table with pvalues
+<<<<<<< HEAD
 for(i in 10){
   assign(paste0("gwas.pvalue",i), dcast(setDT(paste0("gwas",i)), Gene~rowid(Gene, prefix = "pvalue"), value.var = "pvalue"))
 }
 for(i in 10){
+=======
+for(i in 1:10){
+  assign(paste0("gwas.pvalue",i), dcast(setDT(paste0("gwas",i)), Gene~rowid(Gene, prefix = "pvalue"), value.var = "pvalue"))
+}
+for(i in 1:10){
+>>>>>>> 5df7a0819959d81625ea8743ef11f389cb69e873
   assign(paste0("gwas.pvalue",i), paste0("gwaspvalue",i)[-1, ])
   assign(paste0("gwas.pvalue",i), apply(paste0("gwaspvalue",i),2,sort))
   assign(paste0("gwas.pvalue",i), na.omit(paste0("gwaspvalue",i)))
@@ -197,32 +246,56 @@ for(i in 10){
 #Need a directory to  create the gds file. If working on the server, we might need to define this before starting
 
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Sorghum.genotype")
+<<<<<<< HEAD
 for(i in 10){
   assign(paste0("vcf.fn",i),"path/to/file/","sorghum.chr",i,".vcf")
 }
 
 For(i in 10){
+=======
+for(i in 1:10){
+  assign(paste0("vcf.fn",i),"path/to/file/","sorghum.chr",i,".vcf")
+}
+
+For(i in 1:10){
+>>>>>>> 5df7a0819959d81625ea8743ef11f389cb69e873
   snpgdsVCF2GDS(paste0("vcf.fn",i), paste0("sorghum.ch",i,".gds"), method = "biallelic.only" , )
 }
 
 ##Get GDS file data
+<<<<<<< HEAD
 for(i in 10){
+=======
+for(i in 1:10){
+>>>>>>> 5df7a0819959d81625ea8743ef11f389cb69e873
   assign(paste0("genofile",i), snpgdsOpen(paste0("sorghum.ch",i,".gds")))
 }
 
 ##LD-based SNP pruning
 set.seed(1000)
 # Try different LD thresholds for sensitivity analysis but read in a paper somewhere that 0.2 was used for GBJ
+<<<<<<< HEAD
 for(i in 10){
   assign(paste0("snpset",i), snpgdsLDpruning(paste0("genofile",i), ld.threshold = 0.2))
 }
 ## Get all selected snp id
 for(i in 10){
+=======
+for(i in 1:10){
+  assign(paste0("snpset",i), snpgdsLDpruning(paste0("genofile",i), ld.threshold = 0.2))
+}
+## Get all selected snp id
+for(i in 1:10){
+>>>>>>> 5df7a0819959d81625ea8743ef11f389cb69e873
   assign(paste0("snpset.id",i), unlist(unname(paste0("snpset",i))))
 }
 
 ## Run PCA
+<<<<<<< HEAD
 for(i in 10){
+=======
+for(i in 1:10){
+>>>>>>> 5df7a0819959d81625ea8743ef11f389cb69e873
   assign(paste0("pca",i), snpgdsPCA(paste0("genofile",i), snp.id = paste0("snpset.id",i), num.thread = 2))
 }
 
@@ -231,7 +304,11 @@ for(i in 10){
 #https://www.bioconductor.org/packages/devel/bioc/vignettes/SNPRelate/inst/doc/SNPRelate.html
 #In the case of no prior population information,
 #Make a data.frame of eigen values
+<<<<<<< HEAD
 for(i in 10){
+=======
+for(i in 1:10){
+>>>>>>> 5df7a0819959d81625ea8743ef11f389cb69e873
   assign(paste0("tab",i), data.frame(paste0("sample.id",i) = paste0("pca$sample.id",i),
                                      EV1 = paste0("pca",i,"$eigenvect")[,1],
                                      EV2 = paste0("pca",i,"$eigenvect")[,2],
@@ -243,7 +320,11 @@ for(i in 10){
 
 ###Pvalue combination
 ##Pre-processing for pvalue combination
+<<<<<<< HEAD
 for(i in 10){
+=======
+for(i in 1:10){
+>>>>>>> 5df7a0819959d81625ea8743ef11f389cb69e873
   assign(paste0("tab.pc",1), paste0("tab",i)[,c(2:6)])
 }
 
@@ -251,17 +332,29 @@ for(i in 10){
 #First need to impute the hapmap file and then change to numeric format and vice-versa
 #IMPORTANT: This can be done in TASSEL. Remove <marker> and <numerical> text from the transposed txt file before loading 
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Sorghum.genotype")
+<<<<<<< HEAD
 for(i in 10){
+=======
+for(i in 1:10){
+>>>>>>> 5df7a0819959d81625ea8743ef11f389cb69e873
   assign(paste0("geno",i), read.table(file = paste0("numerical.imputed.hapmap",i,".txt"), header = TRUE, sep = "\t"))
 }
 
 ##Combination tests using GBJ
+<<<<<<< HEAD
 for(i in 10){
+=======
+for(i in 1:10){
+>>>>>>> 5df7a0819959d81625ea8743ef11f389cb69e873
   assign(paste0("pvalue.combine",i), pvalue.combine(paste0("gwas.fstat",i), paste0("gwas.markers",i), paste0("gwas.pvalue",i), paste0("geno",i),paste0("tab.pc",i)))
 }
 
 ##Saving the result as RDS
+<<<<<<< HEAD
 for(i in 10){
+=======
+for(i in 1:10){
+>>>>>>> 5df7a0819959d81625ea8743ef11f389cb69e873
   saveRDS(paste0("pvalue.combine",i), file = paste0("pvalue.combine.sorghum.chr",i))
 }
 
