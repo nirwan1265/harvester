@@ -122,20 +122,18 @@ for(i in sprintf("%02d", 1:10)){
 }
 
 #Subsetting only gene
-gwas01 <- gwas01[which(gwas01$first.X.Region == "gene"), ]
-gwas02 <- gwas02[which(gwas02$first.X.Region == "gene"), ]
-gwas03 <- gwas03[which(gwas03$first.X.Region == "gene"), ]
-gwas04 <- gwas04[which(gwas04$first.X.Region == "gene"), ]
-gwas05 <- gwas05[which(gwas05$first.X.Region == "gene"), ]
-gwas06 <- gwas06[which(gwas06$first.X.Region == "gene"), ]
-gwas07 <- gwas07[which(gwas07$first.X.Region == "gene"), ]
-gwas08 <- gwas08[which(gwas08$first.X.Region == "gene"), ]
-gwas09 <- gwas09[which(gwas09$first.X.Region == "gene"), ]
-gwas10 <- gwas10[which(gwas10$first.X.Region == "gene"), ]
+for(i in paste0("gwas", sprintf("%02d", 1:10))){
+  d=get(i)
+  d <- d[which(d$first.X.Region == "gene"), ]
+  assign(i,d)
+}
+
+
 #Filtering out the required columns
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("gwas",i), data.frame(get(paste0("gwas",i)))[,c(7,15,16,17)])
 }
+
 #Renaming columns
 for(i in paste0("gwas", sprintf("%02d", 1:10))){
   d=get(i)
@@ -166,67 +164,88 @@ for(i in paste0("gwas", sprintf("%02d", 1:10))){
   assign(paste0(i,".gene.names"), get(paste0(i,".fstat"))[,1])
   assign(i,d)
 }
-for(i in paste0("gwas", 10,".gene.names")){
+
+for(i in paste0("gwas", sprintf("%02d", 1:10),".gene.names")){
   d=get(i)
-  d <-  as.data.frame(t(apply(d,1,split.names)))
+  d <-  as.data.frame(apply(d,1,split.names))
   assign(i,d)
 }
 
 #----> continue
-for(i in 1:10){
-  assign(paste0("gwas.fstat",i), dcast(setDT(paste0("gwas",i)), Gene~rowid(Gene, prefix = "fstat"), value.var = "fstat"))
-}
 #Adding gene names
-for(i in 1:10){
-  assign(paste0("gene.names",i), paste0("gwas.fstat",i)[1, ])
+j <- 1
+for(i in paste0("gwas",sprintf("%02d",1:10),".fstat")){
+  d <- get(i)
+  d[,1] <- get(paste0("gwas",sprintf("%02d",j),".gene.names"))[,1]
+  assign(i,d)
+  j = j + 1
 }
-for(i in 1:10){
-  assign(paste0("gene.names",i), apply(paste0("gene.names",i), 2, split.names))
-  assign(paste0("gene.names",i), as.data.frame(t(paste0("gene.names"),i)))
+#Data ordering
+for(i in paste0("gwas",sprintf("%02d", 1:10),".fstat")){
+  d <- get(i)
+  d <- as.data.frame(t(d))
+  x <- d[1,]
+  d <- d[-1,]
+  d <- apply(d,2,sort)
+  d <- as.data.frame(stri_list2matrix(d, byrow = FALSE))
+  colnames(d) <- x
+  assign(i,d)
 }
-for(i in 1:10){
-  assign(paste0("gwas.fstat",i), paste0("gwasfstat",i)[-1, ])
-  assign(paste0("gwas.fstat",i), apply(paste0("gwasfstat",i),2,sort))
-  assign(paste0("gwas.fstat",i), na.omit(paste0("gwasfstat",i)))
-  assign(paste0("gwas.fstat",i), stri_list2matrix(paste0("gwasfstat",i), byrow = FALSE))
-  colnames(assign(paste0("gwas.fstat",i), paste0("gene.names",i)))
-}
-
 
 
 ##Table with SNP markers
-for(i in 10){
-  assign(paste0("gwas.markers",i), dcast(setDT(paste0("gwas",i)), Gene~rowid(Gene, prefix = "markers"), value.var = "markers"))
+for(i in paste0("gwas",sprintf("%02d",1:10))){
+  d=get(i)
+  assign(paste0(i,".Marker"), dcast(setDT(d), Gene~rowid(Gene, prefix = "Marker"), value.var = "Marker"))
+  assign(i,d)
+}
+#Adding gene names
+j <- 1
+for(i in paste0("gwas",sprintf("%02d",1:10),".Marker")){
+  d <- get(i)
+  d[,1] <- get(paste0("gwas",sprintf("%02d",j),".gene.names"))[,1]
+  assign(i,d)
+  j = j + 1
+}
+#Data ordering
+for(i in paste0("gwas",sprintf("%02d", 1:10),".Marker")){
+  d <- get(i)
+  d <- as.data.frame(t(d))
+  x <- d[1,]
+  d <- d[-1,]
+  d <- apply(d,2,sort)
+  d <- as.data.frame(stri_list2matrix(d, byrow = FALSE))
+  colnames(d) <- x
+  assign(i,d)
 }
 
-for(i in 1:10){
-  assign(paste0("gwas.markers",i), dcast(setDT(paste0("gwas",i)), Gene~rowid(Gene, prefix = "markers"), value.var = "markers"))
+
+##Table with pvalue values
+for(i in paste0("gwas",sprintf("%02d",1:10))){
+  d=get(i)
+  assign(paste0(i,".pvalue"), dcast(setDT(d), Gene~rowid(Gene, prefix = "pvalue"), value.var = "pvalue"))
+  assign(i,d)
 }
-for(i in 1:10){
-  assign(paste0("gwas.markers",i), paste0("gwasmarkers",i)[-1, ])
-  assign(paste0("gwas.markers",i), apply(paste0("gwasmarkers",i),2,sort))
-  assign(paste0("gwas.markers",i), na.omit(paste0("gwasmarkers",i)))
-  assign(paste0("gwas.markers",i), stri_list2matrix(paste0("gwasmarkers",i), byrow = FALSE))
-  colnames(assign(paste0("gwas.markers",i), paste0("gene.names",i)))
+#Adding gene names
+j <- 1
+for(i in paste0("gwas",sprintf("%02d",1:10),".pvalue")){
+  d <- get(i)
+  d[,1] <- get(paste0("gwas",sprintf("%02d",j),".gene.names"))[,1]
+  assign(i,d)
+  j = j + 1
+}
+#Data ordering
+for(i in paste0("gwas",sprintf("%02d", 1:10),".pvalue")){
+  d <- get(i)
+  d <- as.data.frame(t(d))
+  x <- d[1,]
+  d <- d[-1,]
+  d <- apply(d,2,sort)
+  d <- as.data.frame(stri_list2matrix(d, byrow = FALSE))
+  colnames(d) <- x
+  assign(i,d)
 }
 
-
-##Table with pvalues
-
-for(i in 10){
-  assign(paste0("gwas.pvalue",i), dcast(setDT(paste0("gwas",i)), Gene~rowid(Gene, prefix = "pvalue"), value.var = "pvalue"))
-}
-
-for(i in 1:10){
-  assign(paste0("gwas.pvalue",i), dcast(setDT(paste0("gwas",i)), Gene~rowid(Gene, prefix = "pvalue"), value.var = "pvalue"))
-}
-for(i in 1:10){
-  assign(paste0("gwas.pvalue",i), paste0("gwaspvalue",i)[-1, ])
-  assign(paste0("gwas.pvalue",i), apply(paste0("gwaspvalue",i),2,sort))
-  assign(paste0("gwas.pvalue",i), na.omit(paste0("gwaspvalue",i)))
-  assign(paste0("gwas.pvalue",i), stri_list2matrix(paste0("gwaspvalue",i), byrow = FALSE))
-  colnames(assign(paste0("gwas.pvalue",i), paste0("gene.names",i)))
-}
 
 
 ###PCA analysis required for GBJ
