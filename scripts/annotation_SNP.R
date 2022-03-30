@@ -78,17 +78,17 @@ colnames(snp.db) <- c("Chromosome","Database","Region","Start","End","NA","Stran
 ##Location in the server: /rsstu/users/r/rrellan/sara/SorghumGEA/results/GLM_20220222 - GLM
 ##Location in the server: /rsstu/users/r/rrellan/sara/SorghumGEA/results/GLM_20220224 - GLM
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/GWAS.results")
+##Reading the gwas RDS files
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("query.snp.gwas", i) , readRDS(file = paste0("glm_sol_VL_",i,"_20220224_03_09.RDS")))
 }
-
+##Subsetting the required columns for analysis
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("query.snp.gwas",i), data.frame(get(paste0("query.snp.gwas",i))[1]))
   assign(paste0("query.snp.gwas",i), get(paste0("query.snp.gwas",i))[,c(2,3,4,5,6)])
 }
 
-
-###Sub-setting chromosomes from db
+###Sub-setting chromosomes from gene annotation database
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("x",i), paste0("Chr",i))
 }
@@ -97,7 +97,7 @@ for(i in sprintf("%02d", 1:10)){
 }
 
 
-##Making GRanges for Database 
+###Making GRanges for Database 
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/GWAS.results")
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("gr.db", i) , GRanges(seqnames = paste0("chr",i), ranges = IRanges(start = get(paste0("db.",i))[,"Start"], end = get(paste0("db.",i))[,"End"]), strand = get(paste0("db.",i))[,"Strand"], Region = get(paste0("db.",i))[,"Region"], Gene = get(paste0("db.",i))[,"Gene"]))
@@ -108,7 +108,8 @@ for(i in sprintf("%02d", 1:10)){
   assign(paste0("gr.q", i) , GRanges(seqnames = paste0("chr",i), ranges = IRanges(start = get(paste0("query.snp.gwas",i))[,"GLM_Stats.Pos"], width =1, fstat = get(paste0("query.snp.gwas",i))[,"GLM_Stats.marker_F"], Marker = get(paste0("query.snp.gwas",i))[,"GLM_Stats.Marker"],pvalue = get(paste0("query.snp.gwas",i))[,"GLM_Stats.p"])))
 }
 
-##Overlaps
+
+##Finding the Overlaps
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("common",i), as.data.frame(findOverlapPairs(get(paste0("gr.db",i)), get(paste0("gr.q",i)))))
 }
@@ -116,20 +117,19 @@ for(i in sprintf("%02d", 1:10)){
 
 ###Combining F-stat:
 ##Filtering out the gene, fstat, Marker and pvalue columns
-#Making a new dummy dataframe
+#Making a new dummy table
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("gwas",i), get(paste0("common",i)))
 }
 
-#Subsetting only gene
+#Filter table having only gene
 for(i in paste0("gwas", sprintf("%02d", 1:10))){
   d=get(i)
   d <- d[which(d$first.X.Region == "gene"), ]
   assign(i,d)
 }
 
-
-#Filtering out the required columns
+#Filtering out the required columns for analysis
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("gwas",i), data.frame(get(paste0("gwas",i)))[,c(7,15,16,17)])
 }
@@ -142,7 +142,7 @@ for(i in paste0("gwas", sprintf("%02d", 1:10))){
 }
 
 ##Sorting a/c gene name
-#Mayber not required, but might be for other database or when combining all result
+#Not required, but might be useful for other database or when combining all results
 for(i in paste0("gwas", sprintf("%02d", 1:10))){
   d=get(i)
   d <- d[gtools::mixedorder(d$Gene), ]
@@ -218,7 +218,6 @@ for(i in paste0("gwas",sprintf("%02d", 1:10),".Marker")){
   colnames(d) <- x
   assign(i,d)
 }
-
 
 ##Table with pvalue values
 for(i in paste0("gwas",sprintf("%02d",1:10))){
