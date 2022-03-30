@@ -41,7 +41,7 @@ pvalue.combine <- function(gwas.fstat, gwas.markers, gwas.pvalue, geno, tab.pc){
     if(ncol(x) >= 2){
       x <- as.matrix(as.double(x))
       ref_genotype <- as.data.frame(geno10[,colnames(geno10) %in% y])
-      cor_mat <- estimate_ss_cor(ref_pcs=tab.pc, ref_genotypes=ref_genotype, link_function='log')
+      cor_mat <- estimate_ss_cor(ref_pcs=tab.pc, ref_genotypes=ref_genotype, link_function='linear')
       bj.test <- BJ(test_stats = x, cor_mat=cor_mat)
       gbj.test <- GBJ(test_stats = x, cor_mat=cor_mat)
       minP.test <- minP(test_stats = x, cor_mat=cor_mat)
@@ -247,82 +247,109 @@ for(i in paste0("gwas",sprintf("%02d", 1:10),".pvalue")){
 }
 
 
-
 ###PCA analysis required for GBJ
-#Need a vcf file format of the hapmap which is converted to GDS format
+
+##Need a vcf file format of the hapmap which is converted to GDS format
 #TASSEL or PLINK is used for converting hapmap to VCF file format
 #Need a directory to  create the gds file. If working on the server, we might need to define this before starting
-
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Sorghum.genotype")
-for(i in 10){
-  assign(paste0("vcf.fn",i),"path/to/file/","sorghum.chr",i,".vcf")
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap")
+#Reading the vcf files
+for(i in sprintf("%02d", 1:10)){
+  assign(paste0("vcf.fn",i),paste0("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/hapmap.chr",i,".vcf"))
+}
+#Converting vcf to gds
+#A bit time consuming
+#Note: for some reason, you cannot run the next step twice if you make an error. you need to delete all this converted gds files, remove all your env variables and do it again.
+j <- 1
+for(i in paste0("vcf.fn",sprintf("%02d",1:10))){
+  d = get(i)
+  snpgdsVCF2GDS(d, paste0("chr",sprintf("%02d",j),".gds"), method = "copy.num.of.ref")
+  assign(i,d)
+  j = j + 1
 }
 
-for(i in 1:10){
-  assign(paste0("vcf.fn",i),"path/to/file/","sorghum.chr",i,".vcf")
+#Get the GDS file data
+for(i in sprintf("%02d", 1:10)){
+  assign(paste0("gdsfile",i), snpgdsOpen(paste0("chr",i,".gds")))
 }
 
-For(i in 1:10){
-  snpgdsVCF2GDS(paste0("vcf.fn",i), paste0("sorghum.ch",i,".gds"), method = "biallelic.only" , )
-}
 
-##Get GDS file data
-for(i in 1:10){
-  assign(paste0("genofile",i), snpgdsOpen(paste0("sorghum.ch",i,".gds")))
-}
-
-##LD-based SNP pruning
+###LD-based SNP pruning
 set.seed(1000)
 # Try different LD thresholds for sensitivity analysis but read in a paper somewhere that 0.2 was used for GBJ
-for(i in 10){
-  assign(paste0("snpset",i), snpgdsLDpruning(paste0("genofile",i), ld.threshold = 0.2))
+j <- 1
+for(i in paste0("gdsfile",sprintf("%02d", 1:10))){
+  d = get(i)
+  assign(paste0("snpset",sprintf("%02d",j)), snpgdsLDpruning(d,ld.threshold = 0.2))
+  assign(i,d)
+  j = j + 1
 }
+
 ## Get all selected snp id
-for(i in 1:10){
-  assign(paste0("snpset",i), snpgdsLDpruning(paste0("genofile",i), ld.threshold = 0.2))
-}
-## Get all selected snp id
-for(i in 1:10){
-  assign(paste0("snpset.id",i), unlist(unname(paste0("snpset",i))))
+j <- 1
+for(i in paste0("snpset",sprintf("%02d",1:10))){
+  d = get(i)
+  assign(paste0("snpset.id",sprintf("%02d",j)), unlist(unname(d)))
+  assign(i,d)
+  j = j + 1
 }
 
 ## Run PCA
-for(i in 1:10){
-  assign(paste0("pca",i), snpgdsPCA(paste0("genofile",i), snp.id = paste0("snpset.id",i), num.thread = 2))
+j <- 1
+for(i in paste0("snpset.id",sprintf("%02d",1:10))){
+  d = get(i)
+  assign(paste0("pca",sprintf("%02d",j)), snpgdsPCA(get(paste0("gdsfile",sprintf("%02d",j))), snp.id = d, num.thread = 2))
+  assign(i,d)
+  j = j+1
 }
 
 
 #In case there are population information
 #https://www.bioconductor.org/packages/devel/bioc/vignettes/SNPRelate/inst/doc/SNPRelate.html
 #In the case of no prior population information,
-#Make a data.frame of eigen values
-for(i in 1:10){
-  assign(paste0("tab",i), data.frame(paste0("sample.id",i) = paste0("pca$sample.id",i),
-                                     EV1 = paste0("pca",i,"$eigenvect")[,1],
-                                     EV2 = paste0("pca",i,"$eigenvect")[,2],
-                                     EV3 = paste0("pca",i,"$eigenvect")[,3],
-                                     EV4 = paste0("pca",i,"$eigenvect")[,4],
-                                     EV5 = paste0("pca",i,"$eigenvect")[,5],
-                                     stringAsFactors = FALSE))
+#Make a table of eigen values
+j <- 1
+for(i in paste0("pca",sprintf("%02d",1:10))){
+  d = get(i)
+  assign(paste0("tab",sprintf("%02d",j)), data.frame(sample.id = d$sample.id,
+                                     EV1 = d$eigenvect[,1],
+                                     EV2 = d$eigenvect[,2],
+                                     EV3 = d$eigenvect[,3],
+                                     EV4 = d$eigenvect[,4],
+                                     EV5 = d$eigenvect[,5],
+                                     stringsAsFactors = FALSE))
+  assign(i,d)
+  j = j + 1
 }
 
 ###Pvalue combination
-##Pre-processing for pvalue combination
-for(i in 1:10){
-  assign(paste0("tab.pc",1), paste0("tab",i)[,c(2:6)])
+##Pre-processing for p-value combination
+for(i in sprintf("%02d", 1:10)){
+  assign(paste0("tab.pc",i), get(paste0("tab",i))[,c(2:6)])
 }
 
 ##Numerical hapmap genotype file
-#First need to impute the hapmap file and then change to numeric format and vice-versa
+#Save as numerical in TASSEL
 #IMPORTANT: This can be done in TASSEL. Remove <marker> and <numerical> text from the transposed txt file before loading 
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Sorghum.genotype")
-for(i in 1:10){
-  assign(paste0("geno",i), read.table(file = paste0("numerical.imputed.hapmap",i,".txt"), header = TRUE, sep = "\t"))
+#pre processing step
+#Remove the first row
+# $ cut -f2- chr1.txt > chr1.num.txt
+#Script to change NA to 0
+# $ perl -pi -e 's/NA/0/g' chr1.num.txt
+##Reading the genotype files
+for(i in sprintf("%02d", 1:10)){
+  assign(paste0("geno",i), read.table(file = paste0("numerical.genotype.",i,".txt"), header = TRUE, sep = "\t"))
+}
+##removing first column
+for(i in paste0("geno", sprintf("%02d", 1:10))){
+  d = get(i)
+  d <- d[,-1]
+  assign(i,d)
 }
 
 ##Combination tests using GBJ
 for(i in 1:10){
-  assign(paste0("pvalue.combine",i), pvalue.combine(paste0("gwas.fstat",i), paste0("gwas.markers",i), paste0("gwas.pvalue",i), paste0("geno",i),paste0("tab.pc",i)))
+  assign(paste0("pvalue.combine",i), pvalue.combine(get(paste0("gwas.fstat",i), paste0("gwas.markers",i), paste0("gwas.pvalue",i), paste0("geno",i),paste0("tab.pc",i)))
 }
 
 ##Saving the result as RDS
