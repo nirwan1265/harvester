@@ -70,7 +70,7 @@ perl -i -pe ' if ( $_ !~ /chain/) {s/ +/\t/g}' AGPv3_to_B73_RefGen_v4.chain
 ```{sh}
 # in zsh
 perl -pi -e 's/NA/0/g' numerical.genotype.chr<chr.no.).txt
-
+```
 
 ## Other possible data for combining:
 
