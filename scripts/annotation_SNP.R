@@ -28,7 +28,7 @@ split.names <- function(x,split){
 }
 
 ##Pvalues Combinations Test
-pvalue.combine <- function(gwas.fstat, gwas.markers, gwas.pvalue, geno, tab.pc){
+pvalue.combine <- function(gwas.fstat, gwas.markers, gwas.pvalue, geno, tab.pc,combined.test.statistics){
   x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
   y <- vector()
   combined.test.statistics <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
@@ -40,7 +40,7 @@ pvalue.combine <- function(gwas.fstat, gwas.markers, gwas.pvalue, geno, tab.pc){
     }
     if(ncol(x) >= 2){
       x <- as.matrix(as.double(x))
-      ref_genotype <- as.data.frame(geno10[,colnames(geno10) %in% y])
+      ref_genotype <- as.data.frame(geno[,colnames(geno) %in% y])
       cor_mat <- estimate_ss_cor(ref_pcs=tab.pc, ref_genotypes=ref_genotype, link_function='linear')
       bj.test <- BJ(test_stats = x, cor_mat=cor_mat)
       gbj.test <- GBJ(test_stats = x, cor_mat=cor_mat)
@@ -61,8 +61,9 @@ pvalue.combine <- function(gwas.fstat, gwas.markers, gwas.pvalue, geno, tab.pc){
       combined.test.statistics[i,4] <- as.double(gwas.pvalue[1,i])
       combined.test.statistics[i,5] <- as.double(gwas.pvalue[1,i])
     }
+    ref_genotype <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
   }
-  
+return(combined.test.statistics)
 }
 
 
@@ -347,13 +348,29 @@ for(i in paste0("geno", sprintf("%02d", 1:10))){
 }
 
 ##Combination tests using GBJ
-for(i in 1:10){
-  assign(paste0("pvalue.combine",i), pvalue.combine(get(paste0("gwas.fstat",i), paste0("gwas.markers",i), paste0("gwas.pvalue",i), paste0("geno",i),paste0("tab.pc",i)))
+#Using Global Function
+for(i in sprintf("%02d",1:10)){
+  assign(paste0("pvalue.combine",i), pvalue.combine(get(paste0("gwas",i,".fstat")), get(paste0("gwas",i,".Marker")), get(paste0("gwas",i,".pvalue")), get(paste0("geno",i)),get(paste0("tab.pc",i))))
 }
 
+#Adding gene(row) and test(column) names
+j <- 1
+for(i in paste0("pvalue.combine",sprintf("%02d", 1:10))){
+  d = get(i)
+  row.names(d) <- get(paste0("gwas",sprintf("%02d",j),".gene.names"))[,1]
+  colnames(d) <- c("BJ","GBJ","HC","GHC","minP")
+  assign(i,d)
+  j = j + 1
+}
+
+
 ##Saving the result as RDS
-for(i in 1:10){
-  saveRDS(paste0("pvalue.combine",i), file = paste0("pvalue.combine.sorghum.chr",i))
+j <- 1
+for(i in paste0("pvalue.combine", sprintf("%02d", 1:10))){
+  d = get(i)
+  saveRDS(d, paste0("pvalue.combine.sorghum.chr",sprintf("%02d" , j),".RDS"))
+  assign(i,d)
+  j <- j+1
 }
 
 
