@@ -19,7 +19,7 @@ library(SNPRelate)
 library(gdsfmt)
 library(dplyr)
 
-###Local Functions:
+###Global Functions:
 ##Gene Name filtering
 split.names <- function(x,split){
   split.genename <- unlist(strsplit(x, split = ';', fixed = TRUE))[2]
@@ -67,15 +67,16 @@ return(combined.test.statistics)
 }
 
 
-###Loading database
-##Download SNP database
+###Loading databases
+##Downloading SNP database
 #SNP Database 
 #http://ftp.ebi.ac.uk/ensemblgenomes/pub/release-52/plants/gff3/sorghum_bicolor/
+#Will need to make a folder for all the databases for Sorghum and Maize
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/SNP annotation/Sorghum")
 snp.db <- read.table(file ="Sbicolor_454_v3.1.1.gene_exons.gff3", sep = "\t", header = FALSE)
 colnames(snp.db) <- c("Chromosome","Database","Region","Start","End","NA","Strand","NA2","Gene")
 
-###Loading query SNPs for GWAS from RDS file
+##Loading query SNPs for GWAS from RDS file
 ##Location in the server: /rsstu/users/r/rrellan/sara/SorghumGEA/results/GLM_20220222 - GLM
 ##Location in the server: /rsstu/users/r/rrellan/sara/SorghumGEA/results/GLM_20220224 - GLM
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/GWAS.results")
@@ -89,7 +90,7 @@ for(i in sprintf("%02d", 1:10)){
   assign(paste0("query.snp.gwas",i), get(paste0("query.snp.gwas",i))[,c(2,3,4,5,6)])
 }
 
-###Sub-setting chromosomes from gene annotation database
+##Sub-setting chromosomes from gene annotation database
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("x",i), paste0("Chr",i))
 }
@@ -97,8 +98,8 @@ for(i in sprintf("%02d", 1:10)){
   assign(paste0("db.",i), snp.db[which(snp.db$Chromosome == get(paste0("x",i))), ])
 }
 
-
-###Making GRanges for Database 
+###Annotation the SNPs
+##Making GRanges for Database 
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/GWAS.results")
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("gr.db", i) , GRanges(seqnames = paste0("chr",i), ranges = IRanges(start = get(paste0("db.",i))[,"Start"], end = get(paste0("db.",i))[,"End"]), strand = get(paste0("db.",i))[,"Strand"], Region = get(paste0("db.",i))[,"Region"], Gene = get(paste0("db.",i))[,"Gene"]))
@@ -115,27 +116,26 @@ for(i in sprintf("%02d", 1:10)){
   assign(paste0("common",i), as.data.frame(findOverlapPairs(get(paste0("gr.db",i)), get(paste0("gr.q",i)))))
 }
 
-
-###Combining F-stat:
+###Data prep
 ##Filtering out the gene, fstat, Marker and pvalue columns
-#Making a new dummy table
+##Making a new dummy table
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("gwas",i), get(paste0("common",i)))
 }
 
-#Filter table having only gene
+##Filter table having only gene
 for(i in paste0("gwas", sprintf("%02d", 1:10))){
   d=get(i)
   d <- d[which(d$first.X.Region == "gene"), ]
   assign(i,d)
 }
 
-#Filtering out the required columns for analysis
+##Filtering out the required columns for analysis
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("gwas",i), data.frame(get(paste0("gwas",i)))[,c(7,15,16,17)])
 }
 
-#Renaming columns
+##Renaming columns
 for(i in paste0("gwas", sprintf("%02d", 1:10))){
   d=get(i)
   colnames(d) = c("Gene","fstat","Marker","pvalue")
@@ -248,16 +248,15 @@ for(i in paste0("gwas",sprintf("%02d", 1:10),".pvalue")){
 
 
 ###PCA analysis required for GBJ
-
-##Need a vcf file format of the hapmap which is converted to GDS format
+#Need a vcf file format of the hapmap which is converted to GDS format
 #TASSEL or PLINK is used for converting hapmap to VCF file format
 #Need a directory to  create the gds file. If working on the server, we might need to define this before starting
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap")
-#Reading the vcf files
+##Reading the vcf files
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("vcf.fn",i),paste0("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/hapmap.chr",i,".vcf"))
 }
-#Converting vcf to gds
+##Converting vcf to gds
 #A bit time consuming
 #Note: for some reason, you cannot run the next step twice if you make an error. you need to delete all this converted gds files, remove all your env variables and do it again.
 j <- 1
@@ -268,13 +267,12 @@ for(i in paste0("vcf.fn",sprintf("%02d",1:10))){
   j = j + 1
 }
 
-#Get the GDS file data
+##Get the GDS file data
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("gdsfile",i), snpgdsOpen(paste0("chr",i,".gds")))
 }
 
-
-###LD-based SNP pruning
+##LD-based SNP pruning
 set.seed(1000)
 # Try different LD thresholds for sensitivity analysis but read in a paper somewhere that 0.2 was used for GBJ
 j <- 1
@@ -303,7 +301,6 @@ for(i in paste0("snpset.id",sprintf("%02d",1:10))){
   j = j+1
 }
 
-
 #In case there are population information
 #https://www.bioconductor.org/packages/devel/bioc/vignettes/SNPRelate/inst/doc/SNPRelate.html
 #In the case of no prior population information,
@@ -328,7 +325,7 @@ for(i in sprintf("%02d", 1:10)){
   assign(paste0("tab.pc",i), get(paste0("tab",i))[,c(2:6)])
 }
 
-##Numerical hapmap genotype file
+## Loading Numerical hapmap genotype file
 #Save as numerical in TASSEL
 #IMPORTANT: This can be done in TASSEL. Remove <marker> and <numerical> text from the transposed txt file before loading 
 #pre processing step
@@ -340,7 +337,8 @@ for(i in sprintf("%02d", 1:10)){
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("geno",i), read.table(file = paste0("numerical.genotype.",i,".txt"), header = TRUE, sep = "\t"))
 }
-##removing first column
+
+##Removing first column
 for(i in paste0("geno", sprintf("%02d", 1:10))){
   d = get(i)
   d <- d[,-1]
@@ -353,7 +351,7 @@ for(i in sprintf("%02d",1:10)){
   assign(paste0("pvalue.combine",i), pvalue.combine(get(paste0("gwas",i,".fstat")), get(paste0("gwas",i,".Marker")), get(paste0("gwas",i,".pvalue")), get(paste0("geno",i)),get(paste0("tab.pc",i))))
 }
 
-#Adding gene(row) and test(column) names
+##Adding gene(row) and test(column) names
 j <- 1
 for(i in paste0("pvalue.combine",sprintf("%02d", 1:10))){
   d = get(i)
@@ -364,7 +362,7 @@ for(i in paste0("pvalue.combine",sprintf("%02d", 1:10))){
 }
 
 
-##Saving the result as RDS
+###Saving the result as RDS
 j <- 1
 for(i in paste0("pvalue.combine", sprintf("%02d", 1:10))){
   d = get(i)
