@@ -1,0 +1,46 @@
+[main] INFO net.maizegenetics.plugindef.AbstractPlugin - Starting net.maizegenetics.analysis.data.FileLoadPlugin: time: Mar 31, 2022 15:26:34
+[main] INFO net.maizegenetics.plugindef.AbstractPlugin - 
+FileLoadPlugin Parameters
+format: Make Best Guess
+sortPositions: false
+keepDepth: false
+
+[main] INFO net.maizegenetics.analysis.data.FileLoadPlugin - Start Loading File: /Users/nirwantandukar/Downloads/dgrp2.vcf time: Mar 31, 2022 15:26:34
+[main] INFO net.maizegenetics.analysis.data.FileLoadPlugin - guessAtUnknowns: type: VCF
+[main] INFO net.maizegenetics.plugindef.AbstractPlugin - net.maizegenetics.analysis.data.FileLoadPlugin  Citation: Bradbury PJ, Zhang Z, Kroon DE, Casstevens TM, Ramdoss Y, Buckler ES. (2007) TASSEL: Software for association mapping of complex traits in diverse samples. Bioinformatics 23:2633-2635.
+[main] INFO net.maizegenetics.plugindef.AbstractPlugin - Starting net.maizegenetics.analysis.data.FileLoadPlugin: time: Mar 31, 2022 15:41:50
+[main] INFO net.maizegenetics.plugindef.AbstractPlugin - 
+FileLoadPlugin Parameters
+format: Make Best Guess
+sortPositions: false
+keepDepth: false
+
+[main] INFO net.maizegenetics.analysis.data.FileLoadPlugin - Start Loading File: /Users/nirwantandukar/Downloads/dgrp2.vcf time: Mar 31, 2022 15:41:50
+[main] INFO net.maizegenetics.analysis.data.FileLoadPlugin - guessAtUnknowns: type: VCF
+[main] INFO net.maizegenetics.plugindef.AbstractPlugin - Starting net.maizegenetics.analysis.data.FileLoadPlugin: time: Mar 31, 2022 15:50:5
+[main] INFO net.maizegenetics.plugindef.AbstractPlugin - 
+FileLoadPlugin Parameters
+format: Make Best Guess
+sortPositions: false
+keepDepth: false
+
+[main] INFO net.maizegenetics.analysis.data.FileLoadPlugin - Start Loading File: /Users/nirwantandukar/Documents/dgrp.hapmap.hmp.txt time: Mar 31, 2022 15:50:5
+[main] INFO net.maizegenetics.analysis.data.FileLoadPlugin - guessAtUnknowns: type: Hapmap
+[main] INFO net.maizegenetics.plugindef.AbstractPlugin - Starting net.maizegenetics.analysis.data.FileLoadPlugin: time: Mar 31, 2022 15:52:24
+[main] INFO net.maizegenetics.plugindef.AbstractPlugin - 
+FileLoadPlugin Parameters
+format: Make Best Guess
+sortPositions: false
+keepDepth: false
+
+[main] INFO net.maizegenetics.analysis.data.FileLoadPlugin - Start Loading File: /Users/nirwantandukar/Documents/dgrp.hapmap.hmp.txt time: Mar 31, 2022 15:52:24
+[main] INFO net.maizegenetics.analysis.data.FileLoadPlugin - guessAtUnknowns: type: Hapmap
+[main] INFO net.maizegenetics.plugindef.AbstractPlugin - Starting net.maizegenetics.analysis.data.FileLoadPlugin: time: Mar 31, 2022 15:54:54
+[main] INFO net.maizegenetics.plugindef.AbstractPlugin - 
+FileLoadPlugin Parameters
+format: Make Best Guess
+sortPositions: false
+keepDepth: false
+
+[main] INFO net.maizegenetics.analysis.data.FileLoadPlugin - Start Loading File: /Users/nirwantandukar/Documents/dgrp.hapmap.hmp.txt time: Mar 31, 2022 15:54:54
+[main] INFO net.maizegenetics.analysis.data.FileLoadPlugin - guessAtUnknowns: type: Hapmap
