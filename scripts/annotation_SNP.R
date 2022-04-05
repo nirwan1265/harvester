@@ -337,6 +337,17 @@ for(i in sprintf("%02d", 1:10)){
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("geno",i), read.table(file = paste0("numerical.genotype.",i,".txt"), header = TRUE, sep = "\t"))
 }
+##Saving the genotype file as  RDS
+#j <- 1
+#for(i in paste0("geno", sprintf("%02d", 1:10))){
+#  d = get(i)
+#  saveRDS(d, paste0("geno",sprintf("%02d" , j),".RDS"))
+#  assign(i,d)
+#  j <- j+1
+#}
+#Genotype file for PCA
+#PCA.geno <- geno01[1,]
+#saveRDS(PCA.geno,"PCA.geno.RDS")
 
 ##Removing first column
 for(i in paste0("geno", sprintf("%02d", 1:10))){
