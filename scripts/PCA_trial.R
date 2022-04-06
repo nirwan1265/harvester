@@ -1,3 +1,15 @@
+<<<<<<< HEAD
+=======
+## Run PCA
+j <- 1
+for(i in paste0("snpset.id",sprintf("%02d",1:10))){
+  d = get(i)
+  assign(paste0("pca",sprintf("%02d",j)), snpgdsPCA(get(paste0("gdsfile",sprintf("%02d",j))), snp.id = d, num.thread = 2))
+  assign(i,d)
+  j = j+1
+}
+
+>>>>>>> 25da95751769b8569fd0f5f8a24c74e2faa70901
 #PCA analysis
 data("hapmap_geno")
 
@@ -14,24 +26,35 @@ class(sample.id) #Character
 sample.id
 #Name of Samples or IDs
 #Column name
+<<<<<<< HEAD
 #[1] "NA19152"     "NA19139"     "NA18912"     "NA19160"     "NA07034"    
 #[6] "NA07055"     "NA12814"     "NA10847"     "NA18532"     "NA18561" 
+=======
+
+>>>>>>> 25da95751769b8569fd0f5f8a24c74e2faa70901
 
 snp.id <- hapmap_geno$snp.id
 typeof(snp.id) # character
 class(snp.id) #Character
 snp.id
 #Row name
+<<<<<<< HEAD
 #[656] "rs12288829" "rs3133395"  "rs11222619" "rs7938283"  "rs1382840" 
 #[661] "rs2239153"  "rs710415"   "rs10772627" "rs7311774"  "rs10846382"
+=======
+>>>>>>> 25da95751769b8569fd0f5f8a24c74e2faa70901
 
 snp.position <- hapmap_geno$snp.position
 typeof(snp.position) #double
 class(snp.position) # integer
 snp.position
 #SNP position 
+<<<<<<< HEAD
 #[847]  11223058  11283630  12537074  13265827  14225059  14781966
 #[853]  17468736  18121270  19639950  26516549  26652675  28767579
+=======
+
+>>>>>>> 25da95751769b8569fd0f5f8a24c74e2faa70901
 
 snp.allele <- hapmap_geno$snp.allele
 typeof(snp.allele) #character
@@ -41,6 +64,7 @@ snp.allele
 #[20] "A/G" "C/T" "C/T" "A/T" "A/G" "C/T" "A/G" "C/T" "G/T" "C/T" "A/G" "C/T" "C/T" "C/T" "A/G" "A/G" "A/C" "A/G" "C/T"
 #Both alleles
 
+<<<<<<< HEAD
 snp.chromosome <- hapmap_geno$snp.chromosome
 typeof(snp.chromosome) #integer
 class(snp.chromosome) #integer
@@ -156,3 +180,11 @@ snpgdsCreateGeno("test.gds",genmat = pca.geno01,
 
 
 
+=======
+
+install.packages("vcfR")
+library(vcfR)
+
+chr1.vcf <- read.vcfR(vcf.fn01, verbose = FALSE)
+x <- chr1.vcf@gt
+>>>>>>> 25da95751769b8569fd0f5f8a24c74e2faa70901
