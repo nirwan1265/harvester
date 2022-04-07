@@ -138,7 +138,9 @@ snp.collect
 #Sub-setting the required SNPs from  SNP information
 snp.collect <- as.data.frame(snp.collect)
 colnames(snp.collect) <- "ID"
-pca.snp.gds <- inner_join(pca.snp.info01,snp.collect, by = "ID")
+pca.snp.gds <- right_join(pca.snp.info01,snp.collect, by = "ID")
+#Removing duplicate values
+pca.snp.gds <- pca.snp.gds[!duplicated(pca.snp.gds$position), ]
 
 #Converting Pos and CHR to numeric
 pca.snp.gds$position <- as.integer(pca.snp.gds$POS)
@@ -159,7 +161,7 @@ gdsfile <- snpgdsCreateGeno("test.gds",genmat = genofile.unique,
                  snpfirstdim = TRUE)
 
 
-duplicated(pca.snp.gds$ID)
+
 
 
 
