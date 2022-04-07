@@ -64,7 +64,7 @@ snp.allele
 #[20] "A/G" "C/T" "C/T" "A/T" "A/G" "C/T" "A/G" "C/T" "G/T" "C/T" "A/G" "C/T" "C/T" "C/T" "A/G" "A/G" "A/C" "A/G" "C/T"
 #Both alleles
 
-<<<<<<< HEAD
+
 snp.chromosome <- hapmap_geno$snp.chromosome
 typeof(snp.chromosome) #integer
 class(snp.chromosome) #integer
@@ -76,8 +76,6 @@ snp.chromosome
 #Packages used:
 library(vcfR)
 
-
-
 #Reading the vcf file
 #Reading the path of the VCF files
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap")
@@ -86,6 +84,7 @@ for(i in sprintf("%02d", 1:10)){
 }
 
 #Reading the VCF files:
+
 j <- 1
 for(i in paste0("vcf.fn", sprintf("%02d", 1:10))){
   d = get(i)
@@ -93,6 +92,14 @@ for(i in paste0("vcf.fn", sprintf("%02d", 1:10))){
   assign(i,d)
   j <- j + 1
 }
+#Save RDC files for VCF files. Takes long to load plus very large files
+#j <- 1
+#for(i in paste0("pca.geno.info", sprintf("%02d", 1:10))){
+#  d = get(i)
+#  saveRDS(d, paste0("pca.geno.info.chr",sprintf("%02d" , j),".RDS"))
+#  assign(i,d)
+#  j <- j+1
+#}
 
 #Getting SNPs info
 j <- 1
@@ -102,7 +109,11 @@ for(i in paste0("pca.geno.info", sprintf("%02d", 1:10))){
   assign(i,d)
   j <- j + 1
 }
-
+for(i in paste0("pca.snp.info", sprintf("%02d", 1:10))){
+  d = get(i)
+  d <- d[,c(1:5)]
+  assign(i,d)
+}
 
 #SNP.id
 j <- 1
@@ -152,7 +163,7 @@ for(i in paste0("snp.chromosome", sprintf("%02d", 1:10))){
 
 #Read numerical genotype 
 for(i in sprintf("%02d", 1:10)){
-  assign(paste0("pca.geno", i), read.table(paste0("PCA.chr",i,".txt"), header = TRUE))
+  assign(paste0("geno", i), readRDS(paste0("geno",i,".RDS")))
 }
 
 j <- 1
