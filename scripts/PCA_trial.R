@@ -76,7 +76,7 @@ snp.chromosome
 #Packages used:
 library(vcfR)
 
-#Reading the vcf file
+#Genotype information table for running PCA
 #Reading the path of the VCF files
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap")
 for(i in sprintf("%02d", 1:10)){
@@ -84,7 +84,6 @@ for(i in sprintf("%02d", 1:10)){
 }
 
 #Reading the VCF files:
-
 j <- 1
 for(i in paste0("vcf.fn", sprintf("%02d", 1:10))){
   d = get(i)
@@ -114,6 +113,54 @@ for(i in paste0("pca.snp.info", sprintf("%02d", 1:10))){
   d <- d[,c(1:5)]
   assign(i,d)
 }
+for(i in paste0("pca.snp.info", sprintf("%02d", 1:10))){
+  d <-  get(i)
+  d$allele <- paste0(d$REF,"/", d$ALT) 
+  assign(i,d)
+}
+
+#Read numerical genotype 
+for(i in sprintf("%02d", 1:10)){
+  assign(paste0("geno", i), readRDS(paste0("geno",i,".RDS")))
+}
+
+
+
+
+
+#Convert to GDS
+snpgdsCreateGeno("test.gds",genmat = pca.geno01,
+                 sample.id = sample.id,
+                 snp.id = snp.id01,
+                 snp.chromosome = snp.chromosome01,
+                 snp.position = snp.position01,
+                 snp.allele = snp.allele01,
+                 snpfirstdim = TRUE)
+
+
+
+
+
+install.packages("vcfR")
+library(vcfR)
+
+chr1.vcf <- read.vcfR(vcf.fn01, verbose = FALSE)
+x <- chr1.vcf@gt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #SNP.id
 j <- 1
@@ -161,11 +208,6 @@ for(i in paste0("snp.chromosome", sprintf("%02d", 1:10))){
   assign(i,d)
 }
 
-#Read numerical genotype 
-for(i in sprintf("%02d", 1:10)){
-  assign(paste0("geno", i), readRDS(paste0("geno",i,".RDS")))
-}
-
 j <- 1
 for(i in paste0("pca.geno", sprintf("%02d", 1:10))){
   d = get(i)
@@ -177,25 +219,3 @@ for(i in paste0("pca.geno", sprintf("%02d", 1:10))){
 #Sample.ID
 sample.id <- "REFERENCE_GENOME"
 typeof(sample.id)
-
-#Convert to GDS
-snpgdsCreateGeno("test.gds",genmat = pca.geno01,
-                 sample.id = sample.id,
-                 snp.id = snp.id01,
-                 snp.chromosome = snp.chromosome01,
-                 snp.position = snp.position01,
-                 snp.allele = snp.allele01,
-                 snpfirstdim = TRUE)
-
-
-
-
-
-=======
-
-install.packages("vcfR")
-library(vcfR)
-
-chr1.vcf <- read.vcfR(vcf.fn01, verbose = FALSE)
-x <- chr1.vcf@gt
->>>>>>> 25da95751769b8569fd0f5f8a24c74e2faa70901
