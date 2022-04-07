@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 ## Run PCA
 j <- 1
 for(i in paste0("snpset.id",sprintf("%02d",1:10))){
@@ -9,7 +7,6 @@ for(i in paste0("snpset.id",sprintf("%02d",1:10))){
   j = j+1
 }
 
->>>>>>> 25da95751769b8569fd0f5f8a24c74e2faa70901
 #PCA analysis
 data("hapmap_geno")
 
@@ -18,43 +15,37 @@ genotype <- as.data.frame(hapmap_geno$genotype)
 head(genotype)
 typeof(genotype) # list
 class(genotype) # dataframe
-#Tables with numeric genotype
+genotype
 
+
+
+#Tables with numeric genotype
 sample.id <- hapmap_geno$sample.id
 typeof(sample.id) # character
 class(sample.id) #Character
 sample.id
+
 #Name of Samples or IDs
 #Column name
-<<<<<<< HEAD
 #[1] "NA19152"     "NA19139"     "NA18912"     "NA19160"     "NA07034"    
 #[6] "NA07055"     "NA12814"     "NA10847"     "NA18532"     "NA18561" 
-=======
-
->>>>>>> 25da95751769b8569fd0f5f8a24c74e2faa70901
 
 snp.id <- hapmap_geno$snp.id
 typeof(snp.id) # character
 class(snp.id) #Character
 snp.id
 #Row name
-<<<<<<< HEAD
 #[656] "rs12288829" "rs3133395"  "rs11222619" "rs7938283"  "rs1382840" 
 #[661] "rs2239153"  "rs710415"   "rs10772627" "rs7311774"  "rs10846382"
-=======
->>>>>>> 25da95751769b8569fd0f5f8a24c74e2faa70901
 
 snp.position <- hapmap_geno$snp.position
 typeof(snp.position) #double
 class(snp.position) # integer
 snp.position
 #SNP position 
-<<<<<<< HEAD
 #[847]  11223058  11283630  12537074  13265827  14225059  14781966
 #[853]  17468736  18121270  19639950  26516549  26652675  28767579
-=======
 
->>>>>>> 25da95751769b8569fd0f5f8a24c74e2faa70901
 
 snp.allele <- hapmap_geno$snp.allele
 typeof(snp.allele) #character
@@ -70,12 +61,9 @@ typeof(snp.chromosome) #integer
 class(snp.chromosome) #integer
 snp.chromosome
 # [1]  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1
-####PCA
 
 
-#Packages used:
-library(vcfR)
-
+####PCA########################################################################
 #Genotype information table for running PCA
 #Reading the path of the VCF files
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap")
@@ -84,13 +72,13 @@ for(i in sprintf("%02d", 1:10)){
 }
 
 #Reading the VCF files:
-j <- 1
-for(i in paste0("vcf.fn", sprintf("%02d", 1:10))){
-  d = get(i)
-  assign(paste0("pca.geno.info",sprintf("%02d", j)), read.vcfR(d, verbose = FALSE))
-  assign(i,d)
-  j <- j + 1
-}
+#j <- 1
+#for(i in paste0("vcf.fn", sprintf("%02d", 1:10))){
+#  d = get(i)
+#  assign(paste0("pca.geno.info",sprintf("%02d", j)), read.vcfR(d, verbose = FALSE))
+#  assign(i,d)
+#  j <- j + 1
+#}
 #Save RDC files for VCF files. Takes long to load plus very large files
 #j <- 1
 #for(i in paste0("pca.geno.info", sprintf("%02d", 1:10))){
@@ -99,6 +87,12 @@ for(i in paste0("vcf.fn", sprintf("%02d", 1:10))){
 #  assign(i,d)
 #  j <- j+1
 #}
+
+#Reading PCA genotype RDS file
+for(i in sprintf("%02d", 1:10)){
+  assign(paste0("pca.geno.info", i) , readRDS(file = paste0("pca.geno.info.chr",i,".RDS")))
+}
+
 
 #Getting SNPs info
 j <- 1
@@ -120,14 +114,14 @@ for(i in paste0("pca.snp.info", sprintf("%02d", 1:10))){
 }
 
 #Read numerical genotype 
-for(i in sprintf("%02d", 1:10)){
+for(i in sprintf("%02d", 1)){
   assign(paste0("geno", i), readRDS(paste0("geno",i,".RDS")))
 }
+geno01[1:50,1:50]
 
 #Collecting all the names
-sample.id <- tidyr::gather(gwas01.gene.names)
-sample.id <- sample.id[,-1]
-sample.id <- as.data.frame(na.omit(sample.id))
+genofile <- as.data.frame(geno01)
+genofile[1:6,1:6]
 
 #Collecting all the SNPs
 library(tidyr)
@@ -135,107 +129,83 @@ x <- tidyr::gather(gwas01.Marker)
 x <- x[,-1]
 x <- as.data.frame(na.omit(x))
 x <- as.vector(x$`na.omit(x)`)
-x
+head(x,6)
 
 #Sub-setting only the required SNPs
-xy <- geno01[x]
+xy <- sample.id[x]
 xy[] <- lapply(xy, as.integer)
+typeof(xy)
+class(xy)
+xy.m <- as.matrix(xy)
+genofile2[genofile2 == 0.5] <- 9
 
 #Sub-setting the required SNPs from snp informations
 x <- as.data.frame(x)
 colnames(x) <- "ID"
-xyz <- inner_join(pca.snp.info01,x, by = "ID")
+pca.snp.gds <- inner_join(pca.snp.info01,x, by = "ID")
 
-
+#COnverting Pos and CHR to numeric
+xyz$position <- as.integer(xyz$POS)
+xyz$chromosome <- as.integer(xyz$CHROM)
 
 #Convert to GDS
-xyza <- snpgdsCreateGeno("test.gds",genmat = xy,
-                 sample.id = xyz$ID,
+xyza <- snpgdsCreateGeno("test.gds",genmat = xy.m,
+                 sample.id = sample.id,
                  snp.id = xyz$ID,
-                 snp.chromosome = snp.chromosome01,
-                 snp.position = snp.position01,
-                 snp.allele = snp.allele01,
+                 snp.chromosome = xyz$chromosome,
+                 snp.position = xyz$position,
+                 snp.allele = xyz$allele,
                  snpfirstdim = TRUE)
 
 
 
 
 
-install.packages("vcfR")
-library(vcfR)
-
-chr1.vcf <- read.vcfR(vcf.fn01, verbose = FALSE)
-x <- chr1.vcf@gt
 
 
 
 
 
 
+library(AssocTests)
+data("drS.eg")
+
+eigenstratG.eg <- matrix(rbinom(3000, 2, 0.5), ncol = 30)
+write.table(eigenstratG.eg, file = "eigenstratG.eg.txt", quote = FALSE,
+            sep = "", row.names = FALSE, col.names = FALSE)
+x <- eigenstrat(genoFile = "eigenstratG.eg.txt", outFile.Robj = "eigenstrat.result.list",
+                outFile.txt = "eigenstrat.result.txt", rm.marker.index = NULL,
+                rm.subject.index = NULL, miss.val = 9, num.splits = 10,
+                topK = NULL, signt.eigen.level = 0.01, signal.outlier = FALSE,
+                iter.outlier = 5, sigma.thresh = 6)
+file.remove("eigenstratG.eg.txt", "eigenstrat.result.list", "eigenstrat.result.txt")
 
 
 
+#The genotype file
+genofile <- as.data.frame(geno01)
+genofile[1:6,1:6]
 
 
+#Collecting all the Markers
+library(tidyr)
+x <- tidyr::gather(gwas01.Marker)
+x <- x[,-1]
+x <- as.data.frame(na.omit(x))
+x <- as.vector(x$`na.omit(x)`)
+head(x,6)
+
+#Sub-setting only the required SNPs
+genofile2 <- genofile[x]
+genofile2 <- genofile2[-1,1:40]
+#Replacing 0.5 with 9
+genofile2[genofile2 == 0.5] <- 9
 
 
-
-
-
-#SNP.id
-j <- 1
-for(i in paste0("pca.snp.info", sprintf("%02d", 1:10))){
-  d = get(i)
-  assign(paste0("snp.id",sprintf("%02d", j)), d$ID)
-  assign(i,d)
-  j <- j + 1
-}
-
-#SNP.position
-j <- 1
-for(i in paste0("pca.snp.info", sprintf("%02d", 1:10))){
-  d = get(i)
-  assign(paste0("snp.position",sprintf("%02d", j)), d$POS)
-  assign(i,d)
-  j <- j + 1
-}
-for(i in paste0("snp.position", sprintf("%02d", 1:10))){
-  d = get(i)
-  d <- as.double(d)
-  assign(i,d)
-}
-
-#SNP.allele
-j <- 1
-for(i in paste0("pca.snp.info", sprintf("%02d", 1:10))){
-  d = get(i)
-  assign(paste0("snp.allele",sprintf("%02d", j)), paste(d$REF,d$ALT, sep = "/"))
-  assign(i,d)
-  j <- j + 1
-}
-
-#SNP.chromosome
-j <- 1
-for(i in paste0("pca.snp.info", sprintf("%02d", 1:10))){
-  d = get(i)
-  assign(paste0("snp.chromosome",sprintf("%02d", j)), d$CHROM)
-  assign(i,d)
-  j <- j + 1
-}
-for(i in paste0("snp.chromosome", sprintf("%02d", 1:10))){
-  d = get(i)
-  d <- as.integer(d)
-  assign(i,d)
-}
-
-j <- 1
-for(i in paste0("pca.geno", sprintf("%02d", 1:10))){
-  d = get(i)
-  d = d[,-1]
-  assign(i,d)
-  j <- j + 1
-}
-
-#Sample.ID
-sample.id <- "REFERENCE_GENOME"
-typeof(sample.id)
+write.table(genofile2, file = "eigenstratG.eg.txt", quote = FALSE,
+            sep = "", row.names = FALSE, col.names = FALSE)
+x <- eigenstrat(genoFile = "eigenstratG.eg.txt", outFile.Robj = "eigenstrat.result.list",
+                outFile.txt = "eigenstrat.result.txt", rm.marker.index = NULL,
+                rm.subject.index = NULL, miss.val = 9, num.splits = 10,
+                topK = NULL, signt.eigen.level = 0.01, signal.outlier = FALSE,
+                iter.outlier = 5, sigma.thresh = 6)
