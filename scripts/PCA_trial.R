@@ -119,51 +119,47 @@ for(i in sprintf("%02d", 1)){
 }
 geno01[1:50,1:50]
 
-#Collecting all the names
+#Copying the genotype file in dummy variable
 genofile <- as.data.frame(geno01)
 genofile[1:6,1:6]
 
-#Collecting all the SNPs
-library(tidyr)
-x <- tidyr::gather(gwas01.Marker)
-x <- x[,-1]
-x <- as.data.frame(na.omit(x))
-x <- as.vector(x$`na.omit(x)`)
-head(x,6)
-
 #Sub-setting only the required SNPs
-xy <- sample.id[x]
-xy[] <- lapply(xy, as.integer)
-typeof(xy)
-class(xy)
-xy.m <- as.matrix(xy)
-genofile2[genofile2 == 0.5] <- 9
+sample.id <- genofile[,1]
 
-#Sub-setting the required SNPs from snp informations
-x <- as.data.frame(x)
-colnames(x) <- "ID"
-pca.snp.gds <- inner_join(pca.snp.info01,x, by = "ID")
+#Removing the 
 
-#COnverting Pos and CHR to numeric
-xyz$position <- as.integer(xyz$POS)
-xyz$chromosome <- as.integer(xyz$CHROM)
+#Collecting all the SNPs
+snp.collect <- tidyr::gather(gwas01.Marker)
+snp.collect <- snp.collect[,-1]
+snp.collect <- as.data.frame(na.omit(snp.collect))
+snp.collect <- as.vector(snp.collect$`na.omit(snp.collect)`)
+snp.collect
+
+#Sub-setting the required SNPs from  SNP information
+snp.collect <- as.data.frame(snp.collect)
+colnames(snp.collect) <- "ID"
+pca.snp.gds <- inner_join(pca.snp.info01,snp.collect, by = "ID")
+
+#Converting Pos and CHR to numeric
+pca.snp.gds$position <- as.integer(pca.snp.gds$POS)
+pca.snp.gds$chromosome <- as.integer(pca.snp.gds$CHROM)
+
+#Sub-setting the required SNPs from genotype file
+snp.collect.t <- as.vector(t(snp.collect))
+genofile.unique <- genofile[snp.collect.t]
+genofile.unique <- as.matrix(t(genofile.unique))
 
 #Convert to GDS
-xyza <- snpgdsCreateGeno("test.gds",genmat = xy.m,
+gdsfile <- snpgdsCreateGeno("test.gds",genmat = genofile.unique,
                  sample.id = sample.id,
-                 snp.id = xyz$ID,
-                 snp.chromosome = xyz$chromosome,
-                 snp.position = xyz$position,
-                 snp.allele = xyz$allele,
+                 snp.id = pca.snp.gds$ID,
+                 snp.chromosome = pca.snp.gds$chromosome,
+                 snp.position = pca.snp.gds$position,
+                 snp.allele = pca.snp.gds$allele,
                  snpfirstdim = TRUE)
 
 
-
-
-
-
-
-
+duplicated(pca.snp.gds$ID)
 
 
 

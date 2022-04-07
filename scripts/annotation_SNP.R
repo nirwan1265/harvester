@@ -18,6 +18,7 @@ library(SNPRelate)
 library(gdsfmt)
 library(dplyr)
 library(vcfR)
+library(tidyr)
 
 ###Global Functions:
 ##Gene Name filtering
