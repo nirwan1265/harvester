@@ -162,14 +162,33 @@ gdsfile <- snpgdsCreateGeno("test.gds",genmat = genofile.unique,
 
 
 
-
-
-
-library(AssocTests)
+##EIGENSTRAT
 data("drS.eg")
 
-eigenstratG.eg <- matrix(rbinom(3000, 2, 0.5), ncol = 30)
-write.table(eigenstratG.eg, file = "eigenstratG.eg.txt", quote = FALSE,
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap")
+#Read numerical genotype 
+for(i in sprintf("%02d", 1)){
+  assign(paste0("geno", i), readRDS(paste0("geno",i,".RDS")))
+}
+geno01[1:6,1:6]
+
+#Collecting all the SNPs
+snp.collect <- tidyr::gather(gwas01.Marker)
+snp.collect <- snp.collect[,-1]
+snp.collect <- as.data.frame(na.omit(snp.collect))
+snp.collect <- as.vector(snp.collect$`na.omit(snp.collect)`)
+snp.collect
+
+#Subsetting the required SNPs
+geno01.subset <- geno01[snp.collect]
+
+#Replacing 0.5 with 9
+geno01.subset[geno01.subset == 0.5] <- 9
+
+trial <- geno01.subset[,1:4]
+trial
+
+write.table(trial, file = "eigenstratG.eg.txt", quote = FALSE,
             sep = "", row.names = FALSE, col.names = FALSE)
 x <- eigenstrat(genoFile = "eigenstratG.eg.txt", outFile.Robj = "eigenstrat.result.list",
                 outFile.txt = "eigenstrat.result.txt", rm.marker.index = NULL,
@@ -178,32 +197,4 @@ x <- eigenstrat(genoFile = "eigenstratG.eg.txt", outFile.Robj = "eigenstrat.resu
                 iter.outlier = 5, sigma.thresh = 6)
 file.remove("eigenstratG.eg.txt", "eigenstrat.result.list", "eigenstrat.result.txt")
 
-
-
-#The genotype file
-genofile <- as.data.frame(geno01)
-genofile[1:6,1:6]
-
-
-#Collecting all the Markers
-library(tidyr)
-x <- tidyr::gather(gwas01.Marker)
-x <- x[,-1]
-x <- as.data.frame(na.omit(x))
-x <- as.vector(x$`na.omit(x)`)
-head(x,6)
-
-#Sub-setting only the required SNPs
-genofile2 <- genofile[x]
-genofile2 <- genofile2[-1,1:40]
-#Replacing 0.5 with 9
-genofile2[genofile2 == 0.5] <- 9
-
-
-write.table(genofile2, file = "eigenstratG.eg.txt", quote = FALSE,
-            sep = "", row.names = FALSE, col.names = FALSE)
-x <- eigenstrat(genoFile = "eigenstratG.eg.txt", outFile.Robj = "eigenstrat.result.list",
-                outFile.txt = "eigenstrat.result.txt", rm.marker.index = NULL,
-                rm.subject.index = NULL, miss.val = 9, num.splits = 10,
-                topK = NULL, signt.eigen.level = 0.01, signal.outlier = FALSE,
-                iter.outlier = 5, sigma.thresh = 6)
+x

@@ -19,6 +19,8 @@ library(gdsfmt)
 library(dplyr)
 library(vcfR)
 library(tidyr)
+library(AssocTests)
+
 
 ###Global Functions:
 ##Gene Name filtering
