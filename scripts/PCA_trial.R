@@ -163,9 +163,16 @@ gdsfile <- snpgdsCreateGeno("test.gds",genmat = genofile.unique,
 
 
 ##EIGENSTRAT
+<<<<<<< HEAD
 data("drS.eg")
 
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap")
+=======
+
+library(AssocTests)
+data("drS.eg")
+
+>>>>>>> 0b3e3bcdf9f040dd96d65e7f12321a0edcd6e7d7
 #Read numerical genotype 
 for(i in sprintf("%02d", 1)){
   assign(paste0("geno", i), readRDS(paste0("geno",i,".RDS")))
@@ -184,11 +191,16 @@ geno01.subset <- geno01[snp.collect]
 
 #Replacing 0.5 with 9
 geno01.subset[geno01.subset == 0.5] <- 9
+<<<<<<< HEAD
 
 trial <- geno01.subset[,1:4]
 trial
 
 write.table(trial, file = "eigenstratG.eg.txt", quote = FALSE,
+=======
+
+write.table(geno01.subset, file = "eigenstratG.eg.txt", quote = FALSE,
+>>>>>>> 0b3e3bcdf9f040dd96d65e7f12321a0edcd6e7d7
             sep = "", row.names = FALSE, col.names = FALSE)
 x <- eigenstrat(genoFile = "eigenstratG.eg.txt", outFile.Robj = "eigenstrat.result.list",
                 outFile.txt = "eigenstrat.result.txt", rm.marker.index = NULL,
@@ -196,5 +208,8 @@ x <- eigenstrat(genoFile = "eigenstratG.eg.txt", outFile.Robj = "eigenstrat.resu
                 topK = NULL, signt.eigen.level = 0.01, signal.outlier = FALSE,
                 iter.outlier = 5, sigma.thresh = 6)
 file.remove("eigenstratG.eg.txt", "eigenstrat.result.list", "eigenstrat.result.txt")
+<<<<<<< HEAD
 
 x
+=======
+>>>>>>> 0b3e3bcdf9f040dd96d65e7f12321a0edcd6e7d7
