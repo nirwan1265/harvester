@@ -124,14 +124,34 @@ for(i in sprintf("%02d", 1:10)){
   assign(paste0("geno", i), readRDS(paste0("geno",i,".RDS")))
 }
 
+#Collecting all the names
+sample.id <- tidyr::gather(gwas01.gene.names)
+sample.id <- sample.id[,-1]
+sample.id <- as.data.frame(na.omit(sample.id))
 
+#Collecting all the SNPs
+library(tidyr)
+x <- tidyr::gather(gwas01.Marker)
+x <- x[,-1]
+x <- as.data.frame(na.omit(x))
+x <- as.vector(x$`na.omit(x)`)
+x
+
+#Sub-setting only the required SNPs
+xy <- geno01[x]
+xy[] <- lapply(xy, as.integer)
+
+#Sub-setting the required SNPs from snp informations
+x <- as.data.frame(x)
+colnames(x) <- "ID"
+xyz <- inner_join(pca.snp.info01,x, by = "ID")
 
 
 
 #Convert to GDS
-snpgdsCreateGeno("test.gds",genmat = pca.geno01,
-                 sample.id = sample.id,
-                 snp.id = snp.id01,
+xyza <- snpgdsCreateGeno("test.gds",genmat = xy,
+                 sample.id = xyz$ID,
+                 snp.id = xyz$ID,
                  snp.chromosome = snp.chromosome01,
                  snp.position = snp.position01,
                  snp.allele = snp.allele01,
