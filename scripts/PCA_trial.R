@@ -38,6 +38,7 @@ snp.id
 #[656] "rs12288829" "rs3133395"  "rs11222619" "rs7938283"  "rs1382840" 
 #[661] "rs2239153"  "rs710415"   "rs10772627" "rs7311774"  "rs10846382"
 
+ 
 snp.position <- hapmap_geno$snp.position
 typeof(snp.position) #double
 class(snp.position) # integer
@@ -66,10 +67,10 @@ snp.chromosome
 ####PCA########################################################################
 #Genotype information table for running PCA
 #Reading the path of the VCF files
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap")
-for(i in sprintf("%02d", 1:10)){
-  assign(paste0("vcf.fn",i),paste0("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/hapmap.chr",i,".vcf"))
-}
+#setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap")
+#for(i in sprintf("%02d", 1:10)){
+#  assign(paste0("vcf.fn",i),paste0("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/hapmap.chr",i,".vcf"))
+#}
 
 #Reading the VCF files:
 #j <- 1
@@ -94,6 +95,7 @@ for(i in sprintf("%02d", 1:10)){
 }
 
 
+
 #Getting SNPs info
 j <- 1
 for(i in paste0("pca.geno.info", sprintf("%02d", 1:10))){
@@ -113,20 +115,20 @@ for(i in paste0("pca.snp.info", sprintf("%02d", 1:10))){
   assign(i,d)
 }
 
+
 #Read numerical genotype 
 for(i in sprintf("%02d", 1)){
   assign(paste0("geno", i), readRDS(paste0("geno",i,".RDS")))
 }
-geno01[1:50,1:50]
+geno01[1:6,1:6]
+
 
 #Copying the genotype file in dummy variable
 genofile <- as.data.frame(geno01)
 genofile[1:6,1:6]
 
-#Sub-setting only the required SNPs
-sample.id <- genofile[,1]
-
-#Removing the 
+#Sample.id
+sample.id <- as.data.frame(genofile[,1])
 
 #Collecting all the SNPs
 snp.collect <- tidyr::gather(gwas01.Marker)
@@ -163,16 +165,16 @@ gdsfile <- snpgdsCreateGeno("test.gds",genmat = genofile.unique,
 
 
 ##EIGENSTRAT
-<<<<<<< HEAD
+
 data("drS.eg")
 
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap")
-=======
+
 
 library(AssocTests)
 data("drS.eg")
 
->>>>>>> 0b3e3bcdf9f040dd96d65e7f12321a0edcd6e7d7
+
 #Read numerical genotype 
 for(i in sprintf("%02d", 1)){
   assign(paste0("geno", i), readRDS(paste0("geno",i,".RDS")))
@@ -185,48 +187,77 @@ snp.collect <- snp.collect[,-1]
 snp.collect <- as.data.frame(na.omit(snp.collect))
 snp.collect <- as.vector(snp.collect$`na.omit(snp.collect)`)
 snp.collect
+snp.collect
+
 
 #Subsetting the required SNPs
 geno01.subset <- geno01[snp.collect]
 
 #Replacing 0.5 with 9
 geno01.subset[geno01.subset == 0.5] <- 9
-<<<<<<< HEAD
-
-=======
-<<<<<<< HEAD
->>>>>>> f2e4706946a2cfdaaee59eb85c525daf5de04ecd
-
-trial <- geno01.subset[,1:4]
-trial
-
-<<<<<<< HEAD
 
 
+#Subsetting only SNPs for genes
+head(gwas01.Marker)
+gwas01.Marker[1:6,1:6]
+sum(!is.na(gwas01.Marker$Sobic.001G000100))
 
-write.table(geno01.subset, file = "eigenstratG.eg.txt", quote = FALSE,
-=======
-write.table(trial, file = "eigenstratG.eg.txt", quote = FALSE,
-=======
+snp.tbl <- as.data.frame(matrix(NA))
+geno.tbl <- as.data.frame(matrix(NA))
 
-write.table(geno01.subset, file = "eigenstratG.eg.txt", quote = FALSE,
->>>>>>> 0b3e3bcdf9f040dd96d65e7f12321a0edcd6e7d7
->>>>>>> f2e4706946a2cfdaaee59eb85c525daf5de04ecd
+
+for(i in ncol(gwas01.Marker)){
+  while(sum(!is.na(gwas01.Marker)[i]) > 3){
+    snp.tbl <- as.vector(gwas01.Marker[,i])
+    snp.tbl <- snp.tbl[!is.na(snp.tbl)]
+    geno.tbl <- geno01[snp.tbl]
+    write.table(geno01.tbl, file = "eigenstratG.eg.txt", quote = FALSE,
+                sep = "", row.names = FALSE, col.names = FALSE)
+    
+  }
+}
+snp.tbl <- as.vector(gwas01.Marker[,4])
+snp.tbl <- snp.tbl[!is.na(snp.tbl)]
+geno.tbl <- as.matrix(geno01[snp.tbl])
+geno.tbl[geno.tbl == 0.5] <- 9
+
+cor_mat <- estimate_ss_cor(ref_pcs=tab.pc, ref_genotypes=ref_genotype, link_function='linear')
+
+
+
+
+typeof(geno.tbl)
+class(geno.tbl)
+geno.tbl
+
+
+eigenstratG.eg <- matrix(rbinom(3000, 2, 0.5), ncol = 30)
+eigenstratG.eg
+
+typeof(eigenstratG.eg)
+class(eigenstratG.eg)
+
+write.table(geno.tbl, file = "eigenstratG.eg.txt", quote = FALSE,
             sep = "", row.names = FALSE, col.names = FALSE)
+
 x <- eigenstrat(genoFile = "eigenstratG.eg.txt", outFile.Robj = "eigenstrat.result.list",
                 outFile.txt = "eigenstrat.result.txt", rm.marker.index = NULL,
                 rm.subject.index = NULL, miss.val = 9, num.splits = 10,
                 topK = NULL, signt.eigen.level = 0.01, signal.outlier = FALSE,
                 iter.outlier = 5, sigma.thresh = 6)
+x <- x$eigenvectors
+x <- as.matrix(x[,1], byrow = TRUE)
+x
+
+geno.tbl <- as.data.frame(geno.tbl)
+
+y <- estimate_ss_cor(ref_pcs=x, ref_genotypes=geno.tbl, link_function='logit')
+
+typeof(geno.tbl)
+class(geno.tbl)
+
 file.remove("eigenstratG.eg.txt", "eigenstrat.result.list", "eigenstrat.result.txt")
-<<<<<<< HEAD
 
 
-x
-=======
-<<<<<<< HEAD
 
-x
-=======
->>>>>>> 0b3e3bcdf9f040dd96d65e7f12321a0edcd6e7d7
->>>>>>> f2e4706946a2cfdaaee59eb85c525daf5de04ecd
+system("ls -F")
