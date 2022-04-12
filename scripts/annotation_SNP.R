@@ -1,25 +1,14 @@
-###Packages required
-library(ggplot2)
-library(Rsamtools)
-library(GenomicAlignments)
-library(rtracklayer)
-library(GenomicRanges)
-library(AnnotationHub)
-library(knitr)
-library(gtools)
-library(data.table)
-library(stringi)
-library(GBJ)
-library(metap)
-library(multtest)
-library(Hmisc)
-library(devtools)
-library(SNPRelate)
-library(gdsfmt)
-library(dplyr)
-library(vcfR)
-library(tidyr)
-library(AssocTests)
+# Package names
+packages <- c("ggplot2", "Rsamtools","GenomicAlignments","rtracklayer","GenomicRanges","AnnotationHub","knitr","gtools","data.table","stringi","GBJ","metap","multtest","Hmisc","devtools","SNPRelate","gdsfmt","dplyr","vcfR","tidyr","AssocTests")
+
+# Install packages not yet installed
+#installed_packages <- packages %in% rownames(installed.packages())
+#if (any(installed_packages == FALSE)) {
+#  install.packages(packages[!installed_packages])
+#}
+
+# Packages loading
+invisible(lapply(packages, library, character.only = TRUE))
 
 
 ###Global Functions:
