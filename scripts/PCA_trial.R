@@ -67,7 +67,7 @@ snp.chromosome
 ####PCA########################################################################
 #Genotype information table for running PCA
 #Reading the path of the VCF files
-#setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap")
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap")
 #for(i in sprintf("%02d", 1:10)){
 #  assign(paste0("vcf.fn",i),paste0("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/hapmap.chr",i,".vcf"))
 #}
@@ -117,14 +117,14 @@ for(i in paste0("pca.snp.info", sprintf("%02d", 1:10))){
 
 
 #Read numerical genotype 
-for(i in sprintf("%02d", 1)){
+for(i in sprintf("%02d", 10)){
   assign(paste0("geno", i), readRDS(paste0("geno",i,".RDS")))
 }
-geno01[1:6,1:6]
+geno10[1:6,1:6]
 
 
 #Copying the genotype file in dummy variable
-genofile <- as.data.frame(geno01)
+genofile <- as.data.frame(geno10)
 genofile[1:6,1:6]
 
 #Sample.id
@@ -204,16 +204,47 @@ sum(!is.na(gwas01.Marker$Sobic.001G000100))
 
 snp.tbl <- as.data.frame(matrix(NA))
 geno.tbl <- as.data.frame(matrix(NA))
+snp.tbl <- as.vector(gwas10.Marker[,2])
+snp.tbl <- snp.tbl[!is.na(snp.tbl)]
+geno.tbl <- geno10[snp.tbl]
+geno.tbl[geno.tbl == 0.5] <- 9
+
+system("pwd")
+
+write.table(geno.tbl, file = "eigenstratG.eg.txt", quote = FALSE,
+            sep = "", row.names = FALSE, col.names = FALSE)
+x <- eigenstrat(genoFile = "eigenstratG.eg.txt", outFile.Robj = "eigenstrat.result.list",
+                outFile.txt = "eigenstrat.result.txt", rm.marker.index = NULL,
+                rm.subject.index = NULL, miss.val = 9, num.splits = 1,
+                topK = NULL, signt.eigen.level = 0.01, signal.outlier = FALSE,
+                iter.outlier = 5, sigma.thresh = 6)
+x$eigenvectors
+
+??eigenstrat
+
+x <- x$eigenvectors
+x <- as.matrix(x[,1:2])
+x
+typeof(x)
+class(x)
+
+FGFR2_cor_mat <- estimate_ss_cor(ref_pcs=x, ref_genotypes=geno.tbl, link_function='logit')
 
 
 for(i in ncol(gwas01.Marker)){
-  while(sum(!is.na(gwas01.Marker)[i]) > 3){
+  while(sum(length(which(!is.na(gwas01.Marker[,i])))) > 3){
     snp.tbl <- as.vector(gwas01.Marker[,i])
     snp.tbl <- snp.tbl[!is.na(snp.tbl)]
     geno.tbl <- geno01[snp.tbl]
-    write.table(geno01.tbl, file = "eigenstratG.eg.txt", quote = FALSE,
-                sep = "", row.names = FALSE, col.names = FALSE)
-    
+    write.table(geno.tbl, file = "eigenstratG.eg.txt", quote = FALSE,
+                sep = " ", row.names = FALSE, col.names = FALSE)
+    x <- eigenstrat(genoFile = "eigenstratG.eg.txt", outFile.Robj = "eigenstrat.result.list",
+                    outFile.txt = "eigenstrat.result.txt", rm.marker.index = NULL,
+                    rm.subject.index = NULL, miss.val = 9, num.splits = 10,
+                    topK = NULL, signt.eigen.level = 0.01, signal.outlier = FALSE,
+                    iter.outlier = 5, sigma.thresh = 6)
+    x <- x$eigenvectors
+    x <- as.matrix(x[,1])
   }
 }
 snp.tbl <- as.vector(gwas01.Marker[,4])
