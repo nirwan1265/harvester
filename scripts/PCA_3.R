@@ -1,6 +1,7 @@
 install.packages("smartsnp")
 library("smartsnp")
 
+<<<<<<< HEAD
 
 # Path to example genotype matrix "dataSNP"
 pathToGenoFile = system.file("extdata", "dataSNP", package = "smartsnp")
@@ -9,10 +10,18 @@ pathToGenoFile
 x <- read.table(file = pathToGenoFile)
 
 
+=======
+# Path to example genotype matrix "dataSNP"
+pathToGenoFile = system.file("extdata", "dataSNP", package = "smartsnp")
+pathToGenoFile
+x <- read.table(file = pathToGenoFile)
+
+>>>>>>> add704465cad8d5bc3d2e2a38b769f5a90d80dac
 # Example 1: modern samples
 #assign 50 samples to each of two groups and colors
 my_groups <- c(rep("A", 50), rep("B", 50)); cols = c("red", "blue")
 my_groups
+<<<<<<< HEAD
 class(my_groups)
 
 sample.id <- as.vector(genofile[,1])
@@ -32,6 +41,16 @@ pcaR1 <- smart_pca(snp_data = genofile, sample_group = sample.id)
 
 
 ?smart_pca()
+=======
+
+sample.id <- as.matrix(sample.id)
+sample.id
+
+x <- "/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/eigenstratG.eg.txt"
+#run PCA with truncated SVD (PCA 1 x PCA 2)
+pcaR1 <- smart_pca(snp_data = x, sample_group = sample.id)
+
+>>>>>>> add704465cad8d5bc3d2e2a38b769f5a90d80dac
 
 x <- pcaR1$pca.eigenvalues # extract eigenvalues
 x

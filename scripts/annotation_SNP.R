@@ -301,6 +301,8 @@ for(i in paste0("snpset.id",sprintf("%02d",1:10))){
   assign(i,d)
   j = j+1
 }
+]
+
 
 #In case there are population information
 #https://www.bioconductor.org/packages/devel/bioc/vignettes/SNPRelate/inst/doc/SNPRelate.html
