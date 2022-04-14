@@ -368,7 +368,7 @@ for(i in paste0("pvalue.combine",sprintf("%02d", 10))){
 
 
 ###Saving the result as RDS
-j <- 10
+j <- 1
 for(i in paste0("pvalue.combine", sprintf("%02d", 10))){
   d = get(i)
   saveRDS(d, paste0("pvalue.combine.sorghum.chr",sprintf("%02d" , j),".RDS"))
