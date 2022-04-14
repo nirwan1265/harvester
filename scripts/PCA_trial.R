@@ -207,7 +207,7 @@ geno.tbl <- as.data.frame(matrix(NA))
 snp.tbl <- as.vector(gwas10.Marker[,2])
 snp.tbl <- snp.tbl[!is.na(snp.tbl)]
 geno.tbl <- geno10[snp.tbl]
-<<<<<<< HEAD
+
 geno.tbl[geno.tbl == 0.5] <- 9
 =======
 geno.tbl[geno.tbl == 9] <- 1
@@ -219,7 +219,7 @@ write.table(geno.tbl, file = "eigenstratG.eg.txt", quote = FALSE,
             sep = "", row.names = FALSE, col.names = FALSE)
 x <- eigenstrat(genoFile = "eigenstratG.eg.txt", outFile.Robj = "eigenstrat.result.list",
                 outFile.txt = "eigenstrat.result.txt", rm.marker.index = NULL,
-<<<<<<< HEAD
+
                 rm.subject.index = NULL, miss.val = 9, num.splits = 1,
                 topK = NULL, signt.eigen.level = 0.01, signal.outlier = FALSE,
                 iter.outlier = 5, sigma.thresh = 6)
@@ -247,7 +247,7 @@ for(i in ncol(gwas01.Marker)){
     snp.tbl <- snp.tbl[!is.na(snp.tbl)]
     geno.tbl <- geno01[snp.tbl]
     write.table(geno.tbl, file = "eigenstratG.eg.txt", quote = FALSE,
-<<<<<<< HEAD
+
                 sep = " ", row.names = FALSE, col.names = FALSE)
 =======
                 sep = "", row.names = FALSE, col.names = FALSE)
