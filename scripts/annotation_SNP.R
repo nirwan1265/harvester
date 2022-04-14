@@ -301,12 +301,12 @@ for(i in paste0("snpset.id",sprintf("%02d",1:10))){
   assign(i,d)
   j = j+1
 }
-]
 
 
 #In case there are population information
 #https://www.bioconductor.org/packages/devel/bioc/vignettes/SNPRelate/inst/doc/SNPRelate.html
 #In the case of no prior population information,
+#First two shows max variance
 #Make a table of eigen values
 j <- 1
 for(i in paste0("pca",sprintf("%02d",1:10))){
@@ -314,9 +314,6 @@ for(i in paste0("pca",sprintf("%02d",1:10))){
   assign(paste0("tab",sprintf("%02d",j)), data.frame(sample.id = d$sample.id,
                                      EV1 = d$eigenvect[,1],
                                      EV2 = d$eigenvect[,2],
-                                     EV3 = d$eigenvect[,3],
-                                     EV4 = d$eigenvect[,4],
-                                     EV5 = d$eigenvect[,5],
                                      stringsAsFactors = FALSE))
   assign(i,d)
   j = j + 1
@@ -325,60 +322,54 @@ for(i in paste0("pca",sprintf("%02d",1:10))){
 ###Pvalue combination
 ##Pre-processing for p-value combination
 for(i in sprintf("%02d", 1:10)){
-  assign(paste0("tab.pc",i), get(paste0("tab",i))[,c(2:6)])
+  assign(paste0("tab.pc",i), get(paste0("tab",i))[,c(2:3)])
 }
 
 ## Loading Numerical hapmap genotype file
 #Save as numerical in TASSEL
 #IMPORTANT: This can be done in TASSEL. Remove <marker> and <numerical> text from the transposed txt file before loading 
 #pre processing step
-#Remove the first row
+#Remove the first Element <Marker>
 # $ cut -f2- chr1.txt > chr1.num.txt
+#Remove the first row 
+# $ sed -e '1d' < chr1.num.txt > chr1.1num.txt
 #Script to change NA to 0
-# $ perl -pi -e 's/NA/0/g' chr1.num.txt
+# $ perl -pi -e 's/NA/0/g' chr1.1num.txt
 ##Reading the genotype files
 for(i in sprintf("%02d", 1:10)){
-  assign(paste0("geno",i), read.table(file = paste0("numerical.genotype.",i,".txt"), header = TRUE, sep = "\t"))
+  assign(paste0("geno",i), read.table(file = paste0("numerical.filtered0.95.chr",i,".txt"), header = TRUE, sep = "\t"))
 }
 ##Saving the genotype file as  RDS
-#j <- 1
-#for(i in paste0("geno", sprintf("%02d", 1:10))){
-#  d = get(i)
-#  saveRDS(d, paste0("geno",sprintf("%02d" , j),".RDS"))
-#  assign(i,d)
-#  j <- j+1
-#}
-#Genotype file for PCA
-#PCA.geno <- geno01[1,]
-#saveRDS(PCA.geno,"PCA.geno.RDS")
-
-##Removing first column
+j <- 1
 for(i in paste0("geno", sprintf("%02d", 1:10))){
   d = get(i)
-  d <- d[,-1]
+  saveRDS(d, paste0("geno",sprintf("%02d" , j),".RDS"))
   assign(i,d)
+  j <- j+1
 }
 
-##Combination tests using GBJ
+
+##Combination tests using GBJ package
 #Using Global Function
-for(i in sprintf("%02d",1:10)){
-  assign(paste0("pvalue.combine",i), pvalue.combine(get(paste0("gwas",i,".fstat")), get(paste0("gwas",i,".Marker")), get(paste0("gwas",i,".pvalue")), get(paste0("geno",i)),get(paste0("tab.pc",i))))
+for(i in sprintf("%02d", 10)){
+  assign(paste0("pvalue.combine",i), pvalue.combine(get(paste0("gwas",i,".fstat")), get(paste0("gwas",i,".Marker")), get(paste0("gwas",i,".pvalue")), get(paste0("geno",i)), get(paste0("tab.pc",i))))
 }
+
 
 ##Adding gene(row) and test(column) names
-j <- 1
-for(i in paste0("pvalue.combine",sprintf("%02d", 1:10))){
+j <- 10
+for(i in paste0("pvalue.combine",sprintf("%02d", 10))){
   d = get(i)
-  row.names(d) <- get(paste0("gwas",sprintf("%02d",j),".gene.names"))[,1]
-  colnames(d) <- c("BJ","GBJ","HC","GHC","minP")
+  row.names(d) <- get(paste0("gwas", sprintf("%02d", j), ".gene.names"))[,1]
+  colnames(d) <- c("BJ","GBJ","HC","GBJ","minP")
   assign(i,d)
   j = j + 1
 }
 
 
 ###Saving the result as RDS
-j <- 1
-for(i in paste0("pvalue.combine", sprintf("%02d", 1:10))){
+j <- 10
+for(i in paste0("pvalue.combine", sprintf("%02d", 10))){
   d = get(i)
   saveRDS(d, paste0("pvalue.combine.sorghum.chr",sprintf("%02d" , j),".RDS"))
   assign(i,d)
@@ -386,3 +377,6 @@ for(i in paste0("pvalue.combine", sprintf("%02d", 1:10))){
 }
 
 
+#Write as csv file
+write.csv(pvalue.combine01,"pvalue.combine.csv")
+write.csv(pvalue.combine03,"pvalue.combine03.csv")
