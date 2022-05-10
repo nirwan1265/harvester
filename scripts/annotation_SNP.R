@@ -145,11 +145,11 @@ for(i in paste0("gwas", sprintf("%02d", 1:10))){
 
 ##Sorting a/c gene name
 #Not required, but might be useful for other database or when combining all results
-for(i in paste0("gwas", sprintf("%02d", 1:10))){
-  d=get(i)
-  d <- d[gtools::mixedorder(d$Gene), ]
-  assign(i,d)
-}
+# for(i in paste0("gwas", sprintf("%02d", 1:10))){
+#   d=get(i)
+#   d <- d[gtools::mixedorder(d$Gene), ]
+#   assign(i,d)
+# }
 
 ##Table with F-stat values
 for(i in paste0("gwas",sprintf("%02d",1:10))){
@@ -380,3 +380,5 @@ for(i in paste0("pvalue.combine", sprintf("%02d", 10))){
 #Write as csv file
 write.csv(pvalue.combine01,"pvalue.combine.csv")
 write.csv(pvalue.combine03,"pvalue.combine03.csv")
+
+?GBJ
