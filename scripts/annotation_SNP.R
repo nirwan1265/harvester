@@ -1,5 +1,5 @@
 # Package names
-packages <- c("ggplot2", "Rsamtools","GenomicAlignments","rtracklayer","GenomicRanges","AnnotationHub","knitr","gtools","data.table","stringi","GBJ","metap","multtest","Hmisc","devtools","SNPRelate","gdsfmt","dplyr","vcfR","tidyr","AssocTests")
+packages <- c("ggplot2", "Rsamtools","GenomicAlignments","rtracklayer","GenomicRanges","AnnotationHub","knitr","gtools","data.table","stringi","GBJ","metap","multtest","Hmisc","devtools","SNPRelate","gdsfmt","dplyr","vcfR","tidyr","AssocTests","SKAT")
 
 # Install packages not yet installed
 #installed_packages <- packages %in% rownames(installed.packages())
@@ -34,16 +34,18 @@ pvalue.combine <- function(gwas.fstat, gwas.markers, gwas.pvalue, geno, tab.pc,c
       x <- as.matrix(as.double(x))
       ref_genotype <- as.data.frame(geno[,colnames(geno) %in% y])
       cor_mat <- estimate_ss_cor(ref_pcs=tab.pc, ref_genotypes=ref_genotype, link_function='linear')
-      bj.test <- BJ(test_stats = x, cor_mat=cor_mat)
+      #bj.test <- BJ(test_stats = x, cor_mat=cor_mat)
       gbj.test <- GBJ(test_stats = x, cor_mat=cor_mat)
-      minP.test <- minP(test_stats = x, cor_mat=cor_mat)
-      hc.test <- HC(test_stats = x, cor_mat=cor_mat)
       ghc.test <- GHC(test_stats = x, cor_mat=cor_mat)
-      combined.test.statistics[i,1] <- bj.test$BJ_pvalue
-      combined.test.statistics[i,2] <- gbj.test$GBJ_pvalue
-      combined.test.statistics[i,3] <- hc.test$HC_pvalue
-      combined.test.statistics[i,4] <- ghc.test$GHC_pvalue
-      combined.test.statistics[i,5] <- minP.test$minP_pvalue
+      minP.test <- minP(test_stats = x, cor_mat=cor_mat)
+      #hc.test <- HC(test_stats = x, cor_mat=cor_mat)
+      OMNI.test <- OMNI_ss(test_stats = x, cor_mat=cor_mat, num_boots = 100)
+      #combined.test.statistics[i,1] <- bj.test$BJ_pvalue
+      combined.test.statistics[i,1] <- gbj.test$GBJ_pvalue
+      #combined.test.statistics[i,3] <- hc.test$HC_pvalue
+      combined.test.statistics[i,2] <- ghc.test$GHC_pvalue
+      combined.test.statistics[i,3] <- minP.test$minP_pvalue
+      combined.test.statistics[i,4] <- OMNI.test$OMNI_pvalue
       x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
       y <- vector()
     }else{
@@ -51,7 +53,7 @@ pvalue.combine <- function(gwas.fstat, gwas.markers, gwas.pvalue, geno, tab.pc,c
       combined.test.statistics[i,2] <- as.double(gwas.pvalue[1,i])
       combined.test.statistics[i,3] <- as.double(gwas.pvalue[1,i])
       combined.test.statistics[i,4] <- as.double(gwas.pvalue[1,i])
-      combined.test.statistics[i,5] <- as.double(gwas.pvalue[1,i])
+      #combined.test.statistics[i,5] <- as.double(gwas.pvalue[1,i])
     }
     ref_genotype <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
   }
@@ -351,17 +353,16 @@ for(i in paste0("geno", sprintf("%02d", 1:10))){
 
 ##Combination tests using GBJ package
 #Using Global Function
-for(i in sprintf("%02d", 10)){
+for(i in sprintf("%02d", 1:10)){
   assign(paste0("pvalue.combine",i), pvalue.combine(get(paste0("gwas",i,".fstat")), get(paste0("gwas",i,".Marker")), get(paste0("gwas",i,".pvalue")), get(paste0("geno",i)), get(paste0("tab.pc",i))))
 }
-
 
 ##Adding gene(row) and test(column) names
 j <- 10
 for(i in paste0("pvalue.combine",sprintf("%02d", 10))){
   d = get(i)
   row.names(d) <- get(paste0("gwas", sprintf("%02d", j), ".gene.names"))[,1]
-  colnames(d) <- c("BJ","GBJ","HC","GBJ","minP")
+  colnames(d) <- c("GBJ","GHC","minP","OMNI")
   assign(i,d)
   j = j + 1
 }
@@ -381,4 +382,4 @@ for(i in paste0("pvalue.combine", sprintf("%02d", 10))){
 write.csv(pvalue.combine01,"pvalue.combine.csv")
 write.csv(pvalue.combine03,"pvalue.combine03.csv")
 
-?GBJ
+
