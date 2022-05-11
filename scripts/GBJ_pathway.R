@@ -1,5 +1,17 @@
+# Package names
+packages <- c("ggplot2", "Rsamtools","GenomicAlignments","rtracklayer","GenomicRanges","AnnotationHub","knitr","gtools","data.table","stringi","GBJ","metap","multtest","Hmisc","devtools","SNPRelate","gdsfmt","dplyr","vcfR","tidyr","AssocTests","SKAT")
+
+# Install packages not yet installed
+#installed_packages <- packages %in% rownames(installed.packages())
+#if (any(installed_packages == FALSE)) {
+#  install.packages(packages[!installed_packages])
+#}
+
+# Packages loading
+invisible(lapply(packages, library, character.only = TRUE))
+
 ## Read the pathway database:
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Pathways/sorghumbicolorcyc/7.0/data")
+setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Pathways/sorghumbicolorcyc")
 pathway <- read.delim("pathways.txt", sep ="\t")
 pathway <- as.data.frame(t(pathway[,-1]))
 colnames(pathway) <- pathway[1,]
@@ -7,11 +19,12 @@ pathway <- pathway[-1,]
 
 #Read the combined pvalue files
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/SNP annotation/combined.pvalues")
-for(i in sprintf("%02d", 3)){
+for(i in sprintf("%02d", c(1,3,7,9,10))){
   assign(paste0("pvalue.chr",i), readRDS(paste0("pvalue.combine.sorghum.chr",i,".RDS")))
 }
 
-pvalue.chr01 <- as.data.frame(t(pvalue.chr03))
+#Cobmine all the genes in one file
+pvalue.chr01 <- as.data.frame(t(pvalue.chr07))
 pvalue.chr01 <- pvalue.chr01[2,]
 pvalue.chr01
 
