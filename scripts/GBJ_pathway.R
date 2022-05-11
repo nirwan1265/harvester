@@ -5,6 +5,7 @@ pathway <- as.data.frame(t(pathway[,-1]))
 colnames(pathway) <- pathway[1,]
 pathway <- pathway[-1,]
 
+
 #Read the combined pvalue files
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/SNP annotation/combined.pvalues")
 for(i in sprintf("%02d", 3)){
