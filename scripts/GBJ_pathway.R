@@ -12,6 +12,7 @@ invisible(lapply(packages, library, character.only = TRUE))
 
 ## Read the pathway database:
 setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Pathways/sorghumbicolorcyc")
+setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Pathways/sorghumbicolorcyc")
 pathway <- read.delim("pathways.txt", sep ="\t")
 pathway <- as.data.frame(t(pathway[,-1]))
 colnames(pathway) <- pathway[1,]
@@ -20,6 +21,7 @@ pathway <- pathway[-1,]
 
 #Read the combined pvalue files
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/SNP annotation/combined.pvalues")
+setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/SNP annotation/combined.pvalues")
 for(i in sprintf("%02d", c(1,3,7,9,10))){
   assign(paste0("pvalue.chr",i), readRDS(paste0("pvalue.combine.sorghum.chr",i,".RDS")))
 }
@@ -60,6 +62,14 @@ sorghum.pathway <- sorghum.pathway[,colSums(sorghum.pathway != 0) > 0]
 
 #Sorting by the highest number of genes
 sorghum.pathway <- sorghum.pathway[,order(colSums(sorghum.pathway != 0), decreasing = TRUE)]
+
+#Combining fstat and pathway genes
+while(sorghum.pathway[i,j] != 0)
+for (gwas.fstat, 1:10)
+while(gwas.fstat != NA)
+if  sorghum.pathway[1,1] %in% gwas.fstat1()
+  x [,1] = gwas.fstat
+
 
 #write.csv(sorghum.pathway,"sorghum.pathway.csv",  row.names = FALSE, quote = FALSE)
 
