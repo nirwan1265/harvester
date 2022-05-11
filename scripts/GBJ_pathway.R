@@ -11,7 +11,7 @@ packages <- c("ggplot2", "Rsamtools","GenomicAlignments","rtracklayer","GenomicR
 invisible(lapply(packages, library, character.only = TRUE))
 
 ## Read the pathway database:
-setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Pathways/sorghumbicolorcyc")
+setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Pathways/sorghumbicolorcyc")
 pathway <- read.delim("pathways.txt", sep ="\t")
 pathway <- as.data.frame(t(pathway[,-1]))
 colnames(pathway) <- pathway[1,]
@@ -24,10 +24,19 @@ for(i in sprintf("%02d", c(1,3,7,9,10))){
   assign(paste0("pvalue.chr",i), readRDS(paste0("pvalue.combine.sorghum.chr",i,".RDS")))
 }
 
-#Cobmine all the genes in one file
-pvalue.chr01 <- as.data.frame(t(pvalue.chr07))
-pvalue.chr01 <- pvalue.chr01[2,]
-pvalue.chr01
+#Combine all the genes in one file
+j <- 1
+all.genes = {}
+for(i in paste0("pvalue.chr", sprintf("%02d", c(1,3,7,9,10)))){
+  d = get(i)
+  all.genes <- rbind(all.genes,d)
+  assign(i,d)
+  j <- j+1
+}
+
+all.genes <- as.data.frame(t(all.genes))
+all.genes <- all.genes[2,]
+
 
 
 #Filtering the pathway genes
@@ -44,7 +53,7 @@ for(i in 1:ncol(pathway)){
 
 #Sorting the pathway genes and naming the pathways
 sorghum.pathway <- as.data.frame(apply(x,2,sort,decreasing = TRUE))
-rownames(sorghum.pathway) <- colnames(pathway)
+colnames(sorghum.pathway) <- colnames(pathway)
 
 #Removing empty pathways
 sorghum.pathway <- sorghum.pathway[,colSums(sorghum.pathway != 0) > 0]
