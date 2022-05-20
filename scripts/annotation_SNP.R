@@ -254,21 +254,22 @@ for(i in paste0("gwas",sprintf("%02d", 1:10),".pvalue")){
 #Need a vcf file format of the hapmap which is converted to GDS format
 #TASSEL or PLINK is used for converting hapmap to VCF file format
 #Need a directory to  create the gds file. If working on the server, we might need to define this before starting
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap")
+setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/90perc.taxa.filter.95perc.site.filter/vcf")
 ##Reading the vcf files
 for(i in sprintf("%02d", 1:10)){
-  assign(paste0("vcf.fn",i),paste0("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/hapmap.chr",i,".vcf"))
+  assign(paste0("vcf.fn",i),paste0("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/90perc.taxa.filter.95perc.site.filter/vcf/hapmap.chr",i,".vcf"))
 }
 ##Converting vcf to gds
 #A bit time consuming
 #Note: for some reason, you cannot run the next step twice if you make an error. you need to delete all this converted gds files, remove all your env variables and do it again.
 j <- 1
-for(i in paste0("vcf.fn",sprintf("%02d",1:10))){
+for(i in paste0("vcf.fn",sprintf("%02d", 1:10))){
   d = get(i)
   snpgdsVCF2GDS(d, paste0("chr",sprintf("%02d",j),".gds"), method = "copy.num.of.ref")
   assign(i,d)
   j = j + 1
 }
+
 
 ##Get the GDS file data
 for(i in sprintf("%02d", 1:10)){
@@ -338,17 +339,18 @@ for(i in sprintf("%02d", 1:10)){
 #Script to change NA to 0
 # $ perl -pi -e 's/NA/0/g' chr1.1num.txt
 ##Reading the genotype files
+setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/90perc.taxa.filter.95perc.site.filter/numerical")
 for(i in sprintf("%02d", 1:10)){
-  assign(paste0("geno",i), read.table(file = paste0("numerical.filtered0.95.chr",i,".txt"), header = TRUE, sep = "\t"))
+  assign(paste0("geno",i), read.table(file = paste0("chr",i,".numeric.txt"), header = TRUE, sep = "\t"))
 }
 ##Saving the genotype file as  RDS
-j <- 1
-for(i in paste0("geno", sprintf("%02d", 1:10))){
-  d = get(i)
-  saveRDS(d, paste0("geno",sprintf("%02d" , j),".RDS"))
-  assign(i,d)
-  j <- j+1
-}
+# j <- 1
+# for(i in paste0("geno", sprintf("%02d", 1:10))){
+#   d = get(i)
+#   saveRDS(d, paste0("geno",sprintf("%02d" , j),".RDS"))
+#   assign(i,d)
+#   j <- j+1
+# }
 
 
 ##Combination tests using GBJ package
