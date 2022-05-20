@@ -352,12 +352,30 @@ for(i in sprintf("%02d", 1:10)){
 #   j <- j+1
 # }
 
+#save.image(file="sorghum_VL_omnibus.RData")
 
 ##Combination tests using GBJ package
+
+#Convert tab.pcs to matrix
+for(i in paste0("tab.pc", sprintf("%02d", 1:10))){
+  d = get(i)
+  d <- as.matrix(d)
+  assign(i,d)
+}
+
+#Convert fstat dataframe to numeric
+for(i in paste0("gwas", sprintf("%02d", 1:10), ".fstat")){
+  d <- get(i)
+  d <- as.data.frame(lapply(d, as.numeric))
+  assign(i,d)
+}
+
+
 #Using Global Function
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("pvalue.combine",i), pvalue.combine(get(paste0("gwas",i,".fstat")), get(paste0("gwas",i,".Marker")), get(paste0("gwas",i,".pvalue")), get(paste0("geno",i)), get(paste0("tab.pc",i))))
 }
+
 
 ##Adding gene(row) and test(column) names
 j <- 10
@@ -378,6 +396,8 @@ for(i in paste0("pvalue.combine", sprintf("%02d", 10))){
   assign(i,d)
   j <- j+1
 }
+
+
 
 
 #Write as csv file
