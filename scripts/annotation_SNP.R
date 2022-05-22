@@ -405,3 +405,8 @@ write.csv(pvalue.combine01,"pvalue.combine.csv")
 write.csv(pvalue.combine03,"pvalue.combine03.csv")
 
 
+
+pvalue.combine(gwas.fstat = fstat, gwas.markers = markers, gwas.pvalue = pvalue, tab.pc = pca.values)
+
+library(GBJ)
+?GBJ
