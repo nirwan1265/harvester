@@ -353,6 +353,8 @@ for(i in sprintf("%02d", 1:10)){
 # }
 
 #save.image(file="sorghum_VL_omnibus.RData")
+load(file="sorghum_VL_omnibus.RData")
+
 
 ##Combination tests using GBJ package
 
@@ -401,7 +403,80 @@ for(i in paste0("pvalue.combine", sprintf("%02d", 10))){
 
 
 #Write as csv file
-write.csv(pvalue.combine01,"pvalue.combine.csv")
-write.csv(pvalue.combine03,"pvalue.combine03.csv")
+#write.csv(pvalue.combine01,"pvalue.combine.csv")
+#write.csv(pvalue.combine03,"pvalue.combine03.csv")
 
 
+
+y <- vector()
+combined.test.statistics <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
+x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
+ref_genotype <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
+
+for(i in 7){
+  for(j in 1:sum(!is.na(gwas01.fstat[,i]))){
+    x[1,j] <- as.double(gwas01.fstat[j,i])
+    y[j] <- as.vector(as.character(gwas01.Marker[j,i]))
+  }
+  if(ncol(x) >= 2){
+    x <- as.matrix(as.double(x))
+    ref_genotype <- as.data.frame(geno01[,colnames(geno01) %in% y])
+    while(ncol(ref_genotype) > 1){
+      cor_mat <- estimate_ss_cor(ref_pcs=tab.pc01, ref_genotypes=ref_genotype, link_function='linear')
+      gbj.test <- GBJ(test_stats = x, cor_mat=cor_mat)
+    }
+  }
+}
+x
+
+ref_genotype
+tab.pc01
+
+cor_mat <- estimate_ss_cor(ref_pcs=tab.pc01, ref_genotypes=ref_genotype, link_function='linear')
+
+typeof(ref_genotype)
+class(ref_genotype)
+ncol(ref_genotype)
+
+
+pvalue.combine <- function(gwas.fstat, gwas.markers, gwas.pvalue, geno, tab.pc,combined.test.statistics){
+  x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
+  y <- vector()
+  combined.test.statistics <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
+  
+  for (i in 1:ncol(gwas.fstat)){
+    for(j in 1:sum(!is.na(gwas.fstat[,i]))){
+      x[1,j] <- as.double(gwas.fstat[j,i])
+      y[j] <- as.vector(as.character(gwas.markers[j,i]))
+    }
+    if(ncol(x) >= 2){
+      x <- as.matrix(as.double(x))
+      ref_genotype <- as.data.frame(geno[,colnames(geno) %in% y])
+      cor_mat <- estimate_ss_cor(ref_pcs=tab.pc, ref_genotypes=ref_genotype, link_function='linear')
+      #bj.test <- BJ(test_stats = x, cor_mat=cor_mat)
+      gbj.test <- GBJ(test_stats = x, cor_mat=cor_mat)
+      ghc.test <- GHC(test_stats = x, cor_mat=cor_mat)
+      minP.test <- minP(test_stats = x, cor_mat=cor_mat)
+      #hc.test <- HC(test_stats = x, cor_mat=cor_mat)
+      OMNI.test <- OMNI_ss(test_stats = x, cor_mat=cor_mat, num_boots = 100)
+      #combined.test.statistics[i,1] <- bj.test$BJ_pvalue
+      combined.test.statistics[i,1] <- gbj.test$GBJ_pvalue
+      #combined.test.statistics[i,3] <- hc.test$HC_pvalue
+      combined.test.statistics[i,2] <- ghc.test$GHC_pvalue
+      combined.test.statistics[i,3] <- minP.test$minP_pvalue
+      combined.test.statistics[i,4] <- OMNI.test$OMNI_pvalue
+      x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
+      y <- vector()
+    }else{
+      combined.test.statistics[i,1] <- as.double(gwas.pvalue[1,i])
+      combined.test.statistics[i,2] <- as.double(gwas.pvalue[1,i])
+      combined.test.statistics[i,3] <- as.double(gwas.pvalue[1,i])
+      combined.test.statistics[i,4] <- as.double(gwas.pvalue[1,i])
+      #combined.test.statistics[i,5] <- as.double(gwas.pvalue[1,i])
+    }
+    ref_genotype <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
+  }
+  return(combined.test.statistics)
+}
+
+    
