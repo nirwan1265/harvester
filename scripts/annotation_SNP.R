@@ -415,31 +415,36 @@ ref_genotype <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
 
 for(i in 7){
   for(j in 1:sum(!is.na(gwas01.fstat[,i]))){
-    x[1,j] <- as.double(gwas01.fstat[j,i])
+    #x[1,j] <- as.double(gwas01.fstat[j,i])
     y[j] <- as.vector(as.character(gwas01.Marker[j,i]))
   }
   if(ncol(x) >= 2){
-    x <- as.matrix(as.double(x))
+    #x <- as.matrix(as.double(x))
     ref_genotype <- as.data.frame(geno01[,colnames(geno01) %in% y])
+    x <- colnames(ref_genotype)
+    x <- as.data.frame(geno01[,colnames(geno01) %in% x])
+    x <- as.matrix(as.double(x))
     while(ncol(ref_genotype) > 1){
       cor_mat <- estimate_ss_cor(ref_pcs=tab.pc01, ref_genotypes=ref_genotype, link_function='linear')
       gbj.test <- GBJ(test_stats = x, cor_mat=cor_mat)
     }
   }
 }
+x <- colnames(ref_genotype)
+x <- as.data.frame(geno01[,colnames(geno01) %in% x])
+x <- as.data.frame(as.double(ref_genotype))
 x
-
+gbj.test <- GBJ(test_stats = x, cor_mat=cor_mat)
+x
+y
 ref_genotype
-tab.pc01
+cor_mat
+gbj.test
 
 cor_mat <- estimate_ss_cor(ref_pcs=tab.pc01, ref_genotypes=ref_genotype, link_function='linear')
 
-typeof(ref_genotype)
-class(ref_genotype)
-ncol(ref_genotype)
 
 
-<<<<<<< HEAD
 pvalue.combine <- function(gwas.fstat, gwas.markers, gwas.pvalue, geno, tab.pc,combined.test.statistics){
   x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
   y <- vector()
@@ -481,10 +486,4 @@ pvalue.combine <- function(gwas.fstat, gwas.markers, gwas.pvalue, geno, tab.pc,c
 }
 
     
-=======
 
-pvalue.combine(gwas.fstat = fstat, gwas.markers = markers, gwas.pvalue = pvalue, tab.pc = pca.values)
-
-library(GBJ)
-?GBJ
->>>>>>> ed4fb0d8a92b4ce4d6bc9c158307b174982b422b
