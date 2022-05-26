@@ -439,6 +439,7 @@ class(ref_genotype)
 ncol(ref_genotype)
 
 
+<<<<<<< HEAD
 pvalue.combine <- function(gwas.fstat, gwas.markers, gwas.pvalue, geno, tab.pc,combined.test.statistics){
   x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
   y <- vector()
@@ -480,3 +481,10 @@ pvalue.combine <- function(gwas.fstat, gwas.markers, gwas.pvalue, geno, tab.pc,c
 }
 
     
+=======
+
+pvalue.combine(gwas.fstat = fstat, gwas.markers = markers, gwas.pvalue = pvalue, tab.pc = pca.values)
+
+library(GBJ)
+?GBJ
+>>>>>>> ed4fb0d8a92b4ce4d6bc9c158307b174982b422b
