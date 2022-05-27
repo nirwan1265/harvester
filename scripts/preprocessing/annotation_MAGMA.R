@@ -32,6 +32,14 @@ for(i in paste0("db.", sprintf("%02d", 1:10))){
   assign(i,d)
 }
 
+j = 1
+for(i in paste0("x", sprintf("%02d", 1:10))){
+  d = get(i)
+  d$chr = j
+  j = j + 1
+  assign(i,d)
+}
+
 for(i in paste0("x", sprintf("%02d", 1:10))){
   d = get(i)
   d = d[which(d$Region == "gene"), ]
@@ -58,10 +66,13 @@ for(i in paste0("x", sprintf("%02d", 1:10))){
 gene.file <- NULL
 for(i in paste0("x", sprintf("%02d", 1:10))){
   d = get(i)
-  gene.file = rbind(gene.file,d)
+  gene.file = rbind(gene.file,d[,c(1,6,2,3)])
   assign(i,d)
 }
 
+
+write.table(snp.file,"snp.file.txt", quote = FALSE, col.names = FALSE, row.names = FALSE)
+write.table(gene.file,"gene.file.txt", quote = FALSE, col.names = FALSE, row.names = FALSE)
 
 
 
