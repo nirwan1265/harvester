@@ -1,68 +1,22 @@
 ################################################################################
 #SNP FILE
 ################################################################################
-
-#Collecting all the genotype SNP names
-for(i in sprintf("%02d", 1:10)){
-  assign(paste0("x",i), as.data.frame(colnames(get(paste0("geno", i)))))
-}
-
-#Chromosome Name
-j <- 1 
-for(i in paste0("x", sprintf("%02d", 1:10))){
+#query.snp has it all
+j <- 1
+for(i in paste0("query.snp.gwas", sprintf("%02d", 1:10))){
   d = get(i)
-  d$chr = paste0("chr",j)
+  assign(paste0("x", sprintf("%02d", j)), d[,c(1,2,3)])
   j = j + 1
   assign(i,d)
 }
 
-#Combining all the SNPs
-x <- NULL
-for(i in paste0("x", sprintf("%02d", 1:10))){
-  d = get(i)
-  x = rbind(x,d[1])
-  assign(i,d)
-}
-
-#Combining all the chr
-y <- NULL
-for(i in paste0("x", sprintf("%02d", 1:10))){
-  d = get(i)
-  y = rbind(y,d[2])
-  assign(i,d)
-}
-
-
-#Combining SNPs and Chr
-snp.file <- cbind(x,y)
-
-#Function for extracting the base pair
-base.pair <- function(x,split){
-  bp <- unlist(strsplit(x, split = '_', fixed = TRUE))[2]
-  return(bp)
-}
-
-for(i in paste0("x", sprintf("%02d", 1:10))){
-  d=get(i)
-  d <-  as.data.frame(apply(d,1,base.pair))
-  assign(i,d)
-}
-
-
 #Combining all the base pairs
-z <- NULL
+snp.file <- NULL
 for(i in paste0("x", sprintf("%02d", 1:10))){
   d = get(i)
-  z = rbind(z,d[1])
+  snp.file = rbind(snp.file,d)
   assign(i,d)
 }
-
-#Combining SNPS, Chr, and BP
-snp.file <- cbind(gene.file, z)
-
-colnames(snp.file) <- c("SNP ID", "chromosome", "base pair position")
-
-#query.snp has it all
 
 
 ################################################################################
@@ -99,6 +53,14 @@ for(i in paste0("x", sprintf("%02d", 1:10))){
   assign(i,d)
 }
 
+
+#combining all the gene.file
+gene.file <- NULL
+for(i in paste0("x", sprintf("%02d", 1:10))){
+  d = get(i)
+  gene.file = rbind(gene.file,d)
+  assign(i,d)
+}
 
 
 
