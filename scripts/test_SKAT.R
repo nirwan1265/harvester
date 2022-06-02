@@ -48,8 +48,10 @@ geno01.trial <- geno01[,1:10]
 geno01.trial <- as.matrix(geno01.trial)
 
 #phenotype:
-setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/90perc.taxa.filter.95perc.site.filter/phenotype")
-pheno01 <- read.csv("phenotype.chr01.csv", header = FALSE)
+setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/filtered.phenotype")
+pheno01 <- read.table("phenotype.chr01.txt", header = FALSE)
+row.names(pheno01) <- pheno01[,1]
+pheno01 <- pheno01[,-1]
 pheno01 <- as.matrix(pheno01)
 
 
