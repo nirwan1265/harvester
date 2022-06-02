@@ -255,15 +255,16 @@ for(i in paste0("gwas",sprintf("%02d", 1:10),".pvalue")){
 #TASSEL or PLINK is used for converting hapmap to VCF file format
 #Need a directory to  create the gds file. If working on the server, we might need to define this before starting
 setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/90perc.taxa.filter.95perc.site.filter/vcf")
+setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/unfiltered")
 ##Reading the vcf files
-for(i in sprintf("%02d", 1:10)){
-  assign(paste0("vcf.fn",i),paste0("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/90perc.taxa.filter.95perc.site.filter/vcf/hapmap.chr",i,".vcf"))
+for(i in sprintf("%02d", 1)){
+  assign(paste0("vcf.fn",i),paste0("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/unfiltered/hapmap.chr",i,".vcf"))
 }
 ##Converting vcf to gds
 #A bit time consuming
 #Note: for some reason, you cannot run the next step twice if you make an error. you need to delete all this converted gds files, remove all your env variables and do it again.
 j <- 1
-for(i in paste0("vcf.fn",sprintf("%02d", 1:10))){
+for(i in paste0("vcf.fn",sprintf("%02d", 1))){
   d = get(i)
   snpgdsVCF2GDS(d, paste0("chr",sprintf("%02d",j),".gds"), method = "copy.num.of.ref")
   assign(i,d)
@@ -272,7 +273,7 @@ for(i in paste0("vcf.fn",sprintf("%02d", 1:10))){
 
 
 ##Get the GDS file data
-for(i in sprintf("%02d", 1:10)){
+for(i in sprintf("%02d", 1)){
   assign(paste0("gdsfile",i), snpgdsOpen(paste0("chr",i,".gds")))
 }
 
@@ -280,7 +281,7 @@ for(i in sprintf("%02d", 1:10)){
 set.seed(1000)
 # Try different LD thresholds for sensitivity analysis but read in a paper somewhere that 0.2 was used for GBJ
 j <- 1
-for(i in paste0("gdsfile",sprintf("%02d", 1:10))){
+for(i in paste0("gdsfile",sprintf("%02d", 1))){
   d = get(i)
   assign(paste0("snpset",sprintf("%02d",j)), snpgdsLDpruning(d,ld.threshold = 0.2))
   assign(i,d)
@@ -289,7 +290,7 @@ for(i in paste0("gdsfile",sprintf("%02d", 1:10))){
 
 ## Get all selected snp id
 j <- 1
-for(i in paste0("snpset",sprintf("%02d",1:10))){
+for(i in paste0("snpset",sprintf("%02d",1))){
   d = get(i)
   assign(paste0("snpset.id",sprintf("%02d",j)), unlist(unname(d)))
   assign(i,d)
@@ -298,7 +299,7 @@ for(i in paste0("snpset",sprintf("%02d",1:10))){
 
 ## Run PCA
 j <- 1
-for(i in paste0("snpset.id",sprintf("%02d",1:10))){
+for(i in paste0("snpset.id",sprintf("%02d",1))){
   d = get(i)
   assign(paste0("pca",sprintf("%02d",j)), snpgdsPCA(get(paste0("gdsfile",sprintf("%02d",j))), snp.id = d, num.thread = 2))
   assign(i,d)
@@ -312,7 +313,7 @@ for(i in paste0("snpset.id",sprintf("%02d",1:10))){
 #First two shows max variance
 #Make a table of eigen values
 j <- 1
-for(i in paste0("pca",sprintf("%02d",1:10))){
+for(i in paste0("pca",sprintf("%02d",1))){
   d = get(i)
   assign(paste0("tab",sprintf("%02d",j)), data.frame(sample.id = d$sample.id,
                                      EV1 = d$eigenvect[,1],
@@ -324,7 +325,7 @@ for(i in paste0("pca",sprintf("%02d",1:10))){
 
 ###Pvalue combination
 ##Pre-processing for p-value combination
-for(i in sprintf("%02d", 1:10)){
+for(i in sprintf("%02d", 1)){
   assign(paste0("tab.pc",i), get(paste0("tab",i))[,c(2:3)])
 }
 
@@ -339,10 +340,14 @@ for(i in sprintf("%02d", 1:10)){
 #Script to change NA to 0
 # $ perl -pi -e 's/NA/0/g' chr1.1num.txt
 ##Reading the genotype files
-setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/90perc.taxa.filter.95perc.site.filter/numerical")
-for(i in sprintf("%02d", 1:10)){
-  assign(paste0("geno",i), read.table(file = paste0("chr",i,".numeric.txt"), header = TRUE, sep = "\t"))
-}
+# setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/90perc.taxa.filter.95perc.site.filter/numerical")
+# for(i in sprintf("%02d", 1:10)){
+#   assign(paste0("geno",i), read.table(file = paste0("chr",i,".numeric.txt"), header = TRUE, sep = "\t"))
+# }
+
+setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/unfiltered")
+geno01 <- read.table("numerical.chr01.unfiltered.txt", header = TRUE)
+
 ##Saving the genotype file as  RDS
 # j <- 1
 # for(i in paste0("geno", sprintf("%02d", 1:10))){
@@ -359,14 +364,14 @@ load(file="sorghum_VL_omnibus.RData")
 ##Combination tests using GBJ package
 
 #Convert tab.pcs to matrix
-for(i in paste0("tab.pc", sprintf("%02d", 1:10))){
+for(i in paste0("tab.pc", sprintf("%02d", 1))){
   d = get(i)
   d <- as.matrix(d)
   assign(i,d)
 }
 
 #Convert fstat dataframe to numeric
-for(i in paste0("gwas", sprintf("%02d", 1:10), ".fstat")){
+for(i in paste0("gwas", sprintf("%02d", 1), ".fstat")){
   d <- get(i)
   d <- as.data.frame(lapply(d, as.numeric))
   assign(i,d)
@@ -406,84 +411,129 @@ for(i in paste0("pvalue.combine", sprintf("%02d", 10))){
 #write.csv(pvalue.combine01,"pvalue.combine.csv")
 #write.csv(pvalue.combine03,"pvalue.combine03.csv")
 
+#Trial
+setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/unfiltered")
+#save(geno01, common01, db.01,gdsfile01,gr.db01,gr.q01,gwas01, gwas01.fstat,gwas01.gene.names,gwas01.Marker,gwas01.pvalue,pca01, query.snp.gwas01,pheno01,snpset01,tab.pc01,tab01, file = "chr01.RData")
+load("chr01.RData")
 
 
-y <- vector()
-combined.test.statistics <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
+#number of phenotype should match genotype file. Columns should match. 
+
+
+
+
+############
 x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
-ref_genotype <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
+y <- vector()
+z <- vector()
+combined.test.statistics <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
+ref_genotype <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 
-for(i in 7){
-  for(j in 1:sum(!is.na(gwas01.fstat[,i]))){
-    #x[1,j] <- as.double(gwas01.fstat[j,i])
+for (i in 4){ #ncol(gwas1.Test.Stat)
+  for(j in 1:sum(!is.na(gwas01.fstat[,i]))){ 
+    x[1,j] <- gwas01.fstat[j,i]
+    #x <- as.double(x[!is.na(x)])
+    
     y[j] <- as.vector(as.character(gwas01.Marker[j,i]))
+    #y <- y[!is.na(y)]
+    
+    z[j] <- gwas01.pvalue[j,i]
+    z <- as.double(z[!is.na(z)])
   }
-  if(ncol(x) >= 2){
-    #x <- as.matrix(as.double(x))
+  x <- as.matrix(as.double(x))
+  if(nrow(x) > 2000){
+    x <- x[1:2000,]
+    y <- y[1:2000]
+    z <- z[1:2000]
+    ref_genotype <- as.data.frame(geno1[,colnames(geno01) %in% y])
+    ref_genotype <- data.frame(lapply(ref_genotype, function(x){
+      gsub("-",0,x)
+    }))
+    ref_genotype <- data.frame(apply(ref_genotype, 2, function(x) as.numeric(as.character(x))))
+    cor_mat <- estimate_ss_cor(ref_pcs=tab.pc01, ref_genotypes=ref_genotype, link_function='linear')
+    bj.test <- BJ(test_stats = x, cor_mat=cor_mat)
+    gbj.test <- GBJ(test_stats = x, cor_mat=cor_mat)
+    minP.test <- minP(test_stats = x, cor_mat=cor_mat)
+    hc.test <- HC(test_stats = x, cor_mat=cor_mat)
+    ghc.test <- GHC(test_stats = x, cor_mat=cor_mat)
+    combined.test.statistics[i,1] <- bj.test$BJ_pvalue
+    combined.test.statistics[i,2] <- gbj.test$GBJ_pvalue
+    combined.test.statistics[i,3] <- hc.test$HC_pvalue
+    combined.test.statistics[i,4] <- ghc.test$GHC_pvalue
+    combined.test.statistics[i,5] <- minP.test$minP_pvalue
+    
+    ref_genotype <- data.frame(lapply(ref_genotype, function(x){
+      gsub("0.5",9,x)
+    }))
+    ref_genotype <- data.frame(apply(ref_genotype, 2, function(x) as.numeric(as.character(x))))
+    ref_genotype <- as.matrix(ref_genotype)
+    obj01 <- as.list(ref_genotype,pheno01)
+    obj01<-SKAT_Null_Model(pheno01 ~ 1, out_type="C", data=obj01)
+    combined.test.statistics[i,6] <- SKAT(ref_genotype,obj01)$p.value
+    
+    x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
+    y <- vector()
+  } else if(nrow(x) >= 2 & nrow(x) < 2000){
     ref_genotype <- as.data.frame(geno01[,colnames(geno01) %in% y])
-    x <- colnames(ref_genotype)
-    x <- as.data.frame(geno01[,colnames(geno01) %in% x])
-    x <- as.matrix(as.double(x))
-    while(ncol(ref_genotype) > 1){
-      cor_mat <- estimate_ss_cor(ref_pcs=tab.pc01, ref_genotypes=ref_genotype, link_function='linear')
-      gbj.test <- GBJ(test_stats = x, cor_mat=cor_mat)
-    }
+    ref_genotype <- data.frame(lapply(ref_genotype, function(x){
+      gsub("-",0,x)
+    }))
+    ref_genotype <- data.frame(lapply(ref_genotype, function(x){
+      gsub(0.5,2,x)
+    }))
+    ref_genotype <- data.frame(apply(ref_genotype, 2, function(x) as.numeric(as.character(x))))
+    cor_mat <- estimate_ss_cor(ref_pcs=tab.pc01, ref_genotypes=ref_genotype, link_function='linear')
+    #GBJ
+    bj.test <- BJ(test_stats = x, cor_mat=cor_mat)
+    gbj.test <- GBJ(test_stats = x, cor_mat=cor_mat)
+    minP.test <- minP(test_stats = x, cor_mat=cor_mat)
+    hc.test <- HC(test_stats = x, cor_mat=cor_mat)
+    ghc.test <- GHC(test_stats = x, cor_mat=cor_mat)
+    combined.test.statistics[i,1] <- bj.test$BJ_pvalue
+    combined.test.statistics[i,2] <- gbj.test$GBJ_pvalue
+    combined.test.statistics[i,3] <- hc.test$HC_pvalue
+    combined.test.statistics[i,4] <- ghc.test$GHC_pvalue
+    combined.test.statistics[i,5] <- minP.test$minP_pvalue
+    #SKAT
+    ref_genotype <- data.frame(lapply(ref_genotype, function(x){
+      gsub("0.5",9,x)
+    }))
+    ref_genotype <- data.frame(apply(ref_genotype, 2, function(x) as.numeric(as.character(x))))
+    ref_genotype <- as.matrix(ref_genotype)
+    obj01 <- as.list(ref_genotype,pheno01)
+    obj01 <- SKAT_Null_Model(pheno01 ~ 1, out_type="C", data=obj01)
+    combined.test.statistics[i,6] <- SKAT(ref_genotype,obj01)$p.value
+    
+    
+    x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
+    y <- vector()
+  } else if(nrow(x) == 1){
+    combined.test.statistics[i,1] <- as.double(gwas01.pvalue[1,i])
+    combined.test.statistics[i,2] <- as.double(gwas01.pvalue[1,i])
+    combined.test.statistics[i,3] <- as.double(gwas01.pvalue[1,i])
+    combined.test.statistics[i,4] <- as.double(gwas01.pvalue[1,i])
+    combined.test.statistics[i,5] <- as.double(gwas01.pvalue[1,i])
+    combined.test.statistics[i,6] <- as.double(gwas01.pvalue[1,i])
   }
+  # ref_genotype <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
+  # x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
+  # y <- vector()
+  # z <- vector()
 }
-x <- colnames(ref_genotype)
-x <- as.data.frame(geno01[,colnames(geno01) %in% x])
-x <- as.data.frame(as.double(ref_genotype))
-x
-gbj.test <- GBJ(test_stats = x, cor_mat=cor_mat)
+
+ref_genotype
+ref_genotype <- as.matrix(ref_genotype)
+obj01 <- as.list(ref_genotype,pheno01)
+obj01<-SKAT_Null_Model(pheno01 ~ 1, out_type="C", data=obj01)
+a <- SKAT(ref_genotype,obj01)$p.value
+
+
+typeof(ref_genotype)
+class(ref_genotype)
 x
 y
-ref_genotype
-cor_mat
-gbj.test
-
+ref_genotype <- as.data.frame(geno01[,colnames(geno01) %in% y])
 cor_mat <- estimate_ss_cor(ref_pcs=tab.pc01, ref_genotypes=ref_genotype, link_function='linear')
-
-
-
-pvalue.combine <- function(gwas.fstat, gwas.markers, gwas.pvalue, geno, tab.pc,combined.test.statistics){
-  x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
-  y <- vector()
-  combined.test.statistics <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
-  
-  for (i in 1:ncol(gwas.fstat)){
-    for(j in 1:sum(!is.na(gwas.fstat[,i]))){
-      x[1,j] <- as.double(gwas.fstat[j,i])
-      y[j] <- as.vector(as.character(gwas.markers[j,i]))
-    }
-    if(ncol(x) >= 2){
-      x <- as.matrix(as.double(x))
-      ref_genotype <- as.data.frame(geno[,colnames(geno) %in% y])
-      cor_mat <- estimate_ss_cor(ref_pcs=tab.pc, ref_genotypes=ref_genotype, link_function='linear')
-      #bj.test <- BJ(test_stats = x, cor_mat=cor_mat)
-      gbj.test <- GBJ(test_stats = x, cor_mat=cor_mat)
-      ghc.test <- GHC(test_stats = x, cor_mat=cor_mat)
-      minP.test <- minP(test_stats = x, cor_mat=cor_mat)
-      #hc.test <- HC(test_stats = x, cor_mat=cor_mat)
-      OMNI.test <- OMNI_ss(test_stats = x, cor_mat=cor_mat, num_boots = 100)
-      #combined.test.statistics[i,1] <- bj.test$BJ_pvalue
-      combined.test.statistics[i,1] <- gbj.test$GBJ_pvalue
-      #combined.test.statistics[i,3] <- hc.test$HC_pvalue
-      combined.test.statistics[i,2] <- ghc.test$GHC_pvalue
-      combined.test.statistics[i,3] <- minP.test$minP_pvalue
-      combined.test.statistics[i,4] <- OMNI.test$OMNI_pvalue
-      x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
-      y <- vector()
-    }else{
-      combined.test.statistics[i,1] <- as.double(gwas.pvalue[1,i])
-      combined.test.statistics[i,2] <- as.double(gwas.pvalue[1,i])
-      combined.test.statistics[i,3] <- as.double(gwas.pvalue[1,i])
-      combined.test.statistics[i,4] <- as.double(gwas.pvalue[1,i])
-      #combined.test.statistics[i,5] <- as.double(gwas.pvalue[1,i])
-    }
-    ref_genotype <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
-  }
-  return(combined.test.statistics)
-}
-
-    
-
+typeof(tab.pc01)
+list(tab.pc01)
+class(ref_genotype[1,1])
