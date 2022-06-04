@@ -254,16 +254,16 @@ for(i in paste0("gwas",sprintf("%02d", 1:10),".pvalue")){
 #Need a vcf file format of the hapmap which is converted to GDS format
 #TASSEL or PLINK is used for converting hapmap to VCF file format
 #Need a directory to  create the gds file. If working on the server, we might need to define this before starting
-setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/filtered.phenotype")
+setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/filtered.phenotype")
 ##Reading the vcf files
-for(i in sprintf("%02d", 1)){
-  assign(paste0("vcf.fn",i),paste0("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/filtered.phenotype/chr",i,".vcf"))
+for(i in sprintf("%02d", 2:10)){
+  assign(paste0("vcf.fn",i),paste0("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/filtered.phenotype/chr",i,".vcf"))
 }
 ##Converting vcf to gds
 #A bit time consuming
 #Note: for some reason, you cannot run the next step twice if you make an error. you need to delete all this converted gds files, remove all your env variables and do it again.
 j <- 1
-for(i in paste0("vcf.fn",sprintf("%02d", 1))){
+for(i in paste0("vcf.fn",sprintf("%02d", 2:10))){
   d = get(i)
   snpgdsVCF2GDS(d, paste0("chr",sprintf("%02d",j),".gds"), method = "copy.num.of.ref")
   assign(i,d)
@@ -416,7 +416,7 @@ for(i in paste0("gwas", sprintf("%02d", 1), ".fstat")){
 #write.csv(pvalue.combine03,"pvalue.combine03.csv")
 
 #Trial
-setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/filtered.phenotype")
+setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/filtered.phenotype")
 #save(geno01, common01, db.01,gdsfile01,gr.db01,gr.q01,gwas01, gwas01.fstat,gwas01.gene.names,gwas01.Marker,gwas01.pvalue,pca01, query.snp.gwas01,pheno01,snpset01,tab.pc01,tab01, file = "chr01.RData")
 load("chr01.RData")
 
@@ -433,7 +433,7 @@ z <- vector()
 combined.test.statistics <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 ref_genotype <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 
-for (i in 1:10){#ncol(gwas01.fstat)){ #ncol(gwas1.Test.Stat)
+for (i in 1:ncol(gwas01.fstat)){ #ncol(gwas1.Test.Stat)
   for(j in 1:sum(!is.na(gwas01.fstat[,i]))){ 
     x[1,j] <- gwas01.fstat[j,i]
     #x <- as.double(x[!is.na(x)])
@@ -521,3 +521,5 @@ for (i in 1:10){#ncol(gwas01.fstat)){ #ncol(gwas1.Test.Stat)
   z <- vector()
 }
 
+write.csv(combined.test.statistics,"chr01_test.csv")
+save(combined.test.statistics, file = "chr01.test.stat.RData")
