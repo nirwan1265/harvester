@@ -20,26 +20,31 @@ pathway <- pathway[-1,]
 
 
 #Read the combined pvalue files
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/SNP annotation/combined.pvalues")
-setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/SNP annotation/combined.pvalues")
-for(i in sprintf("%02d", c(1,3,7,9,10))){
-  assign(paste0("pvalue.chr",i), readRDS(paste0("pvalue.combine.sorghum.chr",i,".RDS")))
-}
+setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Results/pvalues.combination")
+# setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/SNP annotation/combined.pvalues")
+# setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/SNP annotation/combined.pvalues")
+# for(i in sprintf("%02d", c(1,3,7,9,10))){
+#   assign(paste0("pvalue.chr",i), readRDS(paste0("pvalue.combine.sorghum.chr",i,".RDS")))
+# }
+pvalue.chr01 <- read.csv("combined.omni.magma.csv")
+rownames(pvalue.chr01) <- pvalue.chr01[,1]
+pvalue.chr01 <- pvalue.chr01[,-1]
+
 
 #Combine all the genes in one file
-j <- 1
-all.genes = {}
-for(i in paste0("pvalue.chr", sprintf("%02d", c(1,3,7,9,10)))){
-  d = get(i)
-  all.genes <- rbind(all.genes,d)
-  assign(i,d)
-  j <- j+1
-}
+# j <- 1
+# all.genes = {}
+# for(i in paste0("pvalue.chr", sprintf("%02d", c(1,3,7,9,10)))){
+#   d = get(i)
+#   all.genes <- rbind(all.genes,d)
+#   assign(i,d)
+#   j <- j+1
+# }
+# 
+# all.genes <- as.data.frame(t(all.genes))
+# all.genes <- all.genes[2,]
 
-all.genes <- as.data.frame(t(all.genes))
-all.genes <- all.genes[2,]
-
-
+all.genes <- as.data.frame(rownames(pvalue.chr01))
 
 #Filtering the pathway genes
 x <- as.data.frame(as.matrix(NA))

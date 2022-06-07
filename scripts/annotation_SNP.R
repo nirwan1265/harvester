@@ -521,5 +521,39 @@ for (i in 1:ncol(gwas01.fstat)){ #ncol(gwas1.Test.Stat)
   z <- vector()
 }
 
-write.csv(combined.test.statistics,"chr01_test.csv")
-save(combined.test.statistics, file = "chr01.test.stat.RData")
+#write.csv(combined.test.statistics,"chr01_test.csv")
+#save(combined.test.statistics, file = "chr01.test.stat.RData")
+load("ch01.test.stat.RData")
+
+
+#Adding names
+setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Results/pvalues.combination")
+pvalue.omni <- read.csv("GBJ_chr01.csv", header=TRUE)
+pvalue.magma <- read.csv("MAGMA_chr01.csv", header = TRUE)
+gwas01.gene.names <- unlist(gwas01.gene.names)
+typeof(gwas01.gene.names)
+pvalue.omni$GENE <- gwas01.gene.names
+
+#Combining OMNI and Magma
+library(dplyr)
+combined.omni.magma <- inner_join(pvalue.omni,pvalue.magma, by = "GENE")
+rownames(combined.omni.magma) <- combined.omni.magma$GENE
+combined.omni.magma <- combined.omni.magma[,-6]
+
+#Saving
+setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Results/pvalues.combination")
+write.csv(combined.omni.magma, "combined.omni.magma.csv", row.names = TRUE)
+
+
+#Number of elements in each row
+elements <- as.data.frame(colSums(!is.na(gwas01.Marker)))
+colnames(elements) <- "Number.of.SNPs"
+#Plotting
+hist(elements$Number.of.SNPs, main = "Distribution of SNPs",
+     xlab = "Number of SNPs", 
+     col = rainbow(14),
+     breaks = 36, #highest SNP
+     ylim = c(1,1000),
+     labels = TRUE
+     )
+
