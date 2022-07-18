@@ -72,18 +72,24 @@ colnames(snp.db) <- c("Chromosome","Database","Region","Start","End","NA","Stran
 
 #For MAGMA analysis:
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/SNP annotation/Sorghum")
-snp.db2 <- snp.db[which(snp.db$Region == "gene"), ]
-gene.names.magma <- as.data.frame(snp.db2[,9])
-gene.names.magma <- as.data.frame(apply(gene.names.magma,1,split.names))
+# snp.db2 <- snp.db[which(snp.db$Region == "gene"), ]
+# gene.names.magma <- as.data.frame(snp.db2[,9])
+# gene.names.magma <- as.data.frame(apply(gene.names.magma,1,split.names))
+# 
+# snp.db.magma <- cbind(gene.names.magma, snp.db2[,c(1,4,5)])
+# snp.db.magma$chr <- gsub("Chr","", snp.db.magma$Chromosome)
+# snp.db.chr <- snp.db.magma
+# snp.db.chr[] <- sapply(snp.db.chr, as.numeric)
+# snp.db.magma <- cbind(snp.db.magma[,1],snp.db.chr[,c(5,3,4)])
+# snp.db.magma <- snp.db.magma[complete.cases(snp.db.magma), ]
+# 
+# setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Github/eMAGMA")
+# write.table(snp.db.magma,"gene.file.txt", sep = " ", row.names = F, col.names = F, quote = F)
 
-snp.db.magma <- cbind(gene.names.magma, snp.db2[,c(1,4,5)])
-snp.db.magma$chr <- gsub("Chr","", snp.db.magma$Chromosome)
-snp.db.chr <- snp.db.magma
-snp.db.chr[] <- sapply(snp.db.chr, as.numeric)
-snp.db.magma <- cbind(snp.db.magma[,1],snp.db.chr[,c(5,3,4)])
-
+##SNP and pvalue table
 setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Github/eMAGMA")
-write.table(snp.db.magma,"gene.file.txt", sep = " ", row.names = F, col.names = F, quote = F)
+chr01.snp <- query.snp.gwas01[,c(1,5)]
+write.table(chr01.snp,"chr01.snp.pvalues.txt", sep = " ", row.names = F, col.names = F, quote = F)
 
 ##Loading query SNPs for GWAS from RDS file
 ##Location in the server: /rsstu/users/r/rrellan/sara/SorghumGEA/results/GLM_20220222 - GLM
@@ -134,6 +140,7 @@ for(i in sprintf("%02d", 1:10)){
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("common",i), as.data.frame(findOverlapPairs(get(paste0("gr.db",i)), get(paste0("gr.q",i)))))
 }
+
 
 ###Data prep
 ##Filtering out the gene, fstat, Marker and pvalue columns
