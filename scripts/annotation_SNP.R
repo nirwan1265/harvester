@@ -70,6 +70,21 @@ setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/S
 snp.db <- read.table(file ="Sbicolor_454_v3.1.1.gene_exons.gff3", sep = "\t", header = FALSE)
 colnames(snp.db) <- c("Chromosome","Database","Region","Start","End","NA","Strand","NA2","Gene")
 
+#For MAGMA analysis:
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/SNP annotation/Sorghum")
+snp.db2 <- snp.db[which(snp.db$Region == "gene"), ]
+gene.names.magma <- as.data.frame(snp.db2[,9])
+gene.names.magma <- as.data.frame(apply(gene.names.magma,1,split.names))
+
+snp.db.magma <- cbind(gene.names.magma, snp.db2[,c(1,4,5)])
+snp.db.magma$chr <- gsub("Chr","", snp.db.magma$Chromosome)
+snp.db.chr <- snp.db.magma
+snp.db.chr[] <- sapply(snp.db.chr, as.numeric)
+snp.db.magma <- cbind(snp.db.magma[,1],snp.db.chr[,c(5,3,4)])
+
+setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Github/eMAGMA")
+write.table(snp.db.magma,"gene.file.txt", sep = " ", row.names = F, col.names = F, quote = F)
+
 ##Loading query SNPs for GWAS from RDS file
 ##Location in the server: /rsstu/users/r/rrellan/sara/SorghumGEA/results/GLM_20220222 - GLM
 ##Location in the server: /rsstu/users/r/rrellan/sara/SorghumGEA/results/GLM_20220224 - GLM
@@ -92,6 +107,7 @@ for(i in sprintf("%02d", 1:10)){
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("db.",i), snp.db[which(snp.db$Chromosome == get(paste0("x",i))), ])
 }
+
 
 ###Annotation the SNPs
 ##Making GRanges for Database 
@@ -556,4 +572,8 @@ hist(elements$Number.of.SNPs, main = "Distribution of SNPs",
      ylim = c(1,1000),
      labels = TRUE
      )
+<<<<<<< HEAD
 
+=======
+2527-910
+>>>>>>> 2193bcb7fc13a0bbd6c607e0928628bfdb70d2e1
