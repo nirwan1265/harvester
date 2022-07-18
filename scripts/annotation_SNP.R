@@ -81,6 +81,7 @@ snp.db.magma$chr <- gsub("Chr","", snp.db.magma$Chromosome)
 snp.db.chr <- snp.db.magma
 snp.db.chr[] <- sapply(snp.db.chr, as.numeric)
 snp.db.magma <- cbind(snp.db.magma[,1],snp.db.chr[,c(5,3,4)])
+snp.db.magma <- snp.db.magma[complete.cases(snp.db.magma), ]
 
 setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Github/eMAGMA")
 write.table(snp.db.magma,"gene.file.txt", sep = " ", row.names = F, col.names = F, quote = F)
@@ -134,6 +135,7 @@ for(i in sprintf("%02d", 1:10)){
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("common",i), as.data.frame(findOverlapPairs(get(paste0("gr.db",i)), get(paste0("gr.q",i)))))
 }
+
 
 ###Data prep
 ##Filtering out the gene, fstat, Marker and pvalue columns
