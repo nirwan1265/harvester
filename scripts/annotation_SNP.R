@@ -72,6 +72,7 @@ colnames(snp.db) <- c("Chromosome","Database","Region","Start","End","NA","Stran
 
 #For MAGMA analysis:
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/SNP annotation/Sorghum")
+<<<<<<< HEAD
 # snp.db2 <- snp.db[which(snp.db$Region == "gene"), ]
 # gene.names.magma <- as.data.frame(snp.db2[,9])
 # gene.names.magma <- as.data.frame(apply(gene.names.magma,1,split.names))
@@ -85,6 +86,18 @@ setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/S
 # 
 # setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Github/eMAGMA")
 # write.table(snp.db.magma,"gene.file.txt", sep = " ", row.names = F, col.names = F, quote = F)
+=======
+snp.db2 <- snp.db[which(snp.db$Region == "gene"), ]
+gene.names.magma <- as.data.frame(snp.db2[,9])
+gene.names.magma <- as.data.frame(apply(gene.names.magma,1,split.names))
+
+snp.db.magma <- cbind(gene.names.magma, snp.db2[,c(1,4,5)])
+snp.db.magma$chr <- gsub("Chr","", snp.db.magma$Chromosome)
+snp.db.chr <- snp.db.magma
+snp.db.chr[] <- sapply(snp.db.chr, as.numeric)
+snp.db.magma <- cbind(snp.db.magma[,1],snp.db.chr[,c(5,3,4)])
+snp.db.magma <- snp.db.magma[complete.cases(snp.db.magma), ]
+>>>>>>> 64745f9b82a499785f1b04333baf26b999c196ae
 
 ##SNP and pvalue table
 setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Github/eMAGMA")
