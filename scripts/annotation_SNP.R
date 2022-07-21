@@ -1,5 +1,5 @@
 # Package names
- packages <- c("ggplot2", "Rsamtools","GenomicAlignments","rtracklayer","GenomicRanges","AnnotationHub","knitr","gtools","data.table","stringi","GBJ","metap","multtest","Hmisc","devtools","SNPRelate","gdsfmt","dplyr","vcfR","tidyr","AssocTests","SKAT")
+packages <- c("ggplot2", "Rsamtools","GenomicAlignments","rtracklayer","GenomicRanges","AnnotationHub","knitr","gtools","data.table","stringi","GBJ","metap","multtest","Hmisc","devtools","SNPRelate","gdsfmt","dplyr","vcfR","tidyr","AssocTests","SKAT")
 
 # Install packages not yet installed
 #installed_packages <- packages %in% rownames(installed.packages())
@@ -348,7 +348,7 @@ for(i in paste0("gdsfile",sprintf("%02d", 1:10))){
 
 ## Get all selected snp id
 j <- 1
-for(i in paste0("snpset",sprintf("%02d",1))){
+for(i in paste0("snpset",sprintf("%02d",1:10))){
   d = get(i)
   assign(paste0("snpset.id",sprintf("%02d",j)), unlist(unname(d)))
   assign(i,d)
@@ -357,7 +357,7 @@ for(i in paste0("snpset",sprintf("%02d",1))){
 
 ## Run PCA
 j <- 1
-for(i in paste0("snpset.id",sprintf("%02d",1))){
+for(i in paste0("snpset.id",sprintf("%02d",1:10))){
   d = get(i)
   assign(paste0("pca",sprintf("%02d",j)), snpgdsPCA(get(paste0("gdsfile",sprintf("%02d",j))), snp.id = d, num.thread = 2))
   assign(i,d)
@@ -371,7 +371,7 @@ for(i in paste0("snpset.id",sprintf("%02d",1))){
 #First two shows max variance
 #Make a table of eigen values
 j <- 1
-for(i in paste0("pca",sprintf("%02d",1))){
+for(i in paste0("pca",sprintf("%02d",1:10))){
   d = get(i)
   assign(paste0("tab",sprintf("%02d",j)), data.frame(sample.id = d$sample.id,
                                      EV1 = d$eigenvect[,1],
@@ -381,9 +381,14 @@ for(i in paste0("pca",sprintf("%02d",1))){
   j = j + 1
 }
 
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
 ###Pvalue combination
 ##Pre-processing for p-value combination
-for(i in sprintf("%02d", 1)){
+for(i in sprintf("%02d", 1:10)){
   assign(paste0("tab.pc",i), get(paste0("tab",i))[,c(2:3)])
 }
 
@@ -401,15 +406,15 @@ for(i in sprintf("%02d", 1)){
 # $ sed -e '1d' < chr1.num.txt > chr1.1num.txt
 #Script to change NA to 0
 # $ perl -pi -e 's/NA/0/g' chr1.1num.txt
+
+
 ##Reading the genotype files
-# setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/90perc.taxa.filter.95perc.site.filter/numerical")
-# for(i in sprintf("%02d", 1:10)){
-#   assign(paste0("geno",i), read.table(file = paste0("chr",i,".numeric.txt"), header = TRUE, sep = "\t"))
-# }
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap/hapmap_numerical")
 
+for(i in sprintf("%02d", 1:10)){
+  assign(paste0("geno",i), read.table(file = paste0("sb_snpsDryad_sept2013_filter.c",i,"_numerical.txt"), header = TRUE, sep = "\t"))
+}
 
-setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/filtered.phenotype")
-geno01 <- read.table("chr01.numeric.txt", header = TRUE)
 
 ##Saving the genotype file as  RDS
 # j <- 1
