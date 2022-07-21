@@ -66,9 +66,14 @@ return(combined.test.statistics)
 #SNP Database 
 #http://ftp.ebi.ac.uk/ensemblgenomes/pub/release-52/plants/gff3/sorghum_bicolor/
 #Will need to make a folder for all the databases for Sorghum and Maize
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/SNP annotation/Sorghum")
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Sorghum.annotation/Phytozome/PhytozomeV12/Sbicolor/annotation")
 snp.db <- read.table(file ="Sbicolor_454_v3.1.1.gene_exons.gff3", sep = "\t", header = FALSE)
 colnames(snp.db) <- c("Chromosome","Database","Region","Start","End","NA","Strand","NA2","Gene")
+
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 
 #For MAGMA analysis:
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/SNP annotation/Sorghum")
@@ -104,10 +109,15 @@ setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Github
 chr01.snp <- query.snp.gwas01[,c(1,5)]
 write.table(chr01.snp,"chr01.snp.pvalues.txt", sep = " ", row.names = F, col.names = F, quote = F)
 
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
 ##Loading query SNPs for GWAS from RDS file
 ##Location in the server: /rsstu/users/r/rrellan/sara/SorghumGEA/results/GLM_20220222 - GLM
 ##Location in the server: /rsstu/users/r/rrellan/sara/SorghumGEA/results/GLM_20220224 - GLM
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/GWAS.results/MLM")
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Results/GWAS.results/MLM")
 ##Reading the gwas RDS files
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("query.snp.gwas", i) , readRDS(file = paste0("mlm_sol_VL_",i,"_20220307_19_13.RDS")))
@@ -128,9 +138,12 @@ for(i in sprintf("%02d", 1:10)){
 }
 
 
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
 ###Annotation the SNPs
 ##Making GRanges for Database 
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/GWAS.results")
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("gr.db", i) , GRanges(seqnames = paste0("chr",i), ranges = IRanges(start = get(paste0("db.",i))[,"Start"], end = get(paste0("db.",i))[,"End"]), strand = get(paste0("db.",i))[,"Strand"], Region = get(paste0("db.",i))[,"Region"], Gene = get(paste0("db.",i))[,"Gene"]))
 }
@@ -149,10 +162,14 @@ for(i in sprintf("%02d", 1:10)){
 }
 
 
-##Finding the Overlaps
+#Finding the Overlaps
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("common",i), as.data.frame(findOverlapPairs(get(paste0("gr.db",i)), get(paste0("gr.q",i)))))
 }
+
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
 ###Data prep
@@ -286,20 +303,26 @@ for(i in paste0("gwas",sprintf("%02d", 1:10),".pvalue")){
 }
 
 
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
 ###PCA analysis required for GBJ
 #Need a vcf file format of the hapmap which is converted to GDS format
 #TASSEL or PLINK is used for converting hapmap to VCF file format
 #Need a directory to  create the gds file. If working on the server, we might need to define this before starting
-setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/filtered.phenotype")
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap/hapmap_vcf")
+
 ##Reading the vcf files
-for(i in sprintf("%02d", 2:10)){
-  assign(paste0("vcf.fn",i),paste0("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/filtered.phenotype/chr",i,".vcf"))
+for(i in sprintf("%02d", 1:10)){
+  assign(paste0("vcf.fn",i),paste0("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap/hapmap_vcf/sb_snpsDryad_sept2013_filter.c",i,".vcf"))
 }
+
 ##Converting vcf to gds
 #A bit time consuming
 #Note: for some reason, you cannot run the next step twice if you make an error. you need to delete all this converted gds files, remove all your env variables and do it again.
 j <- 1
-for(i in paste0("vcf.fn",sprintf("%02d", 2:10))){
+for(i in paste0("vcf.fn",sprintf("%02d", 1:10))){
   d = get(i)
   snpgdsVCF2GDS(d, paste0("chr",sprintf("%02d",j),".gds"), method = "copy.num.of.ref")
   assign(i,d)
@@ -308,7 +331,7 @@ for(i in paste0("vcf.fn",sprintf("%02d", 2:10))){
 
 
 ##Get the GDS file data
-for(i in sprintf("%02d", 1)){
+for(i in sprintf("%02d", 1:10)){
   assign(paste0("gdsfile",i), snpgdsOpen(paste0("chr",i,".gds")))
 }
 
@@ -316,7 +339,7 @@ for(i in sprintf("%02d", 1)){
 set.seed(1000)
 # Try different LD thresholds for sensitivity analysis but read in a paper somewhere that 0.2 was used for GBJ
 j <- 1
-for(i in paste0("gdsfile",sprintf("%02d", 1))){
+for(i in paste0("gdsfile",sprintf("%02d", 1:10))){
   d = get(i)
   assign(paste0("snpset",sprintf("%02d",j)), snpgdsLDpruning(d,ld.threshold = 0.2))
   assign(i,d)
