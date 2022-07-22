@@ -532,7 +532,32 @@ for(i in paste0("gwas", sprintf("%02d", 1), ".fstat")){
 #Phenotype file for SKAT
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Phenotype")
 pheno <- read.table("VL_P.txt")
-pheno <- as.matrix(pheno[-c(1,2),])
+pheno_name <- rownames(pheno) 
+pheno_name <- pheno_name[-c(1,2)]
+pheno <- as.matrix(as.integer(pheno[-c(1,2),]))
+rownames(pheno) <- pheno_name
+
+#Genotype file for SKAT
+#filter by taxa from TASSEL, i.e., only the taxa which are used in the phenotype should be present in the genotype file 
+##Reading the genotype files
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap/genotype_filtered_by_phenotype")
+#edit the files like the one from geno
+for(i in sprintf("%02d", 1:10)){
+  assign(paste0("geno_f",i), read.table(file = paste0("geno_f_pheno",i,".txt"), header = TRUE, sep = "\t"))
+}
+
+
+##Saving the genotype file as  RDS
+j <- 1
+for(i in paste0("geno_f", sprintf("%02d", 1:10))){
+  d = get(i)
+  saveRDS(d, paste0("geno_f",sprintf("%02d" , j),".RDS"))
+  assign(i,d)
+  j <- j+1
+}
+
+
+
 
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
