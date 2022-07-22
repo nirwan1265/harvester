@@ -179,6 +179,17 @@ for(i in sprintf("%02d", 1:10)){
   assign(paste0("gwas",i), get(paste0("common",i)))
 }
 
+# #Saving RDS
+# j <- 1
+# for(i in paste0("common", sprintf("%02d", 1:10))){
+#   d = get(i)
+#   saveRDS(d, paste0("common",sprintf("%02d" , j),".RDS"))
+#   assign(i,d)
+#   j <- j+1
+# }
+
+
+
 ##Filter table having only gene
 for(i in paste0("gwas", sprintf("%02d", 1:10))){
   d=get(i)
@@ -301,6 +312,38 @@ for(i in paste0("gwas",sprintf("%02d", 1:10),".pvalue")){
   colnames(d) <- x
   assign(i,d)
 }
+
+
+#saving objects
+# j <- 1
+# for(i in paste0("gwas", sprintf("%02d", 1:10),".fstat")){
+#   d = get(i)
+#   saveRDS(d, paste0("gwas",sprintf("%02d" , j),".fstat.RDS"))
+#   assign(i,d)
+#   j <- j+1
+# }
+# j <- 1
+# for(i in paste0("gwas", sprintf("%02d", 1:10),".gene.names")){
+#   d = get(i)
+#   saveRDS(d, paste0("gwas",sprintf("%02d" , j),".gene.names.RDS"))
+#   assign(i,d)
+#   j <- j+1
+# }
+# j <- 1
+# for(i in paste0("gwas", sprintf("%02d", 1:10),".Marker")){
+#   d = get(i)
+#   saveRDS(d, paste0("gwas",sprintf("%02d" , j),".Marker.RDS"))
+#   assign(i,d)
+#   j <- j+1
+# }
+# j <- 1
+# for(i in paste0("gwas", sprintf("%02d", 1:10),".pvalue")){
+#   d = get(i)
+#   saveRDS(d, paste0("gwas",sprintf("%02d" , j),".pvalue.RDS"))
+#   assign(i,d)
+#   j <- j+1
+# }
+# 
 
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -438,12 +481,23 @@ for(i in paste0("tab.pc", sprintf("%02d", 1))){
   assign(i,d)
 }
 
+
 #Convert fstat dataframe to numeric
 for(i in paste0("gwas", sprintf("%02d", 1), ".fstat")){
   d <- get(i)
   d <- as.data.frame(lapply(d, as.numeric))
   assign(i,d)
 }
+
+##Saving the tab.pcs file as  RDS
+# j <- 1
+# for(i in paste0("gwas", sprintf("%02d", 1:10))){
+#   d = get(i)
+#   saveRDS(d, paste0("tab.pc",sprintf("%02d" , j),".RDS"))
+#   assign(i,d)
+#   j <- j+1
+# }
+
 
 
 #Using Global Function
@@ -463,26 +517,11 @@ for(i in paste0("gwas", sprintf("%02d", 1), ".fstat")){
 # }
 
 
-###Saving the result as RDS
-# j <- 1
-# for(i in paste0("pvalue.combine", sprintf("%02d", 10))){
-#   d = get(i)
-#   saveRDS(d, paste0("pvalue.combine.sorghum.chr",sprintf("%02d" , j),".RDS"))
-#   assign(i,d)
-#   j <- j+1
-# }
 
 
 
 
-#Write as csv file
-#write.csv(pvalue.combine01,"pvalue.combine.csv")
-#write.csv(pvalue.combine03,"pvalue.combine03.csv")
 
-#Trial
-setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Lasky.hapmap/filtered.phenotype")
-#save(geno01, common01, db.01,gdsfile01,gr.db01,gr.q01,gwas01, gwas01.fstat,gwas01.gene.names,gwas01.Marker,gwas01.pvalue,pca01, query.snp.gwas01,pheno01,snpset01,tab.pc01,tab01, file = "chr01.RData")
-load("chr01.RData")
 
 
 #number of phenotype should match genotype file. Columns should match. 
