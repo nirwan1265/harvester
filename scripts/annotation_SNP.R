@@ -526,10 +526,17 @@ for(i in paste0("gwas", sprintf("%02d", 1), ".fstat")){
 
 #number of phenotype should match genotype file. Columns should match. 
 
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+#Phenotype file for SKAT
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Phenotype")
+pheno <- read.table("VL_P.txt")
+pheno <- as.matrix(pheno[-c(1,2),])
 
 
-
-############
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
 y <- vector()
 z <- vector()
@@ -572,8 +579,8 @@ for (i in 7){ #ncol(gwas1.Test.Stat)
     }))
     ref_genotype <- data.frame(apply(ref_genotype, 2, function(x) as.numeric(as.character(x))))
     ref_genotype <- as.matrix(ref_genotype)
-    obj01 <- as.list(ref_genotype,pheno01)
-    obj01<-SKAT_Null_Model(pheno01 ~ 1, out_type="C", data=obj01)
+    obj01 <- as.list(ref_genotype,pheno)
+    obj01<-SKAT_Null_Model(pheno ~ 1, out_type="C", data=obj01)
     combined.test.statistics[i,4] <- SKAT(ref_genotype,obj01)$p.value
     
     x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
@@ -604,8 +611,8 @@ for (i in 7){ #ncol(gwas1.Test.Stat)
     }))
     ref_genotype <- data.frame(apply(ref_genotype, 2, function(x) as.numeric(as.character(x))))
     ref_genotype <- as.matrix(ref_genotype)
-    obj01 <- as.list(ref_genotype,pheno01)
-    obj01 <- SKAT_Null_Model(pheno01 ~ 1, out_type="C", data=obj01)
+    obj01 <- as.list(ref_genotype,pheno)
+    obj01 <- SKAT_Null_Model(pheno ~ 1, out_type="C", data=obj01)
     combined.test.statistics[i,5] <- SKAT(ref_genotype,obj01)$p.value
     
     
