@@ -536,7 +536,7 @@ z <- vector()
 combined.test.statistics <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 ref_genotype <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 
-for (i in 1:ncol(gwas01.fstat)){ #ncol(gwas1.Test.Stat)
+for (i in 7){ #ncol(gwas1.Test.Stat)
   for(j in 1:sum(!is.na(gwas01.fstat[,i]))){ 
     x[1,j] <- gwas01.fstat[j,i]
     #x <- as.double(x[!is.na(x)])
@@ -574,7 +574,7 @@ for (i in 1:ncol(gwas01.fstat)){ #ncol(gwas1.Test.Stat)
     ref_genotype <- as.matrix(ref_genotype)
     obj01 <- as.list(ref_genotype,pheno01)
     obj01<-SKAT_Null_Model(pheno01 ~ 1, out_type="C", data=obj01)
-    combined.test.statistics[i,5] <- SKAT(ref_genotype,obj01)$p.value
+    combined.test.statistics[i,4] <- SKAT(ref_genotype,obj01)$p.value
     
     x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
     y <- vector()
@@ -596,7 +596,7 @@ for (i in 1:ncol(gwas01.fstat)){ #ncol(gwas1.Test.Stat)
     combined.test.statistics[i,1] <- gbj.test$GBJ_pvalue
     combined.test.statistics[i,2] <- ghc.test$GHC_pvalue
     combined.test.statistics[i,3] <- minP.test$minP_pvalue
-    combined.test.statistics[i,5] <- OMNI.test$OMNI_pvalue
+    combined.test.statistics[i,4] <- OMNI.test$OMNI_pvalue
     
     #SKAT
     ref_genotype <- data.frame(lapply(ref_genotype, function(x){
@@ -606,7 +606,7 @@ for (i in 1:ncol(gwas01.fstat)){ #ncol(gwas1.Test.Stat)
     ref_genotype <- as.matrix(ref_genotype)
     obj01 <- as.list(ref_genotype,pheno01)
     obj01 <- SKAT_Null_Model(pheno01 ~ 1, out_type="C", data=obj01)
-    combined.test.statistics[i,4] <- SKAT(ref_genotype,obj01)$p.value
+    combined.test.statistics[i,5] <- SKAT(ref_genotype,obj01)$p.value
     
     
     x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
