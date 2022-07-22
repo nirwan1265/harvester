@@ -567,6 +567,7 @@ y <- vector()
 z <- vector()
 combined.test.statistics <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 ref_genotype <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
+ref_genotype_skat <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 
 for (i in 7){ #ncol(gwas1.Test.Stat)
   for(j in 1:sum(!is.na(gwas01.fstat[,i]))){ 
@@ -584,6 +585,8 @@ for (i in 7){ #ncol(gwas1.Test.Stat)
     x <- x[1:2000,]
     y <- y[1:2000]
     z <- z[1:2000]
+    
+    #GBJ, minP, GHC, OMNI
     ref_genotype <- as.data.frame(geno1[,colnames(geno01) %in% y])
     ref_genotype <- data.frame(lapply(ref_genotype, function(x){
       gsub("-",0,x)
@@ -599,14 +602,24 @@ for (i in 7){ #ncol(gwas1.Test.Stat)
     combined.test.statistics[i,3] <- minP.test$minP_pvalue
     combined.test.statistics[i,5] <- OMNI.test$OMNI_pvalue
     
-    ref_genotype <- data.frame(lapply(ref_genotype, function(x){
+    #SKAT
+    ref_genotype_skat <- as.data.frame(geno_f01[,colnames(geno_f01) %in% y])
+    ref_genotype_skat <- data.frame(lapply(ref_genotype_skat, function(x){
+      gsub("-",9,x)
+    }))
+    ref_genotype_skat <- data.frame(lapply(ref_genotype_skat, function(x){
+      gsub(0.5,2,x)
+    }))
+    ref_genotype_skat <- data.frame(apply(ref_genotype_skat, 2, function(x) as.numeric(as.character(x))))
+    ref_genotype_skat <- data.frame(lapply(ref_genotype_skat, function(x){
       gsub("0.5",9,x)
     }))
-    ref_genotype <- data.frame(apply(ref_genotype, 2, function(x) as.numeric(as.character(x))))
-    ref_genotype <- as.matrix(ref_genotype)
-    obj01 <- as.list(ref_genotype,pheno)
-    obj01<-SKAT_Null_Model(pheno ~ 1, out_type="C", data=obj01)
-    combined.test.statistics[i,4] <- SKAT(ref_genotype,obj01)$p.value
+    ref_genotype_skat <- data.frame(apply(ref_genotype_skat, 2, function(x) as.numeric(as.character(x))))
+    ref_genotype_skat <- as.matrix(ref_genotype_skat)
+    obj01 <- as.list(ref_genotype_skat,pheno)
+    obj01 <- SKAT_Null_Model(pheno ~ 1, out_type="C", data=obj01)
+    combined.test.statistics[i,5] <- SKAT(ref_genotype_skat,obj01)$p.value
+    
     
     x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
     y <- vector()
@@ -620,7 +633,7 @@ for (i in 7){ #ncol(gwas1.Test.Stat)
     }))
     ref_genotype <- data.frame(apply(ref_genotype, 2, function(x) as.numeric(as.character(x))))
     cor_mat <- estimate_ss_cor(ref_pcs=tab.pc01, ref_genotypes=ref_genotype, link_function='linear')
-    #GBJ
+    #GBJ, minP, GHC, OMNI
     gbj.test <- GBJ(test_stats = x, cor_mat=cor_mat)
     minP.test <- minP(test_stats = x, cor_mat=cor_mat)
     ghc.test <- GHC(test_stats = x, cor_mat=cor_mat)
@@ -631,14 +644,22 @@ for (i in 7){ #ncol(gwas1.Test.Stat)
     combined.test.statistics[i,4] <- OMNI.test$OMNI_pvalue
     
     #SKAT
-    ref_genotype <- data.frame(lapply(ref_genotype, function(x){
+    ref_genotype_skat <- as.data.frame(geno_f01[,colnames(geno_f01) %in% y])
+    ref_genotype_skat <- data.frame(lapply(ref_genotype_skat, function(x){
+      gsub("-",9,x)
+    }))
+    ref_genotype_skat <- data.frame(lapply(ref_genotype_skat, function(x){
+      gsub(0.5,2,x)
+    }))
+    ref_genotype_skat <- data.frame(apply(ref_genotype_skat, 2, function(x) as.numeric(as.character(x))))
+    ref_genotype_skat <- data.frame(lapply(ref_genotype_skat, function(x){
       gsub("0.5",9,x)
     }))
-    ref_genotype <- data.frame(apply(ref_genotype, 2, function(x) as.numeric(as.character(x))))
-    ref_genotype <- as.matrix(ref_genotype)
-    obj01 <- as.list(ref_genotype,pheno)
+    ref_genotype_skat <- data.frame(apply(ref_genotype_skat, 2, function(x) as.numeric(as.character(x))))
+    ref_genotype_skat <- as.matrix(ref_genotype_skat)
+    obj01 <- as.list(ref_genotype_skat,pheno)
     obj01 <- SKAT_Null_Model(pheno ~ 1, out_type="C", data=obj01)
-    combined.test.statistics[i,5] <- SKAT(ref_genotype,obj01)$p.value
+    combined.test.statistics[i,5] <- SKAT(ref_genotype_skat,obj01)$p.value
     
     
     x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
@@ -655,6 +676,8 @@ for (i in 7){ #ncol(gwas1.Test.Stat)
   y <- vector()
   z <- vector()
 }
+
+
 
 #write.csv(combined.test.statistics,"chr01_test.csv")
 #save(combined.test.statistics, file = "chr01.test.stat.RData")
