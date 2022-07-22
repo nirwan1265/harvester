@@ -569,7 +569,7 @@ combined.test.statistics <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 ref_genotype <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 ref_genotype_skat <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 
-for (i in 7){ #ncol(gwas1.Test.Stat)
+for (i in 1:ncol(gwas1.fstat)){ #ncol(gwas1.Test.Stat)
   for(j in 1:sum(!is.na(gwas01.fstat[,i]))){ 
     x[1,j] <- gwas01.fstat[j,i]
     #x <- as.double(x[!is.na(x)])
