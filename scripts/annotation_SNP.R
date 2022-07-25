@@ -447,8 +447,13 @@ for(i in sprintf("%02d", 1:10)){
 # $ cut -f2- chr1.txt > chr1.num.txt
 #Remove the first row 
 # $ sed -e '1d' < chr1.num.txt > chr1.1num.txt
-#Script to change NA to 0
-# $ perl -pi -e 's/NA/0/g' chr1.1num.txt
+#Separate the file in header and body
+#awk 'FNR <=1' sb_snpsDryad_sept2013_filter.c01_numerical.txt > header1.txt
+#sed '1d' sb_snpsDryad_sept2013_filter.c01_numerical.txt > body1.txt
+#Script to change NA to 9, 0 to 2, 1 to 0 and 0.5 to 1 and then 2.5 to 1 because it replaces 0.5 as 2.5 
+# $ perl -pi -e 's/NA/9/g' body1.txt
+#combine the header and body
+# cat header1.txt body1.txt > originalfile.txt
 
 
 ##Reading the genotype files
@@ -569,7 +574,7 @@ combined.test.statistics <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 ref_genotype <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 ref_genotype_skat <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 
-for (i in 1:ncol(gwas1.fstat)){ #ncol(gwas1.Test.Stat)
+for (i in 1:ncol(gwas02.fstat)){ #ncol(gwas1.Test.Stat)
   for(j in 1:sum(!is.na(gwas01.fstat[,i]))){ 
     x[1,j] <- gwas01.fstat[j,i]
     #x <- as.double(x[!is.na(x)])
@@ -624,7 +629,7 @@ for (i in 1:ncol(gwas1.fstat)){ #ncol(gwas1.Test.Stat)
     x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
     y <- vector()
   } else if(nrow(x) >= 2 & nrow(x) < 2000){
-    ref_genotype <- as.data.frame(geno01[,colnames(geno01) %in% y])
+    ref_genotype <- as.data.frame(geno02[,colnames(geno02) %in% y])
     ref_genotype <- data.frame(lapply(ref_genotype, function(x){
       gsub("-",9,x)
     }))
@@ -679,7 +684,7 @@ for (i in 1:ncol(gwas1.fstat)){ #ncol(gwas1.Test.Stat)
 
 
 
-#write.csv(combined.test.statistics,"chr01_test.csv")
+write.csv(combined.test.statistics,"chr01.csv")
 #save(combined.test.statistics, file = "chr01.test.stat.RData")
 load("ch01.test.stat.RData")
 
