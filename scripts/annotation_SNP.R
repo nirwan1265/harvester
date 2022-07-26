@@ -457,9 +457,9 @@ for(i in sprintf("%02d", 1:10)){
 
 
 ##Reading the genotype files
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap/hapmap_numerical")
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap/hapmap_numerical/tassel_format")
 
-for(i in sprintf("%02d", 1:10)){
+for(i in sprintf("%02d", 1)){
   assign(paste0("geno",i), read.table(file = paste0("sb_snpsDryad_sept2013_filter.c",i,"_numerical.txt"), header = TRUE, sep = "\t"))
 }
 
@@ -544,8 +544,11 @@ rownames(pheno) <- pheno_name
 
 #Genotype file for SKAT
 #filter by taxa from TASSEL, i.e., only the taxa which are used in the phenotype should be present in the genotype file 
+#Do the same as before
+
+
 ##Reading the genotype files
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap/genotype_filtered_by_phenotype")
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap/genotype_filtered_by_phenotype/minor_allele_format")
 #edit the files like the one from geno
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("geno_f",i), read.table(file = paste0("geno_f_pheno",i,".txt"), header = TRUE, sep = "\t"))
@@ -574,7 +577,7 @@ combined.test.statistics <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 ref_genotype <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 ref_genotype_skat <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 
-for (i in 1:ncol(gwas02.fstat)){ #ncol(gwas1.Test.Stat)
+for (i in 1:ncol(gwas01.fstat)){ #ncol(gwas1.Test.Stat)
   for(j in 1:sum(!is.na(gwas01.fstat[,i]))){ 
     x[1,j] <- gwas01.fstat[j,i]
     #x <- as.double(x[!is.na(x)])
@@ -592,7 +595,7 @@ for (i in 1:ncol(gwas02.fstat)){ #ncol(gwas1.Test.Stat)
     z <- z[1:2000]
     
     #GBJ, minP, GHC, OMNI
-    ref_genotype <- as.data.frame(geno1[,colnames(geno01) %in% y])
+    ref_genotype <- as.data.frame(geno_f01[,colnames(geno_f01) %in% y])
     ref_genotype <- data.frame(lapply(ref_genotype, function(x){
       gsub("-",0,x)
     }))
@@ -629,7 +632,7 @@ for (i in 1:ncol(gwas02.fstat)){ #ncol(gwas1.Test.Stat)
     x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
     y <- vector()
   } else if(nrow(x) >= 2 & nrow(x) < 2000){
-    ref_genotype <- as.data.frame(geno02[,colnames(geno02) %in% y])
+    ref_genotype <- as.data.frame(geno_f01[,colnames(geno_f01) %in% y])
     ref_genotype <- data.frame(lapply(ref_genotype, function(x){
       gsub("-",9,x)
     }))
@@ -684,9 +687,11 @@ for (i in 1:ncol(gwas02.fstat)){ #ncol(gwas1.Test.Stat)
 
 
 
-write.csv(combined.test.statistics,"chr01.csv")
-#save(combined.test.statistics, file = "chr01.test.stat.RData")
+write.csv(combined.test.statistics,"chr01_gbj.csv")
+save(combined.test.statistics, file = "chr01_gbj.RData")
 load("ch01.test.stat.RData")
+
+
 
 
 #Adding names
