@@ -4,14 +4,18 @@ library(ACAT)
 
 
 #Reading files
-setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Results/pvalues.combination")
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Results/pvalues.combination")
 pvalue.chr01 <- read.csv("combined.omni.magma.csv")
 rownames(pvalue.chr01) <- pvalue.chr01[,1]
 pvalue.chr01 <- pvalue.chr01[,-1]
 
+class(pvalue.chr01)
+
 #Aggregated Cauchy Association Test
-pvalue <- as.numeric(pvalue.chr01[3,])
+pvalue <- as.numeric(pvalue.chr01[1,])
 pvalue
+typeof(pvalue)
+class(pvalue)
 ACAT(Pvals = pvalue)
 ACAT(matrix(runif(1000), ncol = 10))
 
@@ -21,8 +25,14 @@ ACAT(matrix(runif(1000), ncol = 10))
 
 #ACAT function
 acat <- function(x, output){
-  pvalue <- as.numeric(x[1,])
+  pvalue <- unlist(as.numeric(x[1]))
   o <- ACAT(Pvals = pvalue)
   return(o)
 }
-apply(pvalue.chr01,1,acat)
+
+y <- chr01[,-1]
+x <-as.data.frame(apply(y,1,acat))
+pvalue <- chr01[]
+y
+
+chr01 <- 
