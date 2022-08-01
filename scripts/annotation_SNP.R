@@ -1,5 +1,5 @@
 # Package names
-packages <- c("ggplot2", "Rsamtools","GenomicAlignments","rtracklayer","GenomicRanges","AnnotationHub","knitr","gtools","data.table","stringi","GBJ","metap","multtest","Hmisc","devtools","SNPRelate","gdsfmt","dplyr","vcfR","tidyr","AssocTests","SKAT","NCmisc")
+packages <- c("ggplot2", "Rsamtools","GenomicAlignments","rtracklayer","GenomicRanges","AnnotationHub","knitr","gtools","data.table","stringi","GBJ","metap","multtest","Hmisc","devtools","SNPRelate","gdsfmt","dplyr","vcfR","tidyr","AssocTests","SKAT","NCmisc","ACAT")
 
 # Install packages not yet installed
 #installed_packages <- packages %in% rownames(installed.packages())
@@ -261,14 +261,14 @@ for(i in paste0("gwas", sprintf("%02d", 1:10),".gene.names")){
 #----> continue
 #Adding gene names
 j <- 1
-for(i in paste0("gwas",sprintf("%02d",1:10),".fstat")){
+for(i in paste0("gwas",sprintf("%02d",1:10),".zstat")){
   d <- get(i)
   d[,1] <- get(paste0("gwas",sprintf("%02d",j),".gene.names"))[,1]
   assign(i,d)
   j = j + 1
 }
 #Data ordering
-for(i in paste0("gwas",sprintf("%02d", 1:10),".fstat")){
+for(i in paste0("gwas",sprintf("%02d", 1:10),".zstat")){
   d <- get(i)
   d <- as.data.frame(t(d))
   x <- d[1,]
@@ -506,8 +506,8 @@ for(i in paste0("tab", sprintf("%02d", 1))){
 }
 
 
-#Convert fstat dataframe to numeric
-for(i in paste0("gwas", sprintf("%02d", 1), ".fstat")){
+#Convert zstat dataframe to numeric
+for(i in paste0("gwas", sprintf("%02d", 1), ".zstat")){
   d <- get(i)
   d <- as.data.frame(lapply(d, as.numeric))
   assign(i,d)
@@ -596,9 +596,9 @@ combined.test.statistics <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 ref_genotype <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 ref_genotype_skat <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 
-for (i in 1:ncol(gwas01.fstat)){ #ncol(gwas1.Test.Stat) ncol(gwas01.fstat)
-  for(j in 1:sum(!is.na(gwas01.fstat[,i]))){ 
-    x[1,j] <- gwas01.fstat[j,i]
+for (i in 1:6){ #ncol(gwas1.Test.Stat) ncol(gwas01.fstat)
+  for(j in 1:sum(!is.na(gwas01.zstat[,i]))){ 
+    x[1,j] <- gwas01.zstat[j,i]
     #x <- as.double(x[!is.na(x)])
     
     y[j] <- as.vector(as.character(gwas01.Marker[j,i]))
@@ -786,9 +786,9 @@ combined.test.statistics <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 ref_genotype <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 ref_genotype_skat <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 
-for (i in 4){ #ncol(gwas1.Test.Stat) ncol(gwas01.fstat)
-  for(j in 1:sum(!is.na(gwas01.fstat[,i]))){ 
-    x[1,j] <- gwas01.fstat[j,i]
+for (i in 1:20){ #ncol(gwas1.Test.Stat) ncol(gwas01.fstat)
+  for(j in 1:sum(!is.na(gwas01.zstat[,i]))){ 
+    x[1,j] <- gwas01.zstat[j,i]
     #x <- as.double(x[!is.na(x)])
     
     y[j] <- as.vector(as.character(gwas01.Marker[j,i]))
@@ -858,29 +858,15 @@ for (i in 4){ #ncol(gwas1.Test.Stat) ncol(gwas01.fstat)
     combined.test.statistics[i,1] <- gbj.test$GBJ_pvalue
     combined.test.statistics[i,2] <- ghc.test$GHC_pvalue
     combined.test.statistics[i,3] <- minP.test$minP_pvalue
-    combined.test.statistics[i,4] <- OMNI.test$OMNI_pvalue
+    combined.test.statistics[i,5] <- OMNI.test$OMNI_pvalue
     
     #SKAT
-    # ref_genotype_skat <- as.data.frame(geno_f01[,colnames(geno_f01) %in% y])
-    # ref_genotype_skat <- data.frame(lapply(ref_genotype_skat, function(x){
-    #   gsub("-",9,x)
-    # }))
-    # ref_genotype_skat <- data.frame(lapply(ref_genotype_skat, function(x){
-    #   gsub(0.5,2,x)
-    # }))
-    # ref_genotype_skat <- data.frame(apply(ref_genotype_skat, 2, function(x) as.numeric(as.character(x))))
-    # ref_genotype_skat <- data.frame(lapply(ref_genotype_skat, function(x){
-    #   gsub("0.5",9,x)
-    # }))
-    # ref_genotype_skat <- data.frame(apply(ref_genotype_skat, 2, function(x) as.numeric(as.character(x))))
-    # ref_genotype_skat <- as.matrix(ref_genotype_skat)
-    # obj01 <- as.list(ref_genotype_skat,pheno)
-    # obj01 <- SKAT_Null_Model(pheno ~ 1, out_type="C", data=obj01)
-    # combined.test.statistics[i,5] <- SKAT(ref_genotype_skat,obj01)$p.value
-    # 
-    # 
-    # x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
-    # y <- vector()
+    ref_genotype_skat <- as.matrix(ref_genotype)
+    obj01 <- as.list(ref_genotype_skat,pheno)
+    obj01 <- SKAT_Null_Model(pheno ~ 1, out_type="C", data=obj01)
+    combined.test.statistics[i,4] <- SKAT(ref_genotype_skat,obj01)$p.value
+    x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
+    y <- vector()
   } else if(nrow(x) == 1){
     combined.test.statistics[i,1] <- as.double(gwas01.pvalue[1,i])
     combined.test.statistics[i,2] <- as.double(gwas01.pvalue[1,i])
@@ -892,12 +878,10 @@ for (i in 4){ #ncol(gwas1.Test.Stat) ncol(gwas01.fstat)
   y <- vector()
   z <- vector()
   ref_genotype <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
+  ref_genotype_SKAT <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
 }
 
 
-names <- as.data.frame(gwas01.gene.names[1:2488,1])
-
-
 chr01 <- cbind(names, combined.test.statistics)
-colnames(chr01) <- c("GeneNames", "GBJ","GHJ", "minP","SKAT","OMNI")
+colnames(combined.test.statistics) <- c( "GBJ","GHJ", "minP","SKAT","OMNI")
 write.csv(chr01, "chr01.csv")
