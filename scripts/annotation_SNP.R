@@ -1,5 +1,5 @@
 # Package names
-packages <- c("ggplot2", "Rsamtools","GenomicAlignments","rtracklayer","GenomicRanges","AnnotationHub","knitr","gtools","data.table","stringi","GBJ","metap","multtest","Hmisc","devtools","SNPRelate","gdsfmt","dplyr","vcfR","tidyr","AssocTests","SKAT")
+packages <- c("ggplot2", "Rsamtools","GenomicAlignments","rtracklayer","GenomicRanges","AnnotationHub","knitr","gtools","data.table","stringi","GBJ","metap","multtest","Hmisc","devtools","SNPRelate","gdsfmt","dplyr","vcfR","tidyr","AssocTests","SKAT","NCmisc")
 
 # Install packages not yet installed
 #installed_packages <- packages %in% rownames(installed.packages())
@@ -11,13 +11,23 @@ packages <- c("ggplot2", "Rsamtools","GenomicAlignments","rtracklayer","GenomicR
 invisible(lapply(packages, library, character.only = TRUE))
 
 
-###Global Functions:
+#Global Functions:
 ##Gene Name filtering
 split.names <- function(x,split){
   split.genename <- unlist(strsplit(x, split = ';', fixed = TRUE))[2]
   split.genename2 <- unlist(strsplit(split.genename, split = "=", fixed = TRUE))[2]
   return(split.genename2)
 }
+
+## Converting pvalues to Z-scores
+zval <- function(x, output){
+  pvalue <- unlist(as.numeric(x[4]))
+  o <- p.to.Z(pvalue)
+  return(o)
+}
+
+zvalue <-as.data.frame(apply(gwas01,1,zval))
+
 
 ##Pvalues Combinations Test
 pvalue.combine <- function(gwas.fstat, gwas.markers, gwas.pvalue, geno, tab.pc,combined.test.statistics){
@@ -138,6 +148,13 @@ for(i in sprintf("%02d", 1:10)){
 }
 
 
+##Adding z value column
+for(i in paste0("gwas", sprintf("%02d", 1:10))){
+  d = get(i)
+  d$zstat = as.data.frame(apply(d,1,zval))
+  assign(i,d)
+}
+
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -147,6 +164,8 @@ for(i in sprintf("%02d", 1:10)){
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("gr.db", i) , GRanges(seqnames = paste0("chr",i), ranges = IRanges(start = get(paste0("db.",i))[,"Start"], end = get(paste0("db.",i))[,"End"]), strand = get(paste0("db.",i))[,"Strand"], Region = get(paste0("db.",i))[,"Region"], Gene = get(paste0("db.",i))[,"Gene"]))
 }
+
+
 
 ##Making GRanges for gwas Query
 #Changing the position column to numeric and removing the first row
@@ -217,10 +236,10 @@ for(i in paste0("gwas", sprintf("%02d", 1:10))){
 #   assign(i,d)
 # }
 
-##Table with F-stat values
+##Table with Z-stat values
 for(i in paste0("gwas",sprintf("%02d",1:10))){
   d=get(i)
-  assign(paste0(i,".fstat"), dcast(setDT(d), Gene~rowid(Gene, prefix = "fstat"), value.var = "fstat"))
+  assign(paste0(i,".zstat"), dcast(setDT(d), Gene~rowid(Gene, prefix = "zstat"), value.var = "zstat"))
   assign(i,d)
 }
 #----> continue
@@ -229,7 +248,7 @@ for(i in paste0("gwas",sprintf("%02d",1:10))){
 #Can use this table for all the other tables with Marker and pvalue data
 for(i in paste0("gwas", sprintf("%02d", 1:10))){
   d=get(i)
-  assign(paste0(i,".gene.names"), get(paste0(i,".fstat"))[,1])
+  assign(paste0(i,".gene.names"), get(paste0(i,".zstat"))[,1])
   assign(i,d)
 }
 
@@ -880,4 +899,5 @@ names <- as.data.frame(gwas01.gene.names[1:2488,1])
 
 
 chr01 <- cbind(names, combined.test.statistics)
+colnames(chr01) <- c("GeneNames", "GBJ","GHJ", "minP","SKAT","OMNI")
 write.csv(chr01, "chr01.csv")
