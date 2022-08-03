@@ -658,34 +658,40 @@ for(i in sprintf("%02d", 1:10)){
 
 #Running the Analysis:
 #Using the pvalue.combination function:
-for(i in sprintf("%02d", 1)){
+for(i in sprintf("%02d", 6:10)){
   assign(paste0("pvalue.combine",i), pvalue.combine(get(paste0("gwas",i,".zstat")), get(paste0("gwas",i,".Marker")), get(paste0("gwas",i,".pvalue")), get(paste0("geno",i)), get(paste0("tab",i))))
 }
 
 
+
+
 #Adding names
-setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Results/pvalues.combination")
-pvalue.omni <- read.csv("GBJ_chr01.csv", header=TRUE)
-pvalue.magma <- read.csv("MAGMA_chr01.csv", header = TRUE)
-gwas01.gene.names <- unlist(gwas01.gene.names)
-typeof(gwas01.gene.names)
-pvalue.omni$GENE <- gwas01.gene.names
+j = 1
+for(i in paste0("pvalue.combine",sprintf("%02d", 1:5))){
+  d = get(i)
+  a <- get(paste0("gwas",sprintf("%02d", j), ".gene.names"))
+  a <- unlist(a)
+  row.names(d) <- a
+  j = j + 1
+  assign(i,d)
+}
 
+#SAVING the files
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Results/pvalues.combination")
+j = 1
+for(i in paste0("pvalue.combine",sprintf("%02d", 1:5))){
+  d = get(i)
+  write.csv(d, paste0("pvalue.combine",sprintf("%02d", j),".csv"))
+  j = j + 1
+  assign(i,d)
+}
 
+for(i in sprintf("%02d", 1:5)){
+  assign(paste0("pvalue.combine",i), read.csv(paste0("pvalue.combine",i,".csv")))
+}
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-
-#Combining OMNI and Magma
-library(dplyr)
-combined.omni.magma <- inner_join(pvalue.omni,pvalue.magma, by = "GENE")
-rownames(combined.omni.magma) <- combined.omni.magma$GENE
-combined.omni.magma <- combined.omni.magma[,-6]
-
-#Saving
-setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Results/pvalues.combination")
-write.csv(combined.omni.magma, "combined.omni.magma.csv", row.names = TRUE)
 
 
 #Number of elements in each row
