@@ -702,7 +702,7 @@ setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Results/pvalues.c
 
 
 ##Plotting the number of SNPs for each gene
-par(mfrow = c(2, 5))
+par(mfrow = c(5, 5))
 
 for(i in paste0("gwas",sprintf("%02d", 1:10),".Marker")){
   d = get(i)
@@ -737,5 +737,4 @@ for(i in paste0("pvalue.combine",sprintf("%02d", 1:10))){
   filtered_genes_GBJ <- rbind(filtered_genes_GBJ,z)
   assign(i,d)
 }
-
 
