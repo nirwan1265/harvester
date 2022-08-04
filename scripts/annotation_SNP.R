@@ -662,12 +662,9 @@ for(i in sprintf("%02d", 6:10)){
   assign(paste0("pvalue.combine",i), pvalue.combine(get(paste0("gwas",i,".zstat")), get(paste0("gwas",i,".Marker")), get(paste0("gwas",i,".pvalue")), get(paste0("geno",i)), get(paste0("tab",i))))
 }
 
-
-
-
 #Adding names
 j = 1
-for(i in paste0("pvalue.combine",sprintf("%02d", 1:5))){
+for(i in paste0("pvalue.combine",sprintf("%02d", 1:10))){
   d = get(i)
   a <- get(paste0("gwas",sprintf("%02d", j), ".gene.names"))
   a <- unlist(a)
@@ -678,30 +675,42 @@ for(i in paste0("pvalue.combine",sprintf("%02d", 1:5))){
 
 #SAVING the files
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Results/pvalues.combination")
-j = 1
-for(i in paste0("pvalue.combine",sprintf("%02d", 1:5))){
+# j = 1
+# for(i in paste0("pvalue.combine",sprintf("%02d", 1:10))){
+#   d = get(i)
+#   write.csv(d, paste0("pvalue.combine",sprintf("%02d", j),".csv"))
+#   j = j + 1
+#   assign(i,d)
+# }
+
+
+#Reading the files
+# for(i in sprintf("%02d", 1:5)){
+#   assign(paste0("pvalue.combine",i), read.csv(paste0("pvalue.combine",i,".csv")))
+# }
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+##Plotting the number of SNPs for each gene
+par(mfrow = c(2, 5))
+
+for(i in paste0("gwas",sprintf("%02d", 1:10),".Marker")){
   d = get(i)
-  write.csv(d, paste0("pvalue.combine",sprintf("%02d", j),".csv"))
-  j = j + 1
+  elements <- as.data.frame(colSums(!is.na(d)))
+  colnames(elements) <- "Number.of.SNPs"
+  hist(elements$Number.of.SNPs, main = "Distribution of SNPs",
+       xlab = "Number of SNPs", 
+       col = rainbow(14),
+       breaks = max(elements), #highest SNPs
+       ylim = c(1,1000),
+       labels = TRUE
+  )
   assign(i,d)
 }
 
-for(i in sprintf("%02d", 1:5)){
-  assign(paste0("pvalue.combine",i), read.csv(paste0("pvalue.combine",i,".csv")))
-}
-
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
-#Number of elements in each row
-elements <- as.data.frame(colSums(!is.na(gwas01.Marker)))
-colnames(elements) <- "Number.of.SNPs"
-#Plotting
-hist(elements$Number.of.SNPs, main = "Distribution of SNPs",
-     xlab = "Number of SNPs", 
-     col = rainbow(14),
-     breaks = 36, #highest SNP
-     ylim = c(1,1000),
-     labels = TRUE
-)
+
+
