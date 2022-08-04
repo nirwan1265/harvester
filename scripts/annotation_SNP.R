@@ -673,6 +673,14 @@ for(i in paste0("pvalue.combine",sprintf("%02d", 1:10))){
   assign(i,d)
 }
 
+
+#Column names
+for(i in paste0("pvalue.combine",sprintf("%02d", 1:10))){
+  d = get(i)
+  colnames(d) <- c("GBJ","GHC","minP","SKAT","OMNI_ItoIV","CCT_ItoIV")
+  assign(i,d)
+}
+
 #SAVING the files
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Results/pvalues.combination")
 # j = 1
@@ -711,6 +719,23 @@ for(i in paste0("gwas",sprintf("%02d", 1:10),".Marker")){
 }
 
 
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+
+#Filtering only the significant genes
+filtered_genes_OMNI <- NULL
+filtered_genes_CCT <- NULL
+filtered_genes_GBJ <- NULL
+for(i in paste0("pvalue.combine",sprintf("%02d", 1:10))){
+  d = get(i)
+  x <- dplyr::filter(d, OMNI_ItoIV < 0.05)
+  y <- dplyr::filter(d, CCT_ItoIV < 0.05)
+  z <- dplyr::filter(d, GBJ < 0.05)
+  filtered_genes_OMNI <- rbind(filtered_genes_OMNI,x)
+  filtered_genes_CCT <- rbind(filtered_genes_CCT,y)
+  filtered_genes_GBJ <- rbind(filtered_genes_GBJ,z)
+  assign(i,d)
+}
 
 
