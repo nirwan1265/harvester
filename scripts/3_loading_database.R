@@ -9,12 +9,6 @@ colnames(snp.db) <- c("Chromosome","Database","Region","Start","End","NA","Stran
 
 
 
-##SNP and pvalue table
-setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Github/eMAGMA")
-chr01.snp <- query.snp.gwas01[,c(1,5)]
-write.table(chr01.snp,"chr01.snp.pvalues.txt", sep = " ", row.names = F, col.names = F, quote = F)
-
-
 ##Sub-setting chromosomes from gene annotation database
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("x",i), paste0("Chr",i))
