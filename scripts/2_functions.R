@@ -1,4 +1,15 @@
 #Global Functions:
+## Database Annotation
+dbannot <- function(n,db){
+  colnames(db) <- c("Chromosome","Database","Region","Start","End","NA","Strand","NA2","Gene")
+  for(i in sprintf("%02d", 1:n)){
+    assign(paste0("x", paste0("Chr",i)))
+  }
+  for(i in sprintf("%02d", 1:n)){
+    assign(paste0(db,".db.chr.",i), db[which(db$Chromosome == get(paste0("x",i))), ])
+  }
+}
+
 ##Gene Name filtering
 split.names <- function(x,split){
   split.genename <- unlist(strsplit(x, split = ';', fixed = TRUE))[2]
