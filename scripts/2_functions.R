@@ -1,13 +1,21 @@
 #Global Functions:
 ## Database Annotation
-dbannot <- function(n,db){
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Maize.annotation")
+db <- as.data.frame(read.table(file ="Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.gff3", sep = "\t", header = FALSE))
+dbannot <- function(n,db,output){
   colnames(db) <- c("Chromosome","Database","Region","Start","End","NA","Strand","NA2","Gene")
-  for(i in sprintf("%02d", 1:n)){
-    assign(paste0("x", paste0("Chr",i)))
+  if(db[1,1] == "chr1"){
+    for(i in 1:n){
+      assign(paste0("db.chr.",i), db[which(db$Chromosome == paste0("chr",i)), ])
+    }
   }
-  for(i in sprintf("%02d", 1:n)){
-    assign(paste0(db,".db.chr.",i), db[which(db$Chromosome == get(paste0("x",i))), ])
+  if(db[1,1] == "Chr1"){
+    for(i in 1:n){
+      assign(paste0("db.chr.",i), db[which(db$Chromosome == paste0("Chr",i)), ])
+    }
   }
+  
+  return(as.data.frame(db.chr.1))
 }
 
 ##Gene Name filtering
