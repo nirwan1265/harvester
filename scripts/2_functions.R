@@ -18,6 +18,31 @@ dbannot <- function(n,db,output){
   return(as.data.frame(db.chr.1))
 }
 
+## Loading GWAS:
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Results/GWAS.results/MLM")
+colnames(query.snp.gwas01) <- c("marker","chr","pos","F","pval")
+gwasannot <- function(type, n, gwas, zval,output){
+  if(n == 1){
+    if(zval == TRUE){
+      for(i in 1:n){
+        assign(paste0("gwas.chr.",i), gwas[which(db$Chromosome == paste0("chr",i)), ])
+      }
+    }
+    else{
+      
+    }
+  }
+  else{
+    if(zval == TRUE){
+      
+    }
+    else{
+      
+    }
+  }
+}
+
+
 ##Gene Name filtering
 split.names <- function(x,split){
   split.genename <- unlist(strsplit(x, split = ';', fixed = TRUE))[2]
