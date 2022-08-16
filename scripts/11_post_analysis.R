@@ -1,4 +1,7 @@
 library(ggvenn)
+library(VennDiagram)
+
+library(venn)
 # Recover data
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Results/pvalues.combination")
 
@@ -86,24 +89,17 @@ x <- list(
   OMNI <- as.vector(filtered_genes_OMNI[,1]),
   CCT <- as.vector(filtered_genes_CCT[,1])
 )
-
-ggvenn(
-  x,
-  fill_color = c("#0073C2FF", "#EFC000FF", "#868686FF", "#CD534CFF","#CD268CFF","#EFC000FF"),
-  stroke_size = 0.5, set_name_size = 4
+y <- list(
+  OMNI <- as.vector(filtered_genes_OMNI[,1]),
+  CCT <- as.vector(filtered_genes_CCT[,1])
 )
-
-set.seed(20190708)
-genes <- paste("gene",1:1000,sep="")
-
-x <- list(
-  A = sample(genes,300), 
-  B = sample(genes,525), 
-  C = sample(genes,440),
-  D = sample(genes,350)
+z <- list(
+  GBJ = as.vector(filtered_genes_GBJ[,1]),
+  GHC = as.vector(filtered_genes_GHC[,1]),
+  minP = as.vector(filtered_genes_minP[,1]),
+  SKAT = as.vector(filtered_genes_SKAT[,1])
 )
-x
-A = sample(genes,300)
-typeof(A)
-typeof(GBJ)
-class(GBJ)
+venn(x, snames = c("GBJ","GHC","minP","SKAT","OMNI","CCT"), ilabels = TRUE, ellipse = TRUE, zcolor = "style", opacity = 0.2, plotsize = 15, borders = TRUE, box = T, ggplot = TRUE)
+venn(y, snames = c("OMNI","CCT"), ilabels = TRUE, ellipse = TRUE, zcolor = "style", opacity = 0.2, plotsize = 15, borders = TRUE, box = T, ggplot = TRUE)
+venn(z, snames = c("GBJ","GHC","minP","SKAT"), ilabels = TRUE, ellipse = TRUE, zcolor = "style", opacity = 0.2, plotsize = 15, borders = TRUE, box = T, ggplot = TRUE)
+
