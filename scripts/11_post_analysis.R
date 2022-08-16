@@ -73,8 +73,9 @@ for(i in paste0("pvalue.combine",sprintf("%02d", 1:10))){
 filtered_genes_OMNI <- read.csv("filtered_genes_OMNI.csv")
 filtered_genes_CCT <- read.csv("filtered_genes_CCT.csv")
 filtered_genes_GBJ <- read.csv("filtered_genes_GBJ.csv")
-
-
+filtered_genes_SKAT <- read.csv("filtered_genes_SKAT.csv")
+filtered_genes_minP <- read.csv("filtered_genes_minP.csv")
+filtered_genes_GHC <- read.csv("filtered_genes_GHC.csv")
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -102,4 +103,6 @@ z <- list(
 venn(x, snames = c("GBJ","GHC","minP","SKAT","OMNI","CCT"), ilabels = TRUE, ellipse = TRUE, zcolor = "style", opacity = 0.2, plotsize = 15, borders = TRUE, box = T, ggplot = TRUE)
 venn(y, snames = c("OMNI","CCT"), ilabels = TRUE, ellipse = TRUE, zcolor = "style", opacity = 0.2, plotsize = 15, borders = TRUE, box = T, ggplot = TRUE)
 venn(z, snames = c("GBJ","GHC","minP","SKAT"), ilabels = TRUE, ellipse = TRUE, zcolor = "style", opacity = 0.2, plotsize = 15, borders = TRUE, box = T, ggplot = TRUE)
+
+
 

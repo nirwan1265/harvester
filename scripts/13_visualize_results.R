@@ -1,53 +1,4 @@
-#Filtering genes
-#Raw GWAS result
-setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Results")
-x <- gwas01.pvalue
-x[] <- lapply(x, function(x) as.numeric(replace(x, is.na(x), 1)))
-
-raw.gwas <- as.data.frame(apply(x, 2, min))
-colnames(raw.gwas)[1] <- "pvalue"
-raw.gwas$gene <- rownames(raw.gwas)
-raw.gwas <- as.data.frame(raw.gwas[order(raw.gwas$pvalue), ])
-raw.gwas <- raw.gwas[raw.gwas$pvalue < 0.05, ]
-raw.gwas.gene <- raw.gwas$gene
-
-
-
-
-#OMNI GWAS result
-setwd("/Users/nirwan/Library/Mobile Documents/com~apple~CloudDocs/Data for sorghum/sorghum/Results")
-omni.gwas <- read.csv("pvalue.combine.OMNIBUS.csv")
-x <- omni.gwas
-x <- as.data.frame(apply(x, 1, FUN = min))
-x[] <- lapply(x, function(x) as.numeric(replace(x, is.na(x), 1)))
-omnibus.gwas <- cbind(omni.gwas,x)
-omnibus.gwas <- omnibus.gwas[,c(1,6)]
-colnames(omnibus.gwas) <- c("gene","pvalue")
-omnibus.gwas <- as.data.frame(omnibus.gwas[order(omnibus.gwas$pvalue), ])
-
-omnibus.gwas <- omnibus.gwas[omnibus.gwas$pvalue < 0.05, ]
-omnibus.gwas.gene <-omnibus.gwas$gene
-
-library(dplyr)
-x <- left_join(omnibus.gwas.gene, raw.gwas.gene)
-
-#Venn diagram
-if (!require(devtools)) install.packages("devtools")
-devtools::install_github("yanlinlin82/ggvenn")
-library(ggvenn)
-
-x <- list(
-  pvalue.combination = omnibus.gwas.gene,
-  RAW.GWAS = raw.gwas.gene
-)
-
-ggvenn(
-  x,
-  fill_color = c("#CD534CFF", "#EFC000FF"),
-  stroke_size = 0.5, set_name_size = 4
-)
-
-#GO analysis
+#Required Packages
 library(clusterProfiler)
 library(enrichplot)
 library(ggnewscale)
@@ -56,6 +7,38 @@ library(AnnotationDbi)
 library(AnnotationHub)
 library(GenomeInfoDb)
 library(org.Sbicolor.eg.db)
+
+# Loading gene-based pvalue data
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Results/pvalues.combination")
+filtered_genes_OMNI <- read.csv("filtered_genes_OMNI.csv")
+filtered_genes_CCT <- read.csv("filtered_genes_CCT.csv")
+filtered_genes_GBJ <- read.csv("filtered_genes_GBJ.csv")
+filtered_genes_SKAT <- read.csv("filtered_genes_SKAT.csv")
+filtered_genes_minP <- read.csv("filtered_genes_minP.csv")
+filtered_genes_GHC <- read.csv("filtered_genes_GHC.csv")
+
+
+# Loading raw GWAS result
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap/R_saved")
+system("ls")
+readRDS()
+j <- 1
+for(i in paste0("common",sprintf("%02d",1:10),".RDS")){
+  d = get(i)
+  assign(paste0("common",sprintf("%02d", j)), readRDS(d))
+  j <- j + 1
+  assign(i,d)
+}
+
+common01 <- readRDS("common01.RDS")
+
+
+
+
+
+
+#GO analysis
+
 
 
 

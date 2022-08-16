@@ -12,9 +12,3 @@ for(i in sprintf("%02d", 1:10)){
   assign(paste0("query.snp.gwas",i), get(paste0("query.snp.gwas",i))[,c(2,3,4,6,7)])
 }
 
-##Adding z value column
-for(i in paste0("gwas", sprintf("%02d", 1:10))){
-  d = get(i)
-  d$zstat = as.data.frame(apply(d,1,zval))
-  assign(i,d)
-}

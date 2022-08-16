@@ -43,6 +43,13 @@ for(i in paste0("gwas", sprintf("%02d", 1:10))){
 #   assign(i,d)
 # }
 
+##Adding z value column
+for(i in paste0("gwas", sprintf("%02d", 1:10))){
+  d = get(i)
+  d$zstat = as.data.frame(apply(d,1,zval))
+  assign(i,d)
+}
+
 ##Table with Z-stat values
 for(i in paste0("gwas",sprintf("%02d",1:10))){
   d=get(i)
