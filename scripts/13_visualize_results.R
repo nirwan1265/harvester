@@ -20,32 +20,41 @@ filtered_genes_GHC <- read.csv("filtered_genes_GHC.csv")
 
 # Loading raw GWAS result
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap/R_saved")
-system("ls")
-readRDS()
-j <- 1
-for(i in paste0("common",sprintf("%02d",1:10),".RDS")){
+
+gwas01.pvalue <- readRDS("gwas01.pvalue.RDS")
+gwas02.pvalue <- readRDS("gwas02.pvalue.RDS")
+gwas03.pvalue <- readRDS("gwas03.pvalue.RDS")
+gwas04.pvalue <- readRDS("gwas04.pvalue.RDS")
+gwas05.pvalue <- readRDS("gwas05.pvalue.RDS")
+gwas06.pvalue <- readRDS("gwas06.pvalue.RDS")
+gwas07.pvalue <- readRDS("gwas07.pvalue.RDS")
+gwas08.pvalue <- readRDS("gwas08.pvalue.RDS")
+gwas09.pvalue <- readRDS("gwas09.pvalue.RDS")
+gwas10.pvalue <- readRDS("gwas10.pvalue.RDS")
+
+
+#Combining total pvalues in a dataframe
+raw.genes <- NULL
+for (i in paste0("gwas",sprintf("%02d", 1:10),".pvalue")){
   d = get(i)
-  assign(paste0("common",sprintf("%02d", j)), readRDS(d))
-  j <- j + 1
+  raw.genes <- rbind(raw.genes,t(d[1,]))
   assign(i,d)
 }
 
-common01 <- readRDS("common01.RDS")
+raw.genes <-as.data.frame(as.numeric(raw.genes))
+colnames(raw.genes) <- "pvalue"
 
+raw.genes <- as.data.frame(raw.genes[which(raw.genes$pvalue < 0.05), ])
 
-
-
-
+gene.names <- rownames(raw.genes)
+raw.genes <-as.numeric(raw.genes)
 
 #GO analysis
-
-
-
 
 #Sorting the data
 ## feature 1: numeric vector
 geneList = rnaseq_analysis[,2]
-geneList
+geneList = gene.names
 
 ## feature 2: named vector
 names(geneList) = as.character(rnaseq_analysis[,1])
@@ -249,3 +258,5 @@ write.csv(gwas01.fstat,"gwas01.fstat.csv")
 write.csv(gwas01.Marker,"gwas01.marker.csv")
 write.csv(gwas01.pvalue,"gwas01.pvalue.csv")
 write.csv(tab.pc01,"tab.pc01.csv")
+
+
