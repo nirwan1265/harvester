@@ -40,25 +40,30 @@ for (i in paste0("gwas",sprintf("%02d", 1:10),".pvalue")){
   raw.genes <- rbind(raw.genes,t(d[1,]))
   assign(i,d)
 }
-
-raw.genes <-as.data.frame(as.numeric(raw.genes))
-colnames(raw.genes) <- "pvalue"
-
-raw.genes <- as.data.frame(raw.genes[which(raw.genes$pvalue < 0.05), ])
-
 gene.names <- rownames(raw.genes)
-raw.genes <-as.numeric(raw.genes)
+raw.genes <-as.data.frame(as.numeric(raw.genes))
+rownames(raw.genes) <- gene.names
+# colnames(raw.genes) <- "pvalue"
+# rownames(raw.genes) <- gene.names
+# 
+# raw.genes <- as.data.frame(raw.genes[which(raw.genes$pvalue < 0.05), ])
+# 
+# gene.names <- rownames(raw.genes)
+# raw.genes <-as.numeric(raw.genes)
 
 #GO analysis
 
 #Sorting the data
 ## feature 1: numeric vector
 geneList = rnaseq_analysis[,2]
-geneList = gene.names
+geneList = raw.genes[,1]
 
 ## feature 2: named vector
 names(geneList) = as.character(rnaseq_analysis[,1])
 geneList
+names(geneList) = as.character(rownames(raw.genes))
+geneList
+
 ## feature 3: decreasing order
 geneList = sort(geneList, decreasing = TRUE)
 head(geneList)
@@ -75,7 +80,7 @@ ego_BP <- enrichGO(gene = gene,
                    pAdjustMethod = "BH",
                    pvalueCutoff  = 0.01,
                    qvalueCutoff  = 0.05)
-
+?enrichGO()
 ego_MF <- enrichGO(gene = gene,
                    OrgDb         = org.Sbicolor.eg.db,
                    keyType       = 'ENTREZID',
