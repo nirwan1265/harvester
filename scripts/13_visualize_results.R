@@ -43,13 +43,29 @@ for (i in paste0("gwas",sprintf("%02d", 1:10),".pvalue")){
 gene.names <- rownames(raw.genes)
 raw.genes <-as.data.frame(as.numeric(raw.genes))
 rownames(raw.genes) <- gene.names
-# colnames(raw.genes) <- "pvalue"
-# rownames(raw.genes) <- gene.names
-# 
-# raw.genes <- as.data.frame(raw.genes[which(raw.genes$pvalue < 0.05), ])
-# 
-# gene.names <- rownames(raw.genes)
-# raw.genes <-as.numeric(raw.genes)
+colnames(raw.genes) <- "gene"
+write.csv(gene.names,"gene.names.csv")
+
+
+#Converting to Uniprot
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Sorghum.annotation/Phytozome/PhytozomeV12/Sbicolor/annotation")
+synonym <- read.delim("Sbicolor_454_v3.1.1.synonym.txt", header = F)
+colnames(synonym)[1] <- "gene.names"
+#synonym <- synonym[!duplicated(synonym$V2), ]
+
+#Converting locus to transcript
+trans <- read.delim("Sbicolor_454_v3.1.1.locus_transcript_name_map.txt", header = T)
+colnames(trans)[1] <- "gene.names"
+#trans <- trans[!duplicated(trans$gene.names), ]
+gene.names <- as.data.frame(gene.names)
+colnames(gene.names) <- "gene.names"
+
+trans2 <- inner_join(trans, gene.names)
+colnames(trans2)[3] <- "gene.names"
+colnames(trans2)[1] <- "gene.names."
+transformed.gene <- inner_join(trans2, synonym)
+transformed.gene <- transformed.gene[!duplicated(transformed.gene$V2), ]
+transformed.gene <- transformed.gene$V2
 
 #GO analysis
 
@@ -70,7 +86,7 @@ head(geneList)
 
 gene <-names(geneList)
 head(gene)
-
+ 
 
 #GO over-representation analysis
 ego_BP <- enrichGO(gene = gene,
