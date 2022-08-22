@@ -21,8 +21,8 @@ dbannot <- function(n,db,output){
 
 ##Gene Name filtering
 split.names <- function(x,split){
-  split.genename <- unlist(strsplit(x, split = ';', fixed = TRUE))[2]
-  split.genename2 <- unlist(strsplit(split.genename, split = "=", fixed = TRUE))[2]
+  split.genename <- unlist(strsplit(x, split = ';', fixed = TRUE))[1]
+  split.genename2 <- unlist(strsplit(split.genename, split = ":", fixed = TRUE))[2]
   return(split.genename2)
 }
 
