@@ -30,7 +30,7 @@ for(i in sprintf("%02d", 1:10)){
 }
 
 
-##Saving the genotype file as  RDS
+ ##Saving the genotype file as  RDS
 # j <- 1
 # for(i in paste0("geno", sprintf("%02d", 1:10))){
 #   d = get(i)
@@ -38,3 +38,6 @@ for(i in sprintf("%02d", 1:10)){
 #   assign(i,d)
 #   j <- j+1
 # }
+
+## Loading the genotype file 
+

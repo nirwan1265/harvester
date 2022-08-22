@@ -66,6 +66,9 @@ colnames(trans2)[1] <- "gene.names."
 transformed.gene <- inner_join(trans2, synonym)
 transformed.gene <- transformed.gene[!duplicated(transformed.gene$V2), ]
 transformed.gene <- transformed.gene$V2
+write.csv(transformed.gene,"transformed.gene.csv")
+
+AnnotationDbi::select(org.Sbicolor.eg.db, keys=transformed.gene, columns='ENTREZID', keytype='GENENAME')
 
 #GO analysis
 

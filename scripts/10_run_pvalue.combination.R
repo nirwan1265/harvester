@@ -1,6 +1,6 @@
 #Running the Analysis:
 #Using the pvalue.combination function:
-for(i in sprintf("%02d", 6:10)){
+for(i in sprintf("%02d", 1:10)){
   assign(paste0("pvalue.combine",i), pvalue.combine(get(paste0("gwas",i,".zstat")), get(paste0("gwas",i,".Marker")), get(paste0("gwas",i,".pvalue")), get(paste0("geno",i)), get(paste0("tab",i))))
 }
 

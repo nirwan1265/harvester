@@ -5,11 +5,11 @@ for(i in sprintf("%02d", 1:10)){
   assign(paste0("gwas",i), get(paste0("common",i)))
 }
 
-# #Saving RDS
+## Saving RDS 
 # j <- 1
 # for(i in paste0("common", sprintf("%02d", 1:10))){
 #   d = get(i)
-#   saveRDS(d, paste0("common",sprintf("%02d" , j),".RDS"))
+#   saveRDS(d, paste0("common_ensembl",sprintf("%02d" , j),".RDS"))
 #   assign(i,d)
 #   j <- j+1
 # }
@@ -46,9 +46,11 @@ for(i in paste0("gwas", sprintf("%02d", 1:10))){
 ##Adding z value column
 for(i in paste0("gwas", sprintf("%02d", 1:10))){
   d = get(i)
-  d$zstat = as.data.frame(apply(d,1,zval))
+  d$zstat = unlist(apply(d,1,zval))
   assign(i,d)
 }
+
+
 
 ##Table with Z-stat values
 for(i in paste0("gwas",sprintf("%02d",1:10))){
@@ -148,10 +150,11 @@ for(i in paste0("gwas",sprintf("%02d", 1:10),".pvalue")){
 
 
 #saving objects
+# setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/R_saved")
 # j <- 1
-# for(i in paste0("gwas", sprintf("%02d", 1:10),".fstat")){
+# for(i in paste0("gwas", sprintf("%02d", 1:10),".zstat")){
 #   d = get(i)
-#   saveRDS(d, paste0("gwas",sprintf("%02d" , j),".fstat.RDS"))
+#   saveRDS(d, paste0("gwas",sprintf("%02d" , j),".zstat.RDS"))
 #   assign(i,d)
 #   j <- j+1
 # }
@@ -176,7 +179,7 @@ for(i in paste0("gwas",sprintf("%02d", 1:10),".pvalue")){
 #   assign(i,d)
 #   j <- j+1
 # }
-# 
+
 
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

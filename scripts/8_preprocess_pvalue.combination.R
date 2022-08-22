@@ -1,5 +1,10 @@
 ##Combination tests using GBJ package
 
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/R_saved")
+system("ls")
+for(i in sprintf("%02d", 1:10)){
+  assign(paste0("tab",i), readRDS(paste0("tab.pc",i,".RDS")))
+}
 #Convert tab.pcs to matrix
 for(i in paste0("tab", sprintf("%02d", 1:10))){
   d = get(i)
