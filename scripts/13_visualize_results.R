@@ -7,6 +7,8 @@ library(AnnotationDbi)
 library(AnnotationHub)
 library(GenomeInfoDb)
 library(org.Sbicolor.eg.db)
+library(org.Hs.eg.db)
+BiocManager::install("org.Hs.eg.db")
 
 # Loading gene-based pvalue data
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Results/pvalues.combination")
@@ -44,11 +46,14 @@ gene.names <- rownames(raw.genes)
 raw.genes <-as.data.frame(as.numeric(raw.genes))
 rownames(raw.genes) <- gene.names
 colnames(raw.genes) <- "gene"
-write.csv(gene.names,"gene.names.csv")
+#write.csv(gene.names,"gene.names.csv")
 
+library(org.Hs.eg.db)
+up <- UniProt.ws(taxId=9606)
+uniprots <- Rkeys(org.Hs.egUNIPROT)[1:5]
+select(up, uniprots, "GENE_ID")
 
-
-AnnotationDbi::select(org.Sbicolor.eg.db, keys=raw.genes, columns='ENTREZID', keytype='ENSEMBLID')
+AnnotationDbi::select(org.Sbicolor.eg.db, keys=raw.genes, columns='ENTREZID', keytype='UNIPROT')
 
 #GO analysis
 
@@ -70,17 +75,24 @@ head(geneList)
 gene <-names(geneList)
 head(gene)
  
-BiocManager::install("PANTHER.db")
-library(PANTHER.db)
+
+
+# keytype
+# “ACCNUM” “ALIAS” “ENSEMBL” “ENSEMBLPROT” “ENSEMBLTRANS” “ENTREZID”
+# “ENZYME” “EVIDENCE” “EVIDENCEALL” “FLYBASE” “FLYBASECG” “FLYBASEPROT”
+# “GENENAME” “GO” “GOALL” “MAP” “ONTOLOGY” “ONTOLOGYALL”
+# “PATH” “PMID” “REFSEQ” “SYMBOL” “UNIGENE” “UNIPROT”
 
 #GO over-representation analysis
 ego_BP <- enrichGO(gene = gene,
                    OrgDb         = org.Sbicolor.eg.db,
-                   keyType       = 'UNIPROTKB',
+                   keyType       = 'ENTREZID',
                    ont           = "BP",
                    pAdjustMethod = "BH",
                    pvalueCutoff  = 0.01,
                    qvalueCutoff  = 0.05)
+
+gene
 ?enrichGO()
 ego_MF <- enrichGO(gene = gene,
                    OrgDb         = org.Sbicolor.eg.db,
