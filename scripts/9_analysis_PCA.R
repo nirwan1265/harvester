@@ -73,6 +73,44 @@ for(i in paste0("pca",sprintf("%02d",1:10))){
 }
 
 
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Saving tab
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/R_saved")
+# j <- 1
+# for(i in paste0("tab",sprintf("%02d", 1:10))){
+#   d = get(i)
+#   saveRDS(d, paste0("tab",sprintf("%02d",j),".RDS"))
+#   j <- j + 1
+#   assign(i,d)
+# }
+
+system("ls")
+tab01 <- readRDS("tab01.RDS")
+tab01 <- matrix(as.numeric(tab01), ncol = ncol(tab01))
+
+tab02 <- readRDS("tab02.RDS")
+tab02 <- matrix(as.numeric(tab02), ncol = ncol(tab02))
+
+tab03 <- readRDS("tab03.RDS")
+tab03 <- matrix(as.numeric(tab03), ncol = ncol(tab03))
+
+tab04 <- readRDS("tab04.RDS")
+tab04 <- matrix(as.numeric(tab04), ncol = ncol(tab04))
+
+tab05 <- readRDS("tab05.RDS")
+tab05 <- matrix(as.numeric(tab05), ncol = ncol(tab05))
+
+tab06 <- readRDS("tab06.RDS")
+tab06 <- matrix(as.numeric(tab06), ncol = ncol(tab06))
+
+tab07 <- readRDS("tab07.RDS")
+tab07 <- matrix(as.numeric(tab07), ncol = ncol(tab07))
+
+tab08 <- readRDS("tab08.RDS")
+tab08 <- matrix(as.numeric(tab08), ncol = ncol(tab08))
+
+tab09 <- readRDS("tab09.RDS")
+tab09 <- matrix(as.numeric(tab09), ncol = ncol(tab09))
+
+tab10 <- readRDS("tab10.RDS")
+tab10 <- matrix(as.numeric(tab10), ncol = ncol(tab10))
 

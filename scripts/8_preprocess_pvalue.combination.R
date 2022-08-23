@@ -5,12 +5,6 @@ system("ls")
 for(i in sprintf("%02d", 1:10)){
   assign(paste0("tab",i), readRDS(paste0("tab.pc",i,".RDS")))
 }
-#Convert tab.pcs to matrix
-for(i in paste0("tab", sprintf("%02d", 1:10))){
-  d = get(i)
-  d <- as.matrix(d[,-1])
-  assign(i,d)
-}
 
 
 #Convert zstat dataframe to numeric
@@ -19,6 +13,28 @@ for(i in paste0("gwas", sprintf("%02d", 1:10), ".zstat")){
   d <- as.data.frame(lapply(d, as.numeric))
   assign(i,d)
 }
+
+#Convert pvalue dataframe to numeric
+for(i in paste0("gwas", sprintf("%02d", 1:10), ".pvalue")){
+  d <- get(i)
+  d <- as.data.frame(lapply(d, as.numeric))
+  assign(i,d)
+}
+
+#Convert tab dataframe to numeric
+for(i in paste0("tab", sprintf("%02d", 1:10))){
+  d <- get(i)
+  d <- as.data.frame(lapply(d, as.numeric))
+  assign(i,d)
+}
+
+#Convert tab.pcs to matrix
+for(i in paste0("tab", sprintf("%02d", 1:10))){
+  d = get(i)
+  d <- as.matrix(d[,-1])
+  assign(i,d)
+}
+
 
 ##Saving the tab.pcs file as  RDS
 # j <- 1
