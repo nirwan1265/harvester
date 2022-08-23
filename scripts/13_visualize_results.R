@@ -19,7 +19,7 @@ filtered_genes_GHC <- read.csv("filtered_genes_GHC.csv")
 
 
 # Loading raw GWAS result
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap/R_saved")
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/R_saved")
 
 gwas01.pvalue <- readRDS("gwas01.pvalue.RDS")
 gwas02.pvalue <- readRDS("gwas02.pvalue.RDS")
@@ -47,39 +47,19 @@ colnames(raw.genes) <- "gene"
 write.csv(gene.names,"gene.names.csv")
 
 
-#Converting to Uniprot
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Sorghum.annotation/Phytozome/PhytozomeV12/Sbicolor/annotation")
-synonym <- read.delim("Sbicolor_454_v3.1.1.synonym.txt", header = F)
-colnames(synonym)[1] <- "gene.names"
-#synonym <- synonym[!duplicated(synonym$V2), ]
 
-#Converting locus to transcript
-trans <- read.delim("Sbicolor_454_v3.1.1.locus_transcript_name_map.txt", header = T)
-colnames(trans)[1] <- "gene.names"
-#trans <- trans[!duplicated(trans$gene.names), ]
-gene.names <- as.data.frame(gene.names)
-colnames(gene.names) <- "gene.names"
-
-trans2 <- inner_join(trans, gene.names)
-colnames(trans2)[3] <- "gene.names"
-colnames(trans2)[1] <- "gene.names."
-transformed.gene <- inner_join(trans2, synonym)
-transformed.gene <- transformed.gene[!duplicated(transformed.gene$V2), ]
-transformed.gene <- transformed.gene$V2
-write.csv(transformed.gene,"transformed.gene.csv")
-
-AnnotationDbi::select(org.Sbicolor.eg.db, keys=transformed.gene, columns='ENTREZID', keytype='GENENAME')
+AnnotationDbi::select(org.Sbicolor.eg.db, keys=raw.genes, columns='ENTREZID', keytype='ENSEMBLID')
 
 #GO analysis
 
 #Sorting the data
 ## feature 1: numeric vector
-geneList = rnaseq_analysis[,2]
+#geneList = rnaseq_analysis[,2]
 geneList = raw.genes[,1]
 
 ## feature 2: named vector
-names(geneList) = as.character(rnaseq_analysis[,1])
-geneList
+#names(geneList) = as.character(rnaseq_analysis[,1])
+#geneList
 names(geneList) = as.character(rownames(raw.genes))
 geneList
 
@@ -90,11 +70,13 @@ head(geneList)
 gene <-names(geneList)
 head(gene)
  
+BiocManager::install("PANTHER.db")
+library(PANTHER.db)
 
 #GO over-representation analysis
 ego_BP <- enrichGO(gene = gene,
                    OrgDb         = org.Sbicolor.eg.db,
-                   keyType       = 'ENTREZID',
+                   keyType       = 'UNIPROTKB',
                    ont           = "BP",
                    pAdjustMethod = "BH",
                    pvalueCutoff  = 0.01,
