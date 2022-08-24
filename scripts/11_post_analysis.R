@@ -1,7 +1,7 @@
 library(ggvenn)
 library(VennDiagram)
-
 library(venn)
+
 # Recover data
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Results/pvalues.combination")
 
@@ -63,8 +63,15 @@ for(i in paste0("pvalue.combine",sprintf("%02d", 1:10))){
   assign(i,d)
 }
 
+## Save the files
+write.csv(filtered_genes_CCT,"filtered_genes_CCT.csv", row.names = FALSE)
+write.csv(filtered_genes_GBJ,"filtered_genes_GBJ.csv", row.names = FALSE)
+write.csv(filtered_genes_GHC,"filtered_genes_GHC.csv", row.names = FALSE)
+write.csv(filtered_genes_minP,"filtered_genes_minP.csv", row.names = FALSE)
+write.csv(filtered_genes_OMNI,"filtered_genes_OMNI.csv", row.names = FALSE)
+write.csv(filtered_genes_SKAT,"filtered_genes_SKAT.csv", row.names = FALSE)
 
-
+system("pwd")
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -8,7 +8,7 @@ library(AnnotationHub)
 library(GenomeInfoDb)
 library(org.Sbicolor.eg.db)
 library(org.Hs.eg.db)
-BiocManager::install("org.Hs.eg.db")
+library(dplyr)
 
 # Loading gene-based pvalue data
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Results/pvalues.combination")
@@ -18,6 +18,7 @@ filtered_genes_GBJ <- read.csv("filtered_genes_GBJ.csv")
 filtered_genes_SKAT <- read.csv("filtered_genes_SKAT.csv")
 filtered_genes_minP <- read.csv("filtered_genes_minP.csv")
 filtered_genes_GHC <- read.csv("filtered_genes_GHC.csv")
+
 
 
 # Loading raw GWAS result
@@ -35,7 +36,7 @@ gwas09.pvalue <- readRDS("gwas09.pvalue.RDS")
 gwas10.pvalue <- readRDS("gwas10.pvalue.RDS")
 
 
-#Combining total pvalues in a dataframe
+#Combining total  Raw pvalues in a dataframe
 raw.genes <- NULL
 for (i in paste0("gwas",sprintf("%02d", 1:10),".pvalue")){
   d = get(i)
@@ -83,9 +84,10 @@ geneList
 geneList = sort(geneList, decreasing = TRUE)
 head(geneList)
 
-gene <-names(geneList)
+gene <-names(geneList)[geneList < 0.05 & geneList != 0]
 head(gene)
- 
+
+
 
 
 # keytype
@@ -119,175 +121,45 @@ ego_CC <- enrichGO(gene = gene,
                    pvalueCutoff  = 0.01,
                    qvalueCutoff  = 0.05)
 
-#Dotplot
-ego_BP.res <- as.data.frame(ego_BP@result)
-barplot(ego_BP.res)
-ego_BP.res
 
-dotplot(ego_BP@result, showCategory=20)
-dotplot(ego_MF, showCategory=100)
-dotplot(ego_CC, showCategory=100)
+# Visualize
+go.bp.res <- as.data.frame(cbind(ego_BP@result[["Description"]],ego_BP@result[["Count"]],ego_BP@result[["pvalue"]]))
+colnames(go.bp.res) <- c("Description","Count","pvalue")
+go.bp.res[,3] <- sapply(go.bp.res[,3], as.numeric)
+go.bp.res <- go.bp.res[which(go.bp.res$pvalue < 0.05), ]
+go.bp.res[,2] <- sapply(go.bp.res[,2], as.double)
+go.bp.res %>% 
+  ggplot(aes(Description,Count))+
+  geom_col() +
+  coord_flip()+
+  labs(title="Raw GWAS GO_BP",
+       x="Gene Count", y= "Description")+
+  geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")
 
+go.mf.res <- as.data.frame(cbind(ego_MF@result[["Description"]],ego_MF@result[["Count"]],ego_MF@result[["pvalue"]]))
+colnames(go.mf.res) <- c("Description","Count","pvalue")
+go.mf.res[,3] <- sapply(go.mf.res[,3], as.numeric)
+go.mf.res <- go.mf.res[which(go.mf.res$pvalue < 0.05), ]
+go.mf.res[,2] <- sapply(go.mf.res[,2], as.double)
+go.mf.res %>% 
+  ggplot(aes(Description,Count))+
+  geom_col() +
+  coord_flip()+
+  labs(title="Raw GWAS GO_MF",
+       x="Gene Count", y= "Description")+
+  geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")
 
-#Gene Concept Network:
-p1_BP <- cnetplot(ego_BP, foldChange = geneList)
-p3_BP <- cnetplot(ego_BP, foldChange = geneList, circular=TRUE, colorEdge=TRUE)
-cowplot::plot_grid(p1_BP,p3_BP, ncol=2, labels=LETTERS[1:2], rel_widths = c(.8,.8,1.2))
-
-
-p1_MF <- cnetplot(ego_MF, foldChange = geneList)
-p3_MF <- cnetplot(ego_MF, foldChange = geneList, circular=TRUE, colorEdge=TRUE)
-cowplot::plot_grid(p1_MF,p3_MF, ncol=2, labels=LETTERS[1:2], rel_widths = c(.8,.8,1.2))
-
-
-p1_CC <- cnetplot(ego_CC, foldChange = geneList)
-p3_CC <- cnetplot(ego_CC, foldChange = geneList, circular=TRUE, colorEdge=TRUE)
-cowplot::plot_grid(p1_CC,p3_CC, ncol=2, labels=LETTERS[1:2], rel_widths = c(.8,.8,1.2))
-
-#GO plot
-goplot(ego_BP)
-goplot(ego_MF)
-goplot(ego_CC)
-
-
-
-
-######################################################################################################################################################
-#KEGG
-######################################################################################################################################################
-search_kegg_organism('ghum', by='scientific_name')
-#kegg_code= sbi
-
-sbi <- search_kegg_organism('Sorghum bicolo', by='scientific_name')
-dim(sbi)
-head(sbi)
-
-kk <- enrichKEGG(gene = gene,
-                 organism = 'sbi',
-                 pvalueCutoff = 0.05)
-head(kk)
-dotplot(kk)
-
-#GSEA
-kk2 <- gseKEGG(geneList = geneList,
-               organism = 'sbi',
-               minGSSize = 120,
-               pvalueCutoff = 0.05,
-               verbose = F)
-dotplot(kk2)
-
-
-#KEGG module over-representation analysis
-mkk <- enrichMKEGG(gene=gene,
-                   organism = 'sbi',
-                   pvalueCutoff = 1,
-                   qvalueCutoff = 1)
-dotplot(mkk)
-
-mkk2 <- gseMKEGG(geneList = geneList,
-                 organism = 'sbi',
-                 pvalueCutoff = 1)
-dotplot(mkk2)
-
-
-#Visualize enriched KEGG
-browseKEGG(kk,'sbi00940')
-
-library(pathview)
-sbi00940 <- pathview(gene.data = geneList,
-                     pathway.id = "sbi00940",
-                     species = "sbi",
-                     limit = list(gene=max(abs(geneList)), cpd=1))
-
-
-#Reactome pathway over-representation analysis
-library(remotes)
-remotes::install_github("guokai8/Enrichr")
-library(EnrichR)
-gse <- gsea(rnaseq_analysis, SbicolorSC187_694_v1.1.annotation_info.txt, annot.info = NULL, minSize = 15, maxSize = 500, padj.method = "BH" )
-gsea()
-
-#GSEA
-edo <- gseGO(geneList, 
-             OrgDb  = org.Sbicolor.eg.db,
-             keyType       = 'ENTREZID',
-             ont           = "BP",
-             pAdjustMethod = "BH",
-             pvalueCutoff  = 0.01
-)
-edox <- setReadable(edo, 'org.Sbicolor.eg.db', 'ENTREZID')
-p1 <- cnetplot(edox, foldChange=geneList)
-## categorySize can be scaled by 'pvalue' or 'geneNum'
-p2 <- cnetplot(edox, categorySize="pvalue", foldChange=geneList)
-p3 <- cnetplot(edox, foldChange=geneList, circular = TRUE, colorEdge = TRUE) 
-cowplot::plot_grid(p1, p2, p3, ncol=3, labels=LETTERS[1:3], rel_widths=c(.8, .8, 1.2))
-
-
-p1 <- cnetplot(edox, node_label="category", 
-               cex_label_category = 1.2) 
-p2 <- cnetplot(edox, node_label="gene", 
-               cex_label_gene = 0.8) 
-p3 <- cnetplot(edox, node_label="all") 
-p4 <- cnetplot(edox, node_label="none", 
-               color_category='firebrick', 
-               color_gene='steelblue') 
-cowplot::plot_grid(p1, p2, p3, p4, ncol=2, labels=LETTERS[1:4])
-
-
-p1 <- heatplot(edox, showCategory=5)
-p2 <- heatplot(edox, foldChange=geneList, showCategory=5)
-cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
-
-
-edox2 <- pairwise_termsim(edox)
-p1 <- treeplot(edox2)
-p2 <- treeplot(edox2, hclust_method = "average")
-aplot::plot_list(p1, p2, tag_levels='A')
-
-ridgeplot(edo)
-
-gseaplot2(edo, geneSetID = 1, title = edo$Description[1])
-gseaplot2(edo, geneSetID = 1:3)
-
-
-library(ggplot2)
-library(cowplot)
-pp <- lapply(1:3, function(i) {
-  anno <- edo[i, c("NES", "pvalue", "p.adjust")]
-  lab <- paste0(names(anno), "=",  round(anno, 3), collapse="\n")
-  
-  gsearank(edo, i, edo[i, 2]) + xlab(NULL) +ylab(NULL) +
-    annotate("text", 10000, edo[i, "enrichmentScore"] * .75, label = lab, hjust=0, vjust=0)
-})
-plot_grid(plotlist=pp, ncol=1)
-
-
-
-
-
-edo <- gseGO(geneList, 
-             OrgDb  = org.Sbicolor.eg.db,
-             keyType       = 'ENTREZID',
-             ont           = "MF",
-             pAdjustMethod = "BH",
-             pvalueCutoff  = 0.01
-)
-edox <- setReadable(edo, 'org.Sbicolor.eg.db', 'ENTREZID')
-p1 <- cnetplot(edox, foldChange=geneList)
-## categorySize can be scaled by 'pvalue' or 'geneNum'
-p2 <- cnetplot(edox, categorySize="pvalue", foldChange=geneList)
-p3 <- cnetplot(edox, foldChange=geneList, circular = TRUE, colorEdge = TRUE) 
-cowplot::plot_grid(p1, p2, p3, ncol=3, labels=LETTERS[1:3], rel_widths=c(.8, .8, 1.2))
-
-
-
-write.csv(raw.gwas.gene,"raw.gwas.gene.csv")
-write.csv(omnibus.gwas.gene,"omnibus.gwas.gene.csv")
-system("pwd")
-
-write.csv(gwas01.fstat,"gwas01.fstat.csv")
-write.csv(gwas01.Marker,"gwas01.marker.csv")
-write.csv(gwas01.pvalue,"gwas01.pvalue.csv")
-write.csv(tab.pc01,"tab.pc01.csv")
+go.cc.res <- as.data.frame(cbind(ego_CC@result[["Description"]],ego_CC@result[["Count"]],ego_CC@result[["pvalue"]]))
+colnames(go.cc.res) <- c("Description","Count","pvalue")
+go.cc.res[,3] <- sapply(go.cc.res[,3], as.numeric)
+go.cc.res <- go.cc.res[which(go.cc.res$pvalue < 0.05), ]
+go.cc.res[,2] <- sapply(go.cc.res[,2], as.double)
+go.cc.res %>% 
+  ggplot(aes(Description,Count))+
+  geom_col() +
+  coord_flip()+
+  labs(title="Raw GWAS GO_CC",
+       x="Gene Count", y= "Description")+
+  geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")
 
 
