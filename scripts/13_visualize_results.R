@@ -45,27 +45,38 @@ for (i in paste0("gwas",sprintf("%02d", 1:10),".pvalue")){
 gene.names <- rownames(raw.genes)
 raw.genes <-as.data.frame(as.numeric(raw.genes))
 rownames(raw.genes) <- gene.names
-colnames(raw.genes) <- "gene"
+colnames(raw.genes) <- "pvalue"
+raw.genes$GeneName <- rownames(raw.genes)
 #write.csv(gene.names,"gene.names.csv")
 
-library(org.Hs.eg.db)
-up <- UniProt.ws(taxId=9606)
-uniprots <- Rkeys(org.Hs.egUNIPROT)[1:5]
-select(up, uniprots, "GENE_ID")
 
-AnnotationDbi::select(org.Sbicolor.eg.db, keys=raw.genes, columns='ENTREZID', keytype='UNIPROT')
+
+# Converting Gene Names to Gene ID. Happens in two steps:
+## 1.) Go to http://www.pantherdb.org/ and paste the genes, select Sorghum bicolor as the organism and click submit. 
+##     Download the list of genes, with the UniProt ID and separately save them in another file. 
+## 2.) Go to https://www.uniprot.org/ and change the gene name from UniProt to GeneID. Save the file. 
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Gene.conversion")
+# Loading files
+genename_uni <- read.csv("GeneName_UniProt.csv")
+uni_geneid <- read.csv("UniProt_GeneID.csv")
+genename_geneid <- inner_join(genename_uni,uni_geneid, by = "UniProt")
+
+# Filtering out only the ones with geneid
+raw.genes_geneid <- inner_join(raw.genes, genename_geneid)
+rownames(raw.genes_geneid) <- raw.genes_geneid$GeneID
+raw.genes_geneid <- raw.genes_geneid[,]
 
 #GO analysis
 
 #Sorting the data
 ## feature 1: numeric vector
 #geneList = rnaseq_analysis[,2]
-geneList = raw.genes[,1]
+geneList = raw.genes_geneid[,1]
 
 ## feature 2: named vector
 #names(geneList) = as.character(rnaseq_analysis[,1])
 #geneList
-names(geneList) = as.character(rownames(raw.genes))
+names(geneList) = as.character(raw.genes_geneid[,4])
 geneList
 
 ## feature 3: decreasing order
@@ -92,8 +103,6 @@ ego_BP <- enrichGO(gene = gene,
                    pvalueCutoff  = 0.01,
                    qvalueCutoff  = 0.05)
 
-gene
-?enrichGO()
 ego_MF <- enrichGO(gene = gene,
                    OrgDb         = org.Sbicolor.eg.db,
                    keyType       = 'ENTREZID',
@@ -111,7 +120,11 @@ ego_CC <- enrichGO(gene = gene,
                    qvalueCutoff  = 0.05)
 
 #Dotplot
-dotplot(ego_BP, showCategory=100)
+ego_BP.res <- as.data.frame(ego_BP@result)
+barplot(ego_BP.res)
+ego_BP.res
+
+dotplot(ego_BP@result, showCategory=20)
 dotplot(ego_MF, showCategory=100)
 dotplot(ego_CC, showCategory=100)
 
