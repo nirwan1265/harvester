@@ -39,6 +39,31 @@ for(i in paste0("pvalue.combine",sprintf("%02d", 1:10))){
   assign(i,d)
 }
 
+#Filtering ALL GENES
+OMNI_all <- NULL
+CCT_all <- NULL
+GBJ_all <- NULL
+SKAT_all <- NULL
+GHC_all <- NULL
+minP_all <- NULL
+for(i in paste0("pvalue.combine",sprintf("%02d", 1:10))){
+  d = get(i)
+  u <- dplyr::filter(d, GBJ < 5)
+  v <- dplyr::filter(d, GHC < 5)
+  w <- dplyr::filter(d, minP < 5)
+  x <- dplyr::filter(d, SKAT < 5)
+  y <- dplyr::filter(d, OMNI_ItoIV < 5)
+  z <- dplyr::filter(d, CCT_ItoIV < 5)
+  GBJ_all <- rbind(GBJ_all,u)
+  GHC_all <- rbind(GHC_all,v)
+  minP_all <- rbind(minP_all,w)
+  SKAT_all <- rbind(SKAT_all,x)
+  OMNI_all <- rbind(OMNI_all,y)
+  CCT_all <- rbind(CCT_all,z)
+  assign(i,d)
+}
+
+
 #Filtering only the significant genes
 filtered_genes_OMNI <- NULL
 filtered_genes_CCT <- NULL

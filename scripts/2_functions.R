@@ -34,8 +34,15 @@ zval <- function(x, output){
 }
 
 ##ACAT function
+# acat <- function(x, output){
+#   pvalue <- unlist(as.numeric(x[1]))
+#   o <- ACAT(Pvals = pvalue)
+#   return(o)
+# }
+#Need to add n in function for more than 2 genetic datasets. such that x[1:n]
 acat <- function(x, output){
-  pvalue <- unlist(as.numeric(x[1]))
+  pvalue <- as.numeric(x[1:2])
+  pvalue <- unlist(pvalue)
   o <- ACAT(Pvals = pvalue)
   return(o)
 }
