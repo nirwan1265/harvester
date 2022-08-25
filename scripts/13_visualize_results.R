@@ -328,18 +328,21 @@ plot <- go.cc.res %>%
   theme(plot.title = element_text(size = 30)) +
   theme(legend.title = element_text(size = 25)) 
 ggsave("OMNI test enriched Cellular Components.tiff", plot, width=25, height=15, units="in", dpi=750)
-
+dev.off()
 x <- rbind(go.bp.res,go.mf.res,go.cc.res)
+x <- go.mf.res
 x %>% 
   ggplot(aes(Description,Count,fill=-log10(pvalue)))+
   geom_col() +
   coord_flip()+
-  labs(title="OMNI test enriched Cellular Components",
+  labs(title="Raw test enriched Cellular Components",
        x="Description", y= "Gene Count")+
   geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")+
-  scale_fill_viridis_b(trans='log10')
-  # theme(axis.text = element_text(size = 40))+ 
+  scale_fill_viridis_b(trans='log10')+
+  theme(axis.text = element_text(size = 11))
   # theme(axis.title = element_text(size = 25)) +
   # theme(legend.text = element_text(size = 22)) +
   # theme(plot.title = element_text(size = 30)) +
   # theme(legend.title = element_text(size = 25)) 
+ggsave("OMNI test enriched Biological Processes.tiff", plot,  dpi=400)
+system("pwd")
