@@ -165,7 +165,7 @@ plot <- go.mf.res %>%
   theme(legend.text = element_text(size = 22)) +
   theme(plot.title = element_text(size = 30)) +
   theme(legend.title = element_text(size = 25)) 
-ggsave("Raw GWAS enriched Molecular Functions.tiff", plot, width=25, height=15, units="in", dpi=750)
+ggsave("Raw GWAS enriched Molecular Functions.tiff", plot, width=40, height=15, units="in", dpi=750)
 
 
 go.cc.res <- as.data.frame(cbind(ego_CC@result[["Description"]],ego_CC@result[["Count"]],ego_CC@result[["pvalue"]]))
@@ -299,14 +299,14 @@ plot <- go.mf.res %>%
        x="Description", y= "Gene Count")+
   geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")+
   scale_fill_viridis_b(trans='log10')+
-  theme(axis.text = element_text(size = 30))+ 
+  theme(axis.text = element_text(size = 40))+ 
   theme(axis.title = element_text(size = 25)) +
   theme(legend.text = element_text(size = 22)) +
   theme(plot.title = element_text(size = 30)) +
   theme(legend.title = element_text(size = 25)) 
 ggsave("OMNI test enriched Molecular Functions.tiff", plot, width=25, height=15, units="in", dpi=750)
 
-  
+
 
 
 go.cc.res <- as.data.frame(cbind(ego_CC@result[["Description"]],ego_CC@result[["Count"]],ego_CC@result[["pvalue"]]))
@@ -314,7 +314,7 @@ colnames(go.cc.res) <- c("Description","Count","pvalue")
 go.cc.res[,3] <- sapply(go.cc.res[,3], as.numeric)
 go.cc.res <- go.cc.res[which(go.cc.res$pvalue < 0.05), ]
 go.cc.res[,2] <- sapply(go.cc.res[,2], as.double)
-go.cc.res %>% 
+plot <- go.cc.res %>% 
   ggplot(aes(Description,Count,fill=-log10(pvalue)))+
   geom_col() +
   coord_flip()+
@@ -322,11 +322,24 @@ go.cc.res %>%
        x="Description", y= "Gene Count")+
   geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")+
   scale_fill_viridis_b(trans='log10')+
-  theme(axis.text = element_text(size = 30))+ 
+  theme(axis.text = element_text(size = 40))+ 
   theme(axis.title = element_text(size = 25)) +
   theme(legend.text = element_text(size = 22)) +
   theme(plot.title = element_text(size = 30)) +
   theme(legend.title = element_text(size = 25)) 
 ggsave("OMNI test enriched Cellular Components.tiff", plot, width=25, height=15, units="in", dpi=750)
 
-
+x <- rbind(go.bp.res,go.mf.res,go.cc.res)
+x %>% 
+  ggplot(aes(Description,Count,fill=-log10(pvalue)))+
+  geom_col() +
+  coord_flip()+
+  labs(title="OMNI test enriched Cellular Components",
+       x="Description", y= "Gene Count")+
+  geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")+
+  scale_fill_viridis_b(trans='log10')
+  # theme(axis.text = element_text(size = 40))+ 
+  # theme(axis.title = element_text(size = 25)) +
+  # theme(legend.text = element_text(size = 22)) +
+  # theme(plot.title = element_text(size = 30)) +
+  # theme(legend.title = element_text(size = 25)) 
