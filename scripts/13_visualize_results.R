@@ -48,7 +48,7 @@ raw.genes <-as.data.frame(as.numeric(raw.genes))
 rownames(raw.genes) <- gene.names
 colnames(raw.genes) <- "pvalue"
 raw.genes$GeneName <- rownames(raw.genes)
-#write.csv(gene.names,"gene.names.csv")
+#write.csv(raw.genes,"raw.gwas.csv")
 
 
 
@@ -128,39 +128,66 @@ colnames(go.bp.res) <- c("Description","Count","pvalue")
 go.bp.res[,3] <- sapply(go.bp.res[,3], as.numeric)
 go.bp.res <- go.bp.res[which(go.bp.res$pvalue < 0.05), ]
 go.bp.res[,2] <- sapply(go.bp.res[,2], as.double)
-go.bp.res %>% 
-  ggplot(aes(Description,Count))+
+plot <- go.bp.res %>% 
+  ggplot(aes(x = Description,y = Count,fill=-log10(pvalue)))+
   geom_col() +
   coord_flip()+
   labs(title="Raw GWAS enriched Biological Processes",
-       x="Gene Count", y= "Description")+
-  geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")
+       x="Description", y= "Gene Count")+
+  geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")+
+  scale_fill_viridis_b(trans='log10')+
+  theme(axis.text = element_text(size = 30))+ 
+  theme(axis.title = element_text(size = 25)) +
+  theme(legend.text = element_text(size = 22)) +
+  theme(plot.title = element_text(size = 30)) +
+  theme(legend.title = element_text(size = 25)) 
+ggsave("Raw GWAS enriched Biological Processes.tiff", plot, width=25, height=15, units="in", dpi=750)
+
+  
+
+
 
 go.mf.res <- as.data.frame(cbind(ego_MF@result[["Description"]],ego_MF@result[["Count"]],ego_MF@result[["pvalue"]]))
 colnames(go.mf.res) <- c("Description","Count","pvalue")
 go.mf.res[,3] <- sapply(go.mf.res[,3], as.numeric)
 go.mf.res <- go.mf.res[which(go.mf.res$pvalue < 0.05), ]
 go.mf.res[,2] <- sapply(go.mf.res[,2], as.double)
-go.mf.res %>% 
-  ggplot(aes(Description,Count))+
+plot <- go.mf.res %>% 
+  ggplot(aes(Description,Count,fill=-log10(pvalue)))+
   geom_col() +
   coord_flip()+
   labs(title="Raw GWAS enriched Molecular Functions",
-       x="Gene Count", y= "Description")+
-  geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")
+       x="Description", y= "Gene Count")+
+  geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")+
+  scale_fill_viridis_b(trans='log10')+
+  theme(axis.text = element_text(size = 30))+ 
+  theme(axis.title = element_text(size = 25)) +
+  theme(legend.text = element_text(size = 22)) +
+  theme(plot.title = element_text(size = 30)) +
+  theme(legend.title = element_text(size = 25)) 
+ggsave("Raw GWAS enriched Molecular Functions.tiff", plot, width=25, height=15, units="in", dpi=750)
+
 
 go.cc.res <- as.data.frame(cbind(ego_CC@result[["Description"]],ego_CC@result[["Count"]],ego_CC@result[["pvalue"]]))
 colnames(go.cc.res) <- c("Description","Count","pvalue")
 go.cc.res[,3] <- sapply(go.cc.res[,3], as.numeric)
 go.cc.res <- go.cc.res[which(go.cc.res$pvalue < 0.05), ]
 go.cc.res[,2] <- sapply(go.cc.res[,2], as.double)
-go.cc.res %>% 
-  ggplot(aes(Description,Count))+
+plot <- go.cc.res %>% 
+  ggplot(aes(Description,Count,fill=-log10(pvalue)))+
   geom_col() +
   coord_flip()+
   labs(title="Raw GWAS enriched Cellular Components",
-       x="Gene Count", y= "Description")+
-  geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")
+       x="Description", y= "Gene Count")+
+  geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")+
+  scale_fill_viridis_b(trans='log10')+
+  theme(axis.text = element_text(size = 30))+ 
+  theme(axis.title = element_text(size = 25)) +
+  theme(legend.text = element_text(size = 22)) +
+  theme(plot.title = element_text(size = 30)) +
+  theme(legend.title = element_text(size = 25)) 
+ggsave("Raw GWAS enriched Cellular Components.tiff", plot, width=25, height=15, units="in", dpi=750)
+
 
 
 
@@ -168,9 +195,9 @@ go.cc.res %>%
 ################################################################################
 
 # For OMNI test:
-
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Results/pvalues.combination")
 ## Read Data:
-omni_genename_geneid <- read.csv("OMNI_genename_uniprot_geneid.csv")
+omni_genename_geneid <- read.csv("OMNI_filtered_genename_uniprot_geneid.csv")
 colnames(omni_genename_geneid)[1] <- "Gene"
 omni <- filtered_genes_OMNI[,c(1,6)]
 
@@ -243,26 +270,44 @@ colnames(go.bp.res) <- c("Description","Count","pvalue")
 go.bp.res[,3] <- sapply(go.bp.res[,3], as.numeric)
 go.bp.res <- go.bp.res[which(go.bp.res$pvalue < 0.05), ]
 go.bp.res[,2] <- sapply(go.bp.res[,2], as.double)
-go.bp.res %>% 
-  ggplot(aes(Description,Count))+
+plot <- go.bp.res %>% 
+  ggplot(aes(Description,Count,fill=-log10(pvalue)))+
   geom_col() +
   coord_flip()+
   labs(title="OMNI test enriched Biological Processes",
-       x="Gene Count", y= "Description")+
-  geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")
+       x="Description", y= "Gene Count")+
+  geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")+
+  scale_fill_viridis_b(trans='log10')+
+  theme(axis.text = element_text(size = 30))+ 
+  theme(axis.title = element_text(size = 25)) +
+  theme(legend.text = element_text(size = 22)) +
+  theme(plot.title = element_text(size = 30)) +
+  theme(legend.title = element_text(size = 25)) 
+ggsave("OMNI test enriched Biological Processes.tiff", plot, width=25, height=15, units="in", dpi=750)
+
 
 go.mf.res <- as.data.frame(cbind(ego_MF@result[["Description"]],ego_MF@result[["Count"]],ego_MF@result[["pvalue"]]))
 colnames(go.mf.res) <- c("Description","Count","pvalue")
 go.mf.res[,3] <- sapply(go.mf.res[,3], as.numeric)
 go.mf.res <- go.mf.res[which(go.mf.res$pvalue < 0.05), ]
 go.mf.res[,2] <- sapply(go.mf.res[,2], as.double)
-go.mf.res %>% 
-  ggplot(aes(Description,Count))+
+plot <- go.mf.res %>% 
+  ggplot(aes(Description,Count,fill=-log10(pvalue)))+
   geom_col() +
   coord_flip()+
   labs(title="OMNI test enriched Molecular Functions",
-       x="Gene Count", y= "Description")+
-  geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")
+       x="Description", y= "Gene Count")+
+  geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")+
+  scale_fill_viridis_b(trans='log10')+
+  theme(axis.text = element_text(size = 30))+ 
+  theme(axis.title = element_text(size = 25)) +
+  theme(legend.text = element_text(size = 22)) +
+  theme(plot.title = element_text(size = 30)) +
+  theme(legend.title = element_text(size = 25)) 
+ggsave("OMNI test enriched Molecular Functions.tiff", plot, width=25, height=15, units="in", dpi=750)
+
+  
+
 
 go.cc.res <- as.data.frame(cbind(ego_CC@result[["Description"]],ego_CC@result[["Count"]],ego_CC@result[["pvalue"]]))
 colnames(go.cc.res) <- c("Description","Count","pvalue")
@@ -270,9 +315,18 @@ go.cc.res[,3] <- sapply(go.cc.res[,3], as.numeric)
 go.cc.res <- go.cc.res[which(go.cc.res$pvalue < 0.05), ]
 go.cc.res[,2] <- sapply(go.cc.res[,2], as.double)
 go.cc.res %>% 
-  ggplot(aes(Description,Count))+
+  ggplot(aes(Description,Count,fill=-log10(pvalue)))+
   geom_col() +
   coord_flip()+
   labs(title="OMNI test enriched Cellular Components",
-       x="Gene Count", y= "Description")+
-  geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")
+       x="Description", y= "Gene Count")+
+  geom_text(aes(label = round(Count, 1)), nudge_y= -1, color="white")+
+  scale_fill_viridis_b(trans='log10')+
+  theme(axis.text = element_text(size = 30))+ 
+  theme(axis.title = element_text(size = 25)) +
+  theme(legend.text = element_text(size = 22)) +
+  theme(plot.title = element_text(size = 30)) +
+  theme(legend.title = element_text(size = 25)) 
+ggsave("OMNI test enriched Cellular Components.tiff", plot, width=25, height=15, units="in", dpi=750)
+
+
