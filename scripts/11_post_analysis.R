@@ -92,6 +92,11 @@ for(i in paste0("pvalue.combine",sprintf("%02d", 1:10))){
 }
 
 ## Save the files
+write.csv(GBJ_all,"GBJ_all.csv", row.names = FALSE)
+write.csv(GHC_all,"GHC_all.csv", row.names = FALSE)
+write.csv(minP_all,"minP.csv", row.names = FALSE)
+write.csv(OMNI_all,"OMNI_all.csv", row.names = FALSE)
+
 write.csv(filtered_genes_CCT,"filtered_genes_CCT.csv", row.names = FALSE)
 write.csv(filtered_genes_GBJ,"filtered_genes_GBJ.csv", row.names = FALSE)
 write.csv(filtered_genes_GHC,"filtered_genes_GHC.csv", row.names = FALSE)

@@ -20,6 +20,7 @@ rnaseq <- rnaseq[!duplicated(rnaseq$Gene), ]
 
 
 #Combining datasets using Cauchy Combination Test:
+## Data prep
 omni_rnaseq <- inner_join(omni,rnaseq, by = "Gene")
 head(omni_rnaseq)
 colnames(omni_rnaseq) <- c("GeneName", "pvalue.omni","pvalue.rnaseq")
