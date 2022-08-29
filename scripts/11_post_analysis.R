@@ -8,22 +8,22 @@ setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Results/pvalues.c
 
 
 ##Plotting the number of SNPs for each gene
-par(mfrow = c(2, 5))
-
-for(i in paste0("gwas",sprintf("%02d", 1:10),".Marker")){
-  d = get(i)
-  elements <- as.data.frame(colSums(!is.na(d)))
-  colnames(elements) <- "Number.of.SNPs"
-  hist(elements$Number.of.SNPs, main = "Distribution of SNPs",
-       xlab = "Number of SNPs", 
-       col = rainbow(14),
-       breaks = max(elements), #highest SNPs
-       ylim = c(1,1000),
-       labels = TRUE
-  )
-  assign(i,d)
-}
-
+# par(mfrow = c(2, 5))
+# 
+# for(i in paste0("gwas",sprintf("%02d", 1:10),".Marker")){
+#   d = get(i)
+#   elements <- as.data.frame(colSums(!is.na(d)))
+#   colnames(elements) <- "Number.of.SNPs"
+#   hist(elements$Number.of.SNPs, main = "Distribution of SNPs",
+#        xlab = "Number of SNPs", 
+#        col = rainbow(14),
+#        breaks = max(elements), #highest SNPs
+#        ylim = c(1,1000),
+#        labels = TRUE
+#   )
+#   assign(i,d)
+# }
+# 
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -62,6 +62,9 @@ for(i in paste0("pvalue.combine",sprintf("%02d", 1:10))){
   CCT_all <- rbind(CCT_all,z)
   assign(i,d)
 }
+x <- c("GBJ","GHC","minP","SKAT","OMNI_ItoIV","CCT_ItoIV")
+y <- c("GBJ_all","GHC_all","minP_all","SKAT_all","OMNI_all","CCT_all")
+
 
 
 #Filtering only the significant genes
