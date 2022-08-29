@@ -33,19 +33,27 @@ zval <- function(x, output){
   return(o)
 }
 
-##ACAT function
-# acat <- function(x, output){
-#   pvalue <- unlist(as.numeric(x[1]))
-#   o <- ACAT(Pvals = pvalue)
-#   return(o)
-# }
-#Need to add n in function for more than 2 genetic datasets. such that x[1:n]
+# ACAT function
+##For combining known number of pvalues, replace 2 in 1:2 by the number of pvalues
 acat <- function(x, output){
   pvalue <- as.numeric(x[1:2])
   pvalue <- unlist(pvalue)
   o <- ACAT(Pvals = pvalue)
   return(o)
 }
+## Usage
+### dataframe <- cbind(pvalue.dataframe, (apply(pvalue.dataframe[,c(1:n),1,acat])))
+
+## For combining n number of pvalues
+acat <- function(x, n, output){
+  pvalue <- as.numeric(x[1:n])
+  pvalue <- unlist(pvalue)
+  o <- ACAT(Pvals = pvalue)
+  return(o)
+}
+
+## Usage
+### as.data.frame(apply(pvalue.dataframe,1,acat, n = <number of pvalues in the columns>))
 
 ##Pvalues Combinations Test
 pvalue.combine <- function(gwas.zstat, gwas.marker, gwas.pvalue, geno, tab.pc,combined.test.statistics){
@@ -138,14 +146,15 @@ pvalue.combine <- function(gwas.zstat, gwas.marker, gwas.pvalue, geno, tab.pc,co
       ref_genotype <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
       ref_genotype_skat <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
     }
-    combined.test.statistics[i,6] <- apply(combined.test.statistics[i,1:4],1,acat)
+    #combined.test.statistics[i,6] <- apply(combined.test.statistics[i,1:4],1,acat)
     x <- as.data.frame(matrix(0, nrow = 1, ncol = 1))
     y <- vector()
     z <- vector()
     ref_genotype <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
     ref_genotype_SKAT <- as.data.frame(matrix(NA, nrow = 1, ncol = 1))
   }
-  colnames(combined.test.statistics) <- c("GBJ","GHC","minP","SKAT","OMNI(1-4)","CCT(1-4)")
+  #colnames(combined.test.statistics) <- c("GBJ","GHC","minP","SKAT","OMNI(1-4)","CCT(1-4)")
+  colnames(combined.test.statistics) <- c("GBJ","GHC","minP","SKAT","OMNI(1-4)")
   return(combined.test.statistics)
 }
 
