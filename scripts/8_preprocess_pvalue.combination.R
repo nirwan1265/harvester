@@ -21,17 +21,11 @@ for(i in paste0("gwas", sprintf("%02d", 1:10), ".pvalue")){
   assign(i,d)
 }
 
-#Convert tab dataframe to numeric
+#Convert tab matrix to numeric
 for(i in paste0("tab", sprintf("%02d", 1:10))){
   d <- get(i)
-  d <- as.data.frame(lapply(d, as.numeric))
-  assign(i,d)
-}
-
-#Convert tab.pcs to matrix
-for(i in paste0("tab", sprintf("%02d", 1:10))){
-  d = get(i)
-  d <- as.matrix(d[,-1])
+  d <- matrix(as.numeric(d), ncol = ncol(d))
+  #d <- as.data.frame(lapply(d, as.numeric), header = F)
   assign(i,d)
 }
 

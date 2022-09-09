@@ -24,6 +24,6 @@ for(i in paste0("query.snp.gwas",sprintf("%02d", 1:10))){
 raw.gwas.all.snps <-raw.gwas.all.snps[!grepl("None", raw.gwas.all.snps$MLM_Stats.Marker), ]
 
 ## Saving only markers and pvalue
-raw.gwas.all.snps <- as.data.frame(raw.gwas.all.snps[,c(1,5)])
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Github/eMAGMA")
-write.table(raw.gwas.all.snps,"raw.gwas.all.snps.txt", row.names = FALSE, col.names = FALSE, quote = FALSE)
+# raw.gwas.all.snps <- as.data.frame(raw.gwas.all.snps[,c(1,5)])
+# setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Github/eMAGMA")
+# write.table(raw.gwas.all.snps,"raw.gwas.all.snps.txt", row.names = FALSE, col.names = FALSE, quote = FALSE)
