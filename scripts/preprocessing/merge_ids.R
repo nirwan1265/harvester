@@ -28,5 +28,18 @@ geo_hap <-  rbind(
   arrange(-count)  %>%
   dplyr::select(hapmap_id, avgt_min, avgt_max)
 
+long_lat <-  rbind(
+  georef %>%
+    inner_join(hapmap, by = c(is_no = "V2")),
+  georef %>%
+    inner_join(hapmap, by = c(pi = "V2")) 
+) %>%
+  group_by(hapmap_id, Latitude, Longitude) %>%
+  summarise(count = length(hapmap_id)) %>%
+  arrange(-count)  %>%
+  dplyr::select(hapmap_id, Latitude, Longitude)
 
-write.table(geo_hap, "temp.txt", quote = FALSE)
+
+write.table(long_lat, "long_lat.txt", quote = FALSE)
+
+quartz()
