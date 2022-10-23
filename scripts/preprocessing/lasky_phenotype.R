@@ -1,3 +1,7 @@
+# Setting up table
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Phenotype")
+
+
 #Reading file
 #Load file
 
@@ -12,8 +16,16 @@ names(planting_data)[1] <- "country"
 head(planting_data)
 
 
+# Combining both data set by country
+lasky_africa <- left_join(lasky_africa,planting_data)
+head(lasky_africa)
+
+
+
+#Planting data
+
 #Replacing planting data with temperature columns in 
-plant <- planting_data %>% 
+plant <- lasky_africa %>% 
   mutate(Plant = str_split(c(Plant), ",")) %>%
   unnest(Plant) %>%
   mutate(Group = 
@@ -31,7 +43,47 @@ plant <- planting_data %>%
                      Plant == 12 ~ "tmax_12"
            ))
 
-mid_season <- planting_data %>% 
+# Subsetting max temp
+plant <- as.data.frame(plant[,c(1,21:32,52)])
+plant[is.na(plant)] <- 0
+plant$maxtemp <- 0
+
+#Replacing values
+for (i in 2:13){
+  for (j in 1:nrow(plant)){
+    if (plant[j,14] == names(plant)[i]) {
+      plant[j,15] <- plant[j,i]
+    } else {
+      next
+    }
+  }
+}
+
+#plant <- plant[,c(1,15)]
+plant <- plant %>%
+  select(hapmap_id, maxtemp) %>%
+  group_by(hapmap_id) %>%
+  mutate(rid = row_number()) %>%
+  pivot_wider(
+    id_cols = hapmap_id,
+    names_from = rid,
+    values_from = maxtemp
+  ) %>% `row.names<-`(., NULL) %>%
+  column_to_rownames(var = "hapmap_id") %>% 
+  mutate(mean_maxtemp = rowMeans(., na.rm = TRUE)) %>%
+  select(mean_maxtemp)
+
+plant_missing <-  plant %>% 
+  filter(mean_maxtemp == 0)
+  
+ 
+  
+
+
+
+#Mid Season data
+
+mid_season <- lasky_africa %>% 
   mutate(`Mid,Season` = str_split(c(`Mid,Season`), ",")) %>%
   unnest(`Mid,Season`) %>%
   mutate(Group = 
@@ -49,7 +101,46 @@ mid_season <- planting_data %>%
                      `Mid,Season` == 12 ~ "tmax_12"
            ))
 
-Harvest <- planting_data %>% 
+
+
+# Subsetting max temp
+mid_season <- as.data.frame(mid_season[,c(1,21:32,52)])
+mid_season[is.na(mid_season)] <- 0
+mid_season$maxtemp <- 0
+
+#Replacing values
+for (i in 2:13){
+  for (j in 1:nrow(mid_season)){
+    if (mid_season[j,14] == names(mid_season)[i]) {
+      mid_season[j,15] <- mid_season[j,i]
+    } else {
+      next
+    }
+  }
+}
+
+#mid_season <- mid_season[,c(1,15)]
+mid_season <- mid_season %>%
+  select(hapmap_id, maxtemp) %>%
+  group_by(hapmap_id) %>%
+  mutate(rid = row_number()) %>%
+  pivot_wider(
+    id_cols = hapmap_id,
+    names_from = rid,
+    values_from = maxtemp
+  ) %>% `row.names<-`(., NULL) %>%
+  column_to_rownames(var = "hapmap_id") %>% 
+  mutate(mean_maxtemp = rowMeans(., na.rm = TRUE)) %>%
+  select(mean_maxtemp)
+
+
+mid_season_missing <-  mid_season %>% 
+  filter(mean_maxtemp == 0)
+
+
+
+
+harvest <- lasky_africa %>% 
   mutate(Harvest = str_split(c(Harvest), ",")) %>%
   unnest(Harvest) %>%
   mutate(Group = 
@@ -67,22 +158,58 @@ Harvest <- planting_data %>%
                      Harvest == 12 ~ "tmax_12"
            ))
 
+#harvesting data
+
+#Replacing harvesting data with temperature columns in 
+harvest <- lasky_africa %>% 
+  mutate(Harvest = str_split(c(Harvest), ",")) %>%
+  unnest(Harvest) %>%
+  mutate(Group = 
+           case_when(Harvest == 1 ~ "tmax_1",
+                     Harvest == 2 ~ "tmax_2",
+                     Harvest == 3 ~ "tmax_3",
+                     Harvest == 4 ~ "tmax_4",
+                     Harvest == 5 ~ "tmax_5",
+                     Harvest == 6 ~ "tmax_6",
+                     Harvest == 7 ~ "tmax_7",
+                     Harvest == 8 ~ "tmax_8",
+                     Harvest == 9 ~ "tmax_9",
+                     Harvest == 10 ~ "tmax_10",
+                     Harvest == 11 ~ "tmax_11",
+                     Harvest == 12 ~ "tmax_12"
+           ))
+
+# Subsetting max temp
+harvest <- as.data.frame(harvest[,c(1,21:32,52)])
+harvest[is.na(harvest)] <- 0
+harvest$maxtemp <- 0
+
+#Replacing values
+for (i in 2:13){
+  for (j in 1:nrow(harvest)){
+    if (harvest[j,14] == names(harvest)[i]) {
+      harvest[j,15] <- harvest[j,i]
+    } else {
+      next
+    }
+  }
+}
+
+#harvest <- harvest[,c(1,15)]
+harvest <- harvest %>%
+  select(hapmap_id, maxtemp) %>%
+  group_by(hapmap_id) %>%
+  mutate(rid = row_number()) %>%
+  pivot_wider(
+    id_cols = hapmap_id,
+    names_from = rid,
+    values_from = maxtemp
+  ) %>% `row.names<-`(., NULL) %>%
+  column_to_rownames(var = "hapmap_id") %>% 
+  mutate(mean_maxtemp = rowMeans(., na.rm = TRUE)) %>%
+  select(mean_maxtemp)
 
 
-# Combining both data set by country
-lasky_africa <- left_join(lasky_africa,planting_data)
-head(lasky_africa)
 
-
-
-
-
-
-
-#Separating the planting seasons
-lasky_africa[c("planting_start","planting_end")] <- str_split_fixed(lasky_africa$Plant,',',2)
-lasky_africa[c("mid_season_start","mid_season_end")] <- str_split_fixed(lasky_africa$`Mid,Season`,',',2)
-lasky_africa[c("harvest_start","harvest_end")] <- str_split_fixed(lasky_africa$Harvest,',',2)
-
-
-
+harvest_missing <-  harvest %>% 
+  filter(mean_maxtemp == 0)
