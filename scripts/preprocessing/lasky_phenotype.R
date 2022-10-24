@@ -213,3 +213,49 @@ harvest <- harvest %>%
 
 harvest_missing <-  harvest %>% 
   filter(mean_maxtemp == 0)
+
+
+
+####################################################################################################
+# Finding empty rows 
+####################################################################################################
+
+#LASKY PHENOTYPE_ filtered for africa
+lasky_africa <- as_tibble(read.csv("lasky_africa.csv")) %>% relocate(hapmap_id)
+head(lasky_africa)
+
+plant_missing <- plant_missing %>%
+  rownames_to_column() %>%
+  rename("rowname" = "hapmap_id")
+  
+
+missing_data <- left_join(lasky_africa, plant_missing)
+
+missing_data <- left_join(missing_data, planting_data, by = "country")
+
+unique(missing_data$hapmap_id)
+
+
+
+plant <- lasky_africa %>% 
+  mutate(Plant = str_split(c(Plant), ",")) %>%
+  unnest(Plant) %>%
+  mutate(Group = 
+           case_when(Plant == 1 ~ "tmax_1",
+                     Plant == 2 ~ "tmax_2",
+                     Plant == 3 ~ "tmax_3",
+                     Plant == 4 ~ "tmax_4",
+                     Plant == 5 ~ "tmax_5",
+                     Plant == 6 ~ "tmax_6",
+                     Plant == 7 ~ "tmax_7",
+                     Plant == 8 ~ "tmax_8",
+                     Plant == 9 ~ "tmax_9",
+                     Plant == 10 ~ "tmax_10",
+                     Plant == 11 ~ "tmax_11",
+                     Plant == 12 ~ "tmax_12"
+           ))
+
+# Subsetting max temp
+plant <- as.data.frame(plant[,c(1,21:32,52)])
+plant[is.na(plant)] <- 0
+plant$maxtemp <- 0
