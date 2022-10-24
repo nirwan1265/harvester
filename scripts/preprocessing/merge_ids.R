@@ -40,6 +40,7 @@ long_lat <-  rbind(
   dplyr::select(hapmap_id, Latitude, Longitude)
 
 
+
 write.table(long_lat, "long_lat.txt", quote = FALSE)
 
 quartz()

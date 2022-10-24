@@ -163,8 +163,8 @@ pvalue.combine <- function(gwas.zstat, gwas.marker, gwas.pvalue, geno, tab.pc,co
 # Mapping Longitude and Latitude to Country Names
 coords2country = function(points)
 {  
-  countriesSP <- getMap(resolution='low')
-  #countriesSP <- getMap(resolution='high') #you could use high res map from rworldxtra if you were concerned about detail
+  #countriesSP <- getMap(resolution='low')
+  countriesSP <- getMap(resolution='high') #you could use high res map from rworldxtra if you were concerned about detail
   # convert our list of points to a SpatialPoints object
   # pointsSP = SpatialPoints(points, proj4string=CRS(" +proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0"))
   #setting CRS directly to that from rworldmap
