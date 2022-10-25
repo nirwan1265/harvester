@@ -37,14 +37,18 @@ africa <- c("Algeria","Angola","Benin","Botswana","Burkina Faso","Burundi",
             "Tunisia","Uganda","Zambia","Zimbabwe")
 
 
-acc_africa <- long_lat_country[long_lat_country$country %in% africa, ]
-long_lat_country$acc <- row.names(long_lat_country)
-trail1 <- as.data.frame(unique(lasky_africa$country))
-trial2 <- as.data.frame(unique(acc_africa$country))
+acc_africa <- long_lat_country[long_lat_country$country %in% africa, ] %>% tibble::rownames_to_column("Taxa") %>% relocate(Taxa)
 
 
+#Phosphorus data
+phospho <- read.csv("taxa_geoloc_pheno.csv")
 
+#Subsetting only african accesions
+acc_pheno_africa <- left_join(acc_africa,phospho) 
+acc_pheno_africa <- acc_pheno_africa[,(-2:-10)]
 
+#Saving
+write.csv(acc_pheno_africa, "Sorghum_allphospho_africa.csv", row.names = FALSE)
 
 
 
