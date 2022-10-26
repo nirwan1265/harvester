@@ -41,7 +41,7 @@ acc_africa <- long_lat_country[long_lat_country$country %in% africa, ] %>% tibbl
 
 
 #Phosphorus data
-phospho <- read.csv("taxa_geoloc_pheno.csv")
+phospho <- as.data.frame(read.csv("taxa_geoloc_pheno.csv"))
 
 #Subsetting only african accesions
 acc_pheno_africa <- left_join(acc_africa,phospho) 
@@ -52,13 +52,12 @@ write.csv(acc_pheno_africa, "Sorghum_allphospho_africa.csv", row.names = FALSE)
 
 
 
+# Subsetting maize
+head(phospho)
+mays_phospho <- phospho[which(phospho$sp == "Zea mays"), ]
+mays_phospho <- mays_phospho[,c(-1,-3:-7)]
 
 
-
-
-
-
-
-
-
+#Saving
+write.csv(mays_phospho, "Maize_allphospho.csv", row.names = FALSE)
 
