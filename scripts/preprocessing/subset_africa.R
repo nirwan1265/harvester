@@ -39,6 +39,8 @@ africa <- c("Algeria","Angola","Benin","Botswana","Burkina Faso","Burundi",
 
 acc_africa <- long_lat_country[long_lat_country$country %in% africa, ] %>% tibble::rownames_to_column("Taxa") %>% relocate(Taxa)
 
+#Saving africa accessions:
+write.csv(acc_africa,"lasky_africa.csv", row.names = FALSE)
 
 #Phosphorus data
 phospho <- as.data.frame(read.csv("taxa_geoloc_pheno.csv"))

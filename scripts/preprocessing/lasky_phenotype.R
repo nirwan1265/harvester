@@ -7,7 +7,7 @@ setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Phenotype")
 
 #Phenotype folder
 #LASKY PHENOTYPE_ filtered for africa
-lasky_africa <- as_tibble(read.csv("lasky_africa.csv")) %>% relocate(hapmap_id)
+lasky_africa <- as_tibble(read.csv("lasky_africa.csv")) %>% relocate(Taxa) %>% rename(Taxa = "hapmap_id")
 head(lasky_africa)
 
 #HARVEST DATA
@@ -61,17 +61,19 @@ for (i in 2:13){
 
 #plant <- plant[,c(1,15)]
 plant <- plant %>%
-  select(hapmap_id, maxtemp) %>%
-  group_by(hapmap_id) %>%
-  mutate(rid = row_number()) %>%
+  dplyr::select("hapmap_id", "maxtemp") %>%
+  dplyr::group_by(hapmap_id) %>%
+  dplyr::mutate(rid = row_number()) %>%
   pivot_wider(
     id_cols = hapmap_id,
     names_from = rid,
     values_from = maxtemp
-  ) %>% `row.names<-`(., NULL) %>%
-  column_to_rownames(var = "hapmap_id") %>% 
-  mutate(mean_maxtemp = rowMeans(., na.rm = TRUE)) %>%
-  select(mean_maxtemp)
+  ) %>% 
+  `row.names<-`(., NULL) %>%
+  tibble::column_to_rownames(var = "hapmap_id") %>% 
+  dplyr::mutate(mean_maxtemp = rowMeans(., na.rm = TRUE)) %>%
+  dplyr::select(mean_maxtemp)
+
 
 plant_missing <-  plant %>% 
   filter(mean_maxtemp == 0)
@@ -220,14 +222,15 @@ harvest_missing <-  harvest %>%
 # Finding empty rows 
 ####################################################################################################
 
-#LASKY PHENOTYPE_ filtered for africa
-lasky_africa <- as_tibble(read.csv("lasky_africa.csv")) %>% relocate(hapmap_id)
+#LASKY PHENOTYPE filtered for africa
+lasky_africa <- as_tibble(read.csv("lasky_africa.csv")) %>% relocate(Taxa) %>% rename(Taxa = "hapmap_id")
 head(lasky_africa)
 
 plant_missing <- plant_missing %>%
   rownames_to_column() %>%
   rename("rowname" = "hapmap_id")
-  
+head(plant_missing)  
+
 
 missing_data <- left_join(lasky_africa, plant_missing)
 
