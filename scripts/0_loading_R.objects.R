@@ -18,14 +18,15 @@ for(i in sprintf("%02d", 1:10)){
 
 # Genotype
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/R_saved/genotype_filtered.phenotype")
-for(i in sprintf("%02d", 1:10)){
+for(i in sprintf("%02d", 1)){
   assign(paste0("geno_f",i), readRDS(paste0("geno_f",i,".RDS")))
 }
 
 
 # PCA
+
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/R_saved/pca")
-for(i in sprintf("%02d", 1:10)){
+for(i in sprintf("%02d", 1)){
   assign(paste0("tab",i), readRDS(paste0("tab",i,".RDS")))
 }
 

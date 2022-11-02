@@ -86,6 +86,7 @@ pvalue.combine <- function(gwas.zstat, gwas.marker, gwas.pvalue, geno, tab.pc,co
       # }))
       # ref_genotype <- data.frame(apply(ref_genotype, 2, function(x) as.numeric(as.character(x))))
       cor_mat <- estimate_ss_cor(ref_pcs=tab.pc, ref_genotypes=ref_genotype, link_function='linear')
+      #calculate once cor_mat and subset
       gbj.test <- GBJ(test_stats = x, cor_mat=cor_mat)
       ghc.test <- GHC(test_stats = x, cor_mat=cor_mat)
       minP.test <- minP(test_stats = x, cor_mat=cor_mat)

@@ -10,7 +10,8 @@ packages <- c("tidyverse","ggplot2", "Rsamtools","GenomicAlignments","rtracklaye
 #   BiocManager::install(packages[!installed_packages])
 # }
 # devtools::install_github("yaowuliu/ACAT")
-#install.packages("/Users/nirwantandukar/Documents/Sorghum root rnaseq data_low phosphorus/org.Sbicolor.eg.db", repos=NULL, type="source")
+# remotes::install_github("yaowuliu/ACAT")
+# install.packages("/Users/nirwantandukar/Documents/Sorghum root rnaseq data_low phosphorus/org.Sbicolor.eg.db", repos=NULL, type="source")
 
 
 # Packages loading

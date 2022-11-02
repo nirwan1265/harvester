@@ -47,11 +47,12 @@ phospho <- as.data.frame(read.csv("taxa_geoloc_pheno.csv"))
 
 #Subsetting only african accesions
 acc_pheno_africa <- left_join(acc_africa,phospho) 
+covariate_sorghum <- as.data.frame(acc_pheno_africa[,7])
 acc_pheno_africa <- acc_pheno_africa[,(-2:-10)]
 
 #Saving
 write.csv(acc_pheno_africa, "Sorghum_allphospho_africa.csv", row.names = FALSE)
-
+write.csv(covariate_sorghum,"covariate_sorghum_region.csv", row.names = FALSE)
 
 
 # Subsetting maize
