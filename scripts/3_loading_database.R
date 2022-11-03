@@ -6,7 +6,12 @@
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Sorghum.annotation/ensemblgenomes")
 
 
+library(ape)
+x <- read.gff("Sorghum_bicolor.Sorghum_bicolor_NCBIv3.54.chromosome.1.gff3",na.strings = c(".", "?"), GFF3 = TRUE)
+x <- tr2g_gff3("Sorghum_bicolor.Sorghum_bicolor_NCBIv3.54.chromosome.1.gff3", write_tr2g = FALSE, get_transcriptome = FALSE, save_filtered_gff = FALSE)
 
+BiocManager::install("BUSpaRse")
+library(BUSpaRse)
 ##Sub-setting chromosomes from gene annotation database
 
 # For NCBI genes
