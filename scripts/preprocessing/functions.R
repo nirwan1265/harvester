@@ -1,29 +1,4 @@
-# Making genomic ranges for gwas results
-grangeGWAS <- function(query.snp.gwas, n){
-  for(i in paste0("query.snp.gwas", sprintf("%02d", 1:10))){
-    d = get(i)
-    d = d[-1,]
-    d$Pos = as.numeric(d$MLM_Stats.Pos)
-    assign(i,d)
-  }
-  
-  for(i in sprintf("%02d", 1:10)){
-    assign(paste0("gr.q", i) , GRanges(seqnames = paste0("chr",i), ranges = IRanges(start = get(paste0("query.snp.gwas",i))[,"Pos"], width = 1, fstat = get(paste0("query.snp.gwas",i))[,"MLM_Stats.F"], Marker = get(paste0("query.snp.gwas",i))[,"MLM_Stats.Marker"],pvalue = get(paste0("query.snp.gwas",i))[,"MLM_Stats.p"])))
-  }
-  
-  
-  #Finding the Overlaps
-  for(i in sprintf("%02d", 1:10)){
-    print(assign(paste0("common",i), as.data.frame(findOverlapPairs(get(paste0("gr.db",i)), get(paste0("gr.q",i))))))
-    # x <- get(paste0("common",i))
-    # y <- rbind(x,x)
-    # return(y)
-  }
-}
-
-x <- grangeGWAS(query.snp.gwas,10)
-
-
+# Making genomic ranges for gwas and pre processing steps
 preGWAS_process <- function(query.snp.gwas, n, organism){
   for(i in sprintf("%02d", 1:n)){
     d = get(paste0("query.snp.gwas", i))
@@ -125,32 +100,19 @@ for(i in sprintf("%02d", 1:10)){
   assign(i,h)
 }
 
-
-##Gene Name filtering
-split.names <- function(x,split){
-  split.genename <- unlist(strsplit(x, split = ';', fixed = TRUE))[1]
-  split.genename2 <- unlist(strsplit(split.genename, split = ":", fixed = TRUE))[2]
-  return(split.genename2)
-}
-
-
-## Converting pvalues to Z-scores
-zval <- function(x, output){
-  pvalue <- unlist(as.numeric(x[4]))
-  o <- p.to.Z(pvalue)
-  return(o)
-}
-
-Marker01<- apply(Marker01,1,split.names)
-gene01
-
-Marker01 <- replace(Marker01$Gene,gene01)
-
-common01[1]
-system("ls")
-system("pwd")
-rm(common01)
-
 write.table(get(paste0("common",i)), paste0("common",i,".csv"), row.names = FALSE )
 assign(paste0("common",i), vroom(paste0("common",i,".csv")))
 system(paste0("rm common",i,".csv"))
+
+
+
+# Subsetting chromosomes
+setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Research/Results/All.phosphorus_LM")
+x <- vroom("tot.txt") 
+for(i in 1:10){
+  assign()
+}
+
+
+
+
