@@ -108,11 +108,21 @@ system(paste0("rm common",i,".csv"))
 
 # Subsetting chromosomes
 setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Research/Results/All.phosphorus_LM")
-x <- vroom("tot.txt") 
-for(i in 1:10){
-  assign()
+folder <- getwd()
+file_list <- list.files(path = folder, pattern = "*.txt")
+
+# Reading all the files
+for(i in 1:length(file_list)){
+  assign(file_list[i], vroom(file_list[i]))
 }
 
-
-
+for(i in 1:length(file_list)){ #
+  d = get(file_list[i])
+  for(j in 1:10){
+    x = paste0(file_list[i],"_",j)
+    dplyr::filter(d, chr == j) %>% assign(x, ., inherits = TRUE)
+    write.table(get(x),paste0(file_list[i],"_",j,".txt"), quote= FALSE, row.names = FALSE )
+  } 
+  assign(file_list[i], d)
+}
 
