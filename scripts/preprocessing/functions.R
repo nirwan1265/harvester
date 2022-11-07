@@ -1,7 +1,9 @@
 # Making genomic ranges for gwas and pre processing steps
 preGWAS_process <- function(query.snp.gwas, n, organism){
-  for(i in sprintf("%02d", 1:n)){
-    d = get(paste0("query.snp.gwas", i))
+  
+  for(i in 1:n){ #sprintf("%02d", 1:n)
+    x = query.snp.gwas
+    d = get(paste0(x,i))
     d = d[-1,]
     names(d) <- c("Marker","chr","Start_Position","Zvalue","pvalue")
     d <- d %>% mutate_at(c('chr','Start_Position','Zvalue','pvalue'),as.numeric)
@@ -47,7 +49,7 @@ preGWAS_process <- function(query.snp.gwas, n, organism){
   }
 }
 
-grangeGWAS(query.snp.gwas,10)
+preGWAS_process(query.snp.gwas,10)
 
 
 
@@ -113,9 +115,11 @@ file_list <- list.files(path = folder, pattern = "*.txt")
 
 # Reading all the files
 for(i in 1:length(file_list)){
-  assign(file_list[i], vroom(file_list[i]))
+  assign(gsub(".txt","",file_list[i]), vroom(file_list[i]))
 }
 
+
+#Saving all the files
 for(i in 1:length(file_list)){ #
   d = get(file_list[i])
   for(j in 1:10){
@@ -125,4 +129,16 @@ for(i in 1:length(file_list)){ #
   } 
   assign(file_list[i], d)
 }
+
+# Remove extra .txt in the middle using shell
+# > for file in *.txt
+# > do
+# > mv "$file" "${file/.txt/}"
+# > done
+
+system("sudo apt install rename")
+
+#need to change the assign values and stuff mf
+preGWAS_process(TP2.txt_,10)
+
 
