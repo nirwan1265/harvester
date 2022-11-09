@@ -220,3 +220,49 @@ GWAS_process <- function(query.snp.gwas){
     assign(i,h)
   }
 }
+
+
+preGWAS_process <- function(path, filename, n, organism){
+  if(organism == "Sorghum bicolor"){
+    file_list <- list.files(path = path, pattern = filename)
+    for(i in 1:length(file_list)){
+      #assign(gsub(".txt","",file_list[i]), vroom(file_list[i]))
+      assign(file_list[i], vroom(file_list[i]))
+    }
+    GWAS_process(file_list)
+    #return(file_list[i])
+  }
+  # elseif(organism == "Zea mays"){
+  # print("hello")  
+  # }
+}
+setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Research/Results/All.phosphorus_LM")
+path <- getwd()
+filename <- "tot"
+organism <- "Sorghum bicolor"
+file_list <- preGWAS_process(path, filename, 10,  organism)
+
+#file_list <- gsub(".txt","",file_list)
+#GWAS_process(file_list)
+
+
+GWAS_process <- function(query.snp.gwas){
+  a <- 1
+  for(i in query.snp.gwas){
+    d = as.data.frame(get(i))
+    d$zstat = unlist(apply(d,1,zval))
+    names(d) <- c("Marker","chr","Start_Position","pvalue","Zvalue")
+    d <- d %>% mutate_at(c('chr','Start_Position','pvalue','Zvalue'),as.numeric)
+    #print(d[1:5,1:5])
+    assign(paste0("gr.q", i) , GRanges(seqnames = paste0("chr",i), ranges = IRanges(start = d[,"Start_Position"], width = 1, zstat = d[,"Zvalue"], Marker = d[,"Marker"],pvalue = d[,"pvalue"])))
+    print(assign(paste0("common",i), as.data.frame(findOverlapPairs(get(paste0("gr.db",sprintf("%02d",a))), get(paste0("gr.q",sprintf("%02d",a))))))) %>% dplyr::select(c())
+    a = a + 1
+    e = get(paste0("common",i))
+    e <- e[which(e$first.X.Region == "gene"), ]
+    e = e[,c(7,16,17,18)]
+    colnames(e) = c("Gene","zstat","Marker","pvalue")
+    print(e[,1:2])
+    assign(i,d,e)
+  }
+}
+file_list <- preGWAS_process(path, filename, 10,  organism)
