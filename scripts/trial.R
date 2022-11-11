@@ -91,7 +91,7 @@ system("ls")
 
 
 
-GWAS_process <- function(path, filename, n, organism){
+precomb <- function(path, filename, n, organism){
   a <- 1
   if(organism == "Sorghum bicolor"){
     file_list <- list.files(path = path, pattern = filename)
@@ -156,5 +156,5 @@ setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Resear
 path <- getwd()
 filename <- "tot"
 organism <- "Sorghum bicolor"
-GWAS_process(path, filename, 10,  organism)
+precomb(path, filename, 10,  organism)
 

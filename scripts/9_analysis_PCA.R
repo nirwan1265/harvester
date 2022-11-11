@@ -6,7 +6,7 @@ setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap
 
 ##Reading the vcf files
 for(i in sprintf("%02d", 1:10)){
-  assign(paste0("vcf.fn",i),paste0("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap/hapmap_vcf/minor_allele_format/sb_snpsDryad_sept2013_filter.c",i,".vcf"))
+  assign(paste0("vcf.fn",i),paste0("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap/raw/vcf/africa_filtered/sb_snpsDryad_sept2013_filter.c",i,".vcf"))
 }
 
 ##Converting vcf to gds
@@ -50,7 +50,7 @@ for(i in paste0("snpset",sprintf("%02d",1:10))){
 j <- 1
 for(i in paste0("snpset.id",sprintf("%02d",1:10))){
   d = get(i)
-  assign(paste0("pca",sprintf("%02d",j)), snpgdsPCA(get(paste0("gdsfile",sprintf("%02d",j))), snp.id = d, num.thread = 2))
+  assign(paste0("pca",sprintf("%02d",j)), snpgdsPCA(get(paste0("gdsfile",sprintf("%02d",j))), snp.id = d, num.thread = 10))
   assign(i,d)
   j = j+1
 }
@@ -67,12 +67,20 @@ for(i in paste0("pca",sprintf("%02d",1:10))){
   assign(paste0("tab",sprintf("%02d",j)), data.frame(sample.id = d$sample.id,
                                                      EV1 = d$eigenvect[,1],
                                                      EV2 = d$eigenvect[,2],
+                                                     EV3 = d$eigenvect[,3],
+                                                     EV4 = d$eigenvect[,4],
+                                                     EV5 = d$eigenvect[,5],
+                                                     EV6 = d$eigenvect[,6],
+                                                     EV7 = d$eigenvect[,7],
+                                                     EV8 = d$eigenvect[,8],
+                                                     EV9 = d$eigenvect[,9],
+                                                     EV10 = d$eigenvect[,10],
                                                      stringsAsFactors = FALSE))
   assign(i,d)
   j = j + 1
 }
 
-
+write.csv(tab10, "PCA_LM_sorghum.csv", row.names = F)
 # Saving tab
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/R_saved")
 # j <- 1
