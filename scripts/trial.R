@@ -91,7 +91,7 @@ system("ls")
 
 
 
-precomb <- function(path, filename, n, organism){
+preprocess <- function(path, filename, n, organism){
   a <- 1
   if(organism == "Sorghum bicolor"){
     file_list <- list.files(path = path, pattern = filename)

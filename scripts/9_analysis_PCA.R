@@ -2,11 +2,11 @@
 #Need a vcf file format of the hapmap which is converted to GDS format
 #TASSEL or PLINK is used for converting hapmap to VCF file format
 #Need a directory to  create the gds file. If working on the server, we might need to define this before starting
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap/hapmap_vcf/minor_allele_format")
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Github/vcf2gwas/maize.allphospho")
 
 ##Reading the vcf files
 for(i in sprintf("%02d", 1:10)){
-  assign(paste0("vcf.fn",i),paste0("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap/raw/vcf/africa_filtered/sb_snpsDryad_sept2013_filter.c",i,".vcf"))
+  assign(paste0("vcf.fn",i),paste0("~/Library/Mobile Documents/com~apple~CloudDocs/Github/vcf2gwas/maize.allphospho/allchrom_allpheno/maize.chr",i,".vcf.recode.pheno.vcf"))
 }
 
 ##Converting vcf to gds
@@ -80,7 +80,7 @@ for(i in paste0("pca",sprintf("%02d",1:10))){
   j = j + 1
 }
 
-write.csv(tab10, "PCA_LM_sorghum.csv", row.names = F)
+write.csv(tab10, "PCA_LM_maize.csv", row.names = F)
 # Saving tab
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/R_saved")
 # j <- 1
