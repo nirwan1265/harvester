@@ -23,9 +23,10 @@
 
 
 ##Reading the genotype files
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap/genotype_filtered_by_phenotype/minor_allele_format")
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Lasky.hapmap/raw/africa.filtered")
 #edit the files like the one from geno
-ch <- c("ch2L","ch2R","ch3L","ch3R","chX")
+#ch <- c("ch2L","ch2R","ch3L","ch3R","chX")
+ch = c(1,2,3,4,5,6,7,8,9,10)
 for(i in ch){
   assign(paste0("geno_",i), read.table(file = paste0(i,".pheno.MAF10.miss20.filtered.txt"), header = TRUE, sep = "\t"))
 }
