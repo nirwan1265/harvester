@@ -10,11 +10,11 @@ for(i in sprintf("%02d", 1:10)){
 }
 a <- 1
 for(i in paste0("ref_", sprintf("%02d", 1:10))){
-  saveRDS(i, paste0("gr.db", sprintf("%02d",a),".RDS"))
+  saveRDS(get(i), paste0("gr.db", sprintf("%02d",a),".RDS"))
   a <- a+1
 }
-
-
+system("pwd")
+x <- readRDS("gr.db01.RDS")
 
 ##Making GRanges for gwas Query
 #Changing the position column to numeric and removing the first row

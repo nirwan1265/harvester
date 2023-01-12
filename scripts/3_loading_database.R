@@ -42,7 +42,6 @@ for(i in paste0("db.", sprintf("%02d", 1:10))){
 
 # For maize
 setwd("/Users/nirwantandukar/Library/Mobile Documents/com~apple~CloudDocs/Research/Data/Maize/Maize.annotation")
-system("ls")
 maize_ref <- read.table("Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.gff3", sep ="\t", header = T)
 
 chr <- c("chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10")
