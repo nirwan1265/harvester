@@ -46,11 +46,13 @@ system("ls")
 maize_ref <- read.table("Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.gff3", sep ="\t", header = T)
 
 chr <- c("chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10")
+a = 1
 for (i in chr){
-  assign(paste0("ref_",i), maize_ref[which(maize_ref[1] == i), ])
+  assign(paste0("ref_",sprintf("%02d", a)), maize_ref[which(maize_ref[1] == i), ])
+  a = a+1
 }
 
-for(i in paste0("ref_chr", 1:10)){
+for(i in paste0("ref_", sprintf("%02d", 1:10))){
   d = get(i)
   d = d[which(d[3] == "gene"), ]
   colnames(d) <- c("Chromosome","Database","Region","Start","End","NA","Strand","NA2","Gene")

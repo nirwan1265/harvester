@@ -4,6 +4,16 @@ for(i in sprintf("%02d", 1:10)){
   assign(paste0("gr.db", i) , GRanges(seqnames = paste0("chr",i), ranges = IRanges(start = get(paste0("db.",i))[,"Start"], end = get(paste0("db.",i))[,"End"]), strand = get(paste0("db.",i))[,"Strand"], Region = get(paste0("db.",i))[,"Region"], Gene = get(paste0("db.",i))[,"Gene"]))
 }
 
+## for maize
+for(i in sprintf("%02d", 1:10)){
+  assign(paste0("gr.db", i) , GRanges(seqnames = paste0("chr",i), ranges = IRanges(start = get(paste0("ref_",i))[,"Start"], end = get(paste0("ref_",i))[,"End"]), strand = get(paste0("ref_",i))[,"Strand"], Region = get(paste0("ref_",i))[,"Region"], Gene = get(paste0("ref_",i))[,"Gene"]))
+}
+a <- 1
+for(i in paste0("ref_", sprintf("%02d", 1:10))){
+  saveRDS(i, paste0("gr.db", sprintf("%02d",a),".RDS"))
+  a <- a+1
+}
+
 
 
 ##Making GRanges for gwas Query
