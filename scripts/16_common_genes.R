@@ -54,9 +54,14 @@ x = list("apa", "ext", "TP1")
 x = list(expand.grid(c("apa","ext","lab","NPlim","occ","TP1","TP2"), c("apa","ext","lab","TP1","TP2"),"lab", "TP1","TP2"))
 outer(c("apa","ext","lab","TP1","TP2"), c("apa","ext","lab","TP1","TP2"), "paste")
 
-x = c(c("apa","ext","lab","org","PBR1","PBR2","TP1","TP2"), c("apa","ext","lab","org","PBR1","PBR2","TP1","TP2"))
+
+#All combinatino of files 
+x =  c("apa","ext","lab","org","PBR1","PBR2","PHO1","PHO2","PMEH1","PMEH2","PNZ1","PNZ2","POL1","POL2","sec","sol_Hi","sol_Mo","sol_Low","sol_VL","sol","stp10","stp20","stp30","stp100","tot","TP1","TP2")
+res <- Map(combn, list(x), seq_along(x), simplify = FALSE)
+
 x = unique(x)
-combn(x,7)
+x
+combn(x,26)
 
 x
 # Finding Common genes in sets of two: 
@@ -68,4 +73,9 @@ ll
 out <- lapply( ll , function(x)  intersect( x[[1]] , x[[2]] ) ) 
 out_length <- lapply( ll , function(x)  length(intersect( x[[1]] , x[[2]] ) ))
 length_commonphenot <- setNames(out_length, nms)
+length_commonphenot
 length_commonphenot <- lapply(length_commonphenot, sort)
+
+
+
+
