@@ -53,7 +53,14 @@ for (i in chr){
 
 for(i in paste0("ref_", sprintf("%02d", 1:10))){
   d = get(i)
-  d = d[which(d[3] == "gene"), ]
+  #d = d[which(d[3] == "gene"), ]
   colnames(d) <- c("Chromosome","Database","Region","Start","End","NA","Strand","NA2","Gene")
+  assign(i,d)
+}
+for(i in paste0("ref_", sprintf("%02d", 2:10))){
+  d = get(i)
+  d = d[-1,]
+  #d = d[which(d[3] == "gene"), ]
+  #colnames(d) <- c("Chromosome","Database","Region","Start","End","NA","Strand","NA2","Gene")
   assign(i,d)
 }
